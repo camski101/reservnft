@@ -2,11 +2,11 @@
 
 Frontend
 - [x] NextJS boilerplate
-- [] Metamask boilerplate
+- [ ] Metamask boilerplate
 
 Backend
-- [] NFT smart contract
-- [] IPFS stuff
+- [ ] NFT smart contract
+- [ ] IPFS stuff
 
 # Getting Started
 
