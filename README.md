@@ -1,12 +1,12 @@
 # Roadmap
 
 Frontend
-[x] NextJS boilerplate
-[] Metamask boilerplate
+- [x] NextJS boilerplate
+- [] Metamask boilerplate
 
 Backend
-[] NFT smart contract
-[] IPFS stuff
+- [] NFT smart contract
+- [] IPFS stuff
 
 # Getting Started
 
