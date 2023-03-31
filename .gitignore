@@ -1,1 +1,3 @@
 backend/cache/solidity-files-cache.json
+backend/cache
+backend/out
