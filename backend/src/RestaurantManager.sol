@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract RestaurantManager {
     using Counters for Counters.Counter;
+
     Counters.Counter private _restaurantCounter;
 
     struct Restaurant {
@@ -16,7 +17,10 @@ contract RestaurantManager {
 
     mapping(uint256 => Restaurant) public restaurants;
 
-    function registerRestaurant(string calldata name, string calldata location) public {
+    function registerRestaurant(
+        string calldata name,
+        string calldata location
+    ) public {
         uint256 restaurantId = _restaurantCounter.current();
         restaurants[restaurantId] = Restaurant({
             owner: msg.sender,
@@ -26,7 +30,9 @@ contract RestaurantManager {
         _restaurantCounter.increment();
     }
 
-    function getRestaurant(uint256 restaurantId) public view returns (Restaurant memory) {
+    function getRestaurant(
+        uint256 restaurantId
+    ) public view returns (Restaurant memory) {
         return restaurants[restaurantId];
     }
 
