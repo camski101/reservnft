@@ -931,8 +931,8 @@
       }
     },
     "test/RestaurantManager.t.sol": {
-      "lastModificationDate": 1680227986187,
-      "contentHash": "cb1ce416b494256d4a2cf1b6176a3652",
+      "lastModificationDate": 1680231256716,
+      "contentHash": "c3553bec7070d0ede867d0f8464734b4",
       "sourceName": "test/RestaurantManager.t.sol",
       "solcConfig": {
         "settings": {
