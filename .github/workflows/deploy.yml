@@ -4,7 +4,8 @@ on:
       - main
 
 jobs:
-  backend:
+  deploy:
+    name: BE
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -21,9 +22,7 @@ jobs:
       - name: Run snapshot
         run: forge snapshot
         working-directory: ./backend
-  frontend:
-    runs-on: ubuntu-latest
-    name: Deploy front end
+    name: FE
     steps:
       - uses: actions/checkout@v2
       - name: Deploy site using fleek
