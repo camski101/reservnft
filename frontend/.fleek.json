@@ -1,0 +1,10 @@
+{
+    "build": {
+      "image": "fleek/next-js:node-16",
+      "command": "yarn && yarn run build && yarn next export",
+      "publicDir": "out",
+      "baseDir": "frontend",
+      "environment": {
+      }
+    }
+   }
