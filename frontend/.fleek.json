@@ -1,5 +1,7 @@
 {
-    "siteId": "jolly-voice-8243",
+    "site":{
+        "id": "jolly-voice-8243"
+    },
     "build": {
       "image": "fleek/next-js:node-16",
       "command": "yarn && yarn run build && yarn next export",
