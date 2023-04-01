@@ -1,6 +1,7 @@
 {
     "site":{
-        "id": "jolly-voice-8243"
+        "id": "jolly-voice-8243",
+        "source": "ipfs"
     },
     "build": {
       "image": "fleek/next-js:node-16",
