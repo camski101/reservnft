@@ -10,7 +10,6 @@
       "command": "yarn && yarn run build && yarn next export",
       "publicDir": "out",
       "baseDir": "",
-      "environment": {
-      }
+      "rootDir": ""
     }
    }
