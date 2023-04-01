@@ -5,7 +5,7 @@ on:
 
 jobs:
   deploy:
-    name: BE
+    name: Full Deployment
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -15,17 +15,15 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      - name: Run tests
+      - name: Foundry Tests
         run: forge test -vvv
         working-directory: ./backend
 
-      - name: Run snapshot
+      - name: Forge Snapshot
         run: forge snapshot
         working-directory: ./backend
-    name: FE
-    steps:
-      - uses: actions/checkout@v2
-      - name: Deploy site using fleek
+
+      - name: FE Fleek Deployment
         id: deploy
         uses: fleekhq/action-deploy@v1
         with:
