@@ -1,0 +1,18 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    name: Deploy front end
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy site using fleek
+        id: deploy
+        uses: fleekhq/action-deploy@v1
+        with:
+          apiKey: ${{ secrets.FLEEK_API_KEY }}
+      - name: Get the output url
+        run: echo "Deploy url is ${{ steps.deploy.outputs.deployUrl }}"

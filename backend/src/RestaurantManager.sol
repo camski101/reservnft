@@ -5,15 +5,21 @@ pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract RestaurantManager {
-    using Counters for Counters.Counter;
-
-    Counters.Counter private _restaurantCounter;
-
     struct Restaurant {
         address owner;
         string name;
         string location;
     }
+
+    event RestaurantRegistered(
+        address indexed owner,
+        string indexed name,
+        string indexed location
+    );
+
+    using Counters for Counters.Counter;
+
+    Counters.Counter private _restaurantCounter;
 
     mapping(uint256 => Restaurant) public restaurants;
 
@@ -28,6 +34,8 @@ contract RestaurantManager {
             location: location
         });
         _restaurantCounter.increment();
+
+        emit RestaurantRegistered(msg.sender, name, location);
     }
 
     function getRestaurant(
