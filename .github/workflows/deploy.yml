@@ -9,6 +9,10 @@ jobs:
     name: Deploy front end
     steps:
       - uses: actions/checkout@v2
+      - name: Open dir
+          working-directory: frontend
+          run: |
+              ls -la
       - name: Deploy site using fleek
         id: deploy
         uses: fleekhq/action-deploy@v1
