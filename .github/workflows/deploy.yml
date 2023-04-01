@@ -4,6 +4,24 @@ on:
       - main
 
 jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        working-directory: ./backend
+
+      - name: Run tests
+        run: forge test -vvv
+        working-directory: ./backend
+
+      - name: Run snapshot
+        run: forge snapshot
+        working-directory: ./backend
   frontend:
     runs-on: ubuntu-latest
     name: Deploy front end
