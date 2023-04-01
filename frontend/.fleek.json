@@ -4,6 +4,7 @@
       "command": "yarn && yarn run build && yarn next export",
       "publicDir": "out",
       "baseDir": "frontend",
+      "siteId": "jolly-voice-8243"
       "environment": {
       }
     }
