@@ -2,7 +2,7 @@
     "site":{
         "id": "97878ff2-a4f8-43a1-9a4c-ef359f657af4",
         "name": "jolly-voice-8243",
-        "source": "ipfs",
+        "source": "github",
         "platform": "ipfs",
         "team": "FinTech 564 Blockchain Group 5"
     },
