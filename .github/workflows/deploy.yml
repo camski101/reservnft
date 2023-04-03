@@ -14,6 +14,7 @@ jobs:
 
       - name: Install Foundry
         run: make install
+        working-directory: ./backend
 
       - name: Foundry Tests
         run: make test
