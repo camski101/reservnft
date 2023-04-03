@@ -28,7 +28,7 @@ format :; yarn prettier --write src/**/*.sol && yarn prettier --write src/*.sol
 # solhint should be installed globally
 lint :; yarn solhint src/**/*.sol && yarn solhint src/*.sol
 
-anvil :; anvil -m 'test test test test test test test test test test test junk'
+anvil :; anvil -m 'test test test test test test test test test test test junk' --chain-id 31337
 
 # use the "@" to hide the command from your shell 
 deploy-sepolia :; @forge script script/${contract}.s.sol:Deploy${contract} --rpc-url ${SEPOLIA_RPC_URL}  --private-key ${PRIVATE_KEY} --broadcast --verify --etherscan-api-key ${ETHERSCAN_API_KEY}  -vvvv
