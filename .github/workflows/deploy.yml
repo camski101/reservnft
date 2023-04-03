@@ -13,7 +13,7 @@ jobs:
           submodules: recursive
 
       - name: Install Foundry
-        uses: make install
+        run: make install
 
       - name: Foundry Tests
         run: make test
