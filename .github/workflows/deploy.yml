@@ -16,7 +16,7 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
 
       - name: Foundry Tests
-        run: forge test -vvv
+        run: forge test -vvvvv
         working-directory: ./backend
 
       - name: Forge Snapshot

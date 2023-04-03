@@ -3,5 +3,9 @@
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
 
 [submodule "backend/lib/forge-std"]
-  path = backend/lib/forge-std
-  url = https://github.com/foundry-rs/forge-std.git
+  	path = backend/lib/forge-std
+  	url = https://github.com/foundry-rs/forge-std
+
+[submodule "backend/lib/solmate"]
+	path = backend/lib/solmate
+	url = https://github.com/rari-capital/solmate
