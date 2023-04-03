@@ -25,6 +25,8 @@ jobs:
 
       - name: Slither
         uses: crytic/slither-action@v0.3.0
+        with:
+          target: ./backend
 
       - name: FE Fleek Deployment
         id: deploy
