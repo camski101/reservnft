@@ -24,8 +24,7 @@ jobs:
         working-directory: ./backend
 
       - name: Slither
-        run: make slither
-        working-directory: ./backend
+        uses: crytic/slither-action@v0.3.0
 
       - name: FE Fleek Deployment
         id: deploy
