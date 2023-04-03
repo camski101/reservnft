@@ -15,10 +15,6 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      - name: Initial dependencies
-        run: make install
-        working-directory: ./backend
-
       - name: Foundry Tests
         run: make test
         working-directory: ./backend

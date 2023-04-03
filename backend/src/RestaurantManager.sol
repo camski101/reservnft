@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/utils/Counters.sol";
+import {Counters} from "@openzeppelin/contracts/utils/Counters.sol";
 
 contract RestaurantManager {
     struct Restaurant {
