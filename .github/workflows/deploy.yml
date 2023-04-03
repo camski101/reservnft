@@ -13,14 +13,18 @@ jobs:
           submodules: recursive
 
       - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
+        uses: make install
 
       - name: Foundry Tests
-        run: forge test -vvvvv
+        run: make test
         working-directory: ./backend
 
       - name: Forge Snapshot
-        run: forge snapshot
+        run: make snapshot
+        working-directory: ./backend
+
+      - name: Slither
+        run: make slither
         working-directory: ./backend
 
       - name: FE Fleek Deployment
