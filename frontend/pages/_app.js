@@ -2,7 +2,6 @@ import { MoralisProvider } from "react-moralis"
 import { NotificationProvider } from "web3uikit"
 import "../styles/globals.css"
 import Head from "next/head"
-import { NotificationProvider } from "web3uikit"
 
 function MyApp({ Component, pageProps }) {
     return (
