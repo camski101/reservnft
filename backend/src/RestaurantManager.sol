@@ -6,7 +6,10 @@ import {Counters} from "@openzeppelin/contracts/utils/Counters.sol";
 
 error RestaurantManager__Unauthorized();
 
+/// @title RestaurantManager
+/// @notice Register and manage restaurants
 contract RestaurantManager {
+    /// @dev Restaurant struct stores restaurant information
     struct Restaurant {
         address owner;
         string name;
@@ -14,12 +17,14 @@ contract RestaurantManager {
         bool isActive;
     }
 
+    /// @notice Emitted when a restaurant is registered
     event RestaurantRegistered(
         address indexed owner,
         string indexed name,
         string indexed location
     );
 
+    /// @notice Emitted when a restaurant is deactivated
     event RestaurantDeactivated(
         address indexed owner,
         uint256 indexed restaurantId
@@ -31,6 +36,9 @@ contract RestaurantManager {
 
     mapping(uint256 => Restaurant) public restaurants;
 
+    /// @notice Register a restaurant
+    /// @param name Restaurant name
+    /// @param location Restaurant location
     function registerRestaurant(
         string calldata name,
         string calldata location
@@ -47,6 +55,8 @@ contract RestaurantManager {
         emit RestaurantRegistered(msg.sender, name, location);
     }
 
+    /// @notice Deactivate a restaurant by its ID
+    /// @param restaurantId Restaurant ID
     function deactivateRestaurant(uint256 restaurantId) public {
         if (msg.sender != restaurants[restaurantId].owner) {
             revert RestaurantManager__Unauthorized();
@@ -56,12 +66,17 @@ contract RestaurantManager {
         emit RestaurantDeactivated(msg.sender, restaurantId);
     }
 
+    /// @notice Get a restaurant by its ID
+    /// @param restaurantId Restaurant ID
+    /// @return Restaurant struct
     function getRestaurant(
         uint256 restaurantId
     ) public view returns (Restaurant memory) {
         return restaurants[restaurantId];
     }
 
+    /// @notice Get all active restaurants
+    /// @return Array of Restaurant structs
     function getAllRestaurants() public view returns (Restaurant[] memory) {
         uint256 activeRestaurants = 0;
         for (uint256 i = 0; i < _restaurantCounter.current(); i++) {
