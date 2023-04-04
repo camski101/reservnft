@@ -1,0 +1,12 @@
+type RestaurantRegistered @entity {
+  id: ID!
+  owner: Bytes!
+  name: String!
+  location: String!
+}
+
+type RestaurantDeactivated @entity {
+  id: ID!
+  owner: Bytes!
+  restaurantId: BigInt!
+}
