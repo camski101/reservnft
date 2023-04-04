@@ -1,4 +1,4 @@
-import { contractAddresses, abi } from "../constants";
+import { RestaurantManager, networkMapping } from "../constants";
 import { useMoralis, useWeb3Contract } from "react-moralis";
 import { useEffect, useState } from "react";
 import { useNotification } from "web3uikit";
@@ -6,7 +6,7 @@ import { useNotification } from "web3uikit";
 export default function RegisterRestaurant() {
   const { Moralis, isWeb3Enabled, chainId: chainIdHex } = useMoralis();
   const chainId = parseInt(chainIdHex);
-  const rmAddress = chainId in contractAddresses ? contractAddresses[chainId][0] : null;
+  const rmAddress = chainId in networkMapping ? networkMapping[chainId]['RestaurantManager'] : null;
   const dispatch = useNotification();
 
   // State for form input values
@@ -19,7 +19,7 @@ export default function RegisterRestaurant() {
     isLoading,
     isFetching,
   } = useWeb3Contract({
-    abi: abi,
+    abi: RestaurantManager,
     contractAddress: rmAddress,
     functionName: "registerRestaurant",
     params: {
@@ -53,30 +53,31 @@ export default function RegisterRestaurant() {
       message: "Transaction Complete!",
       title: "Transaction Notification",
       position: "topR",
-      icon: "bell",
     });
   };
 
-  return (
-    <div className="p-5">
-      <h1 className="py-4 px-4 font-bold text-3xl">Register Restaurant</h1>
+    return (
+    <div className="p-5 border-2 border-gray-200 shadow-md rounded-lg">
+      <h1 className="pb-4 font-bold text-3xl">Register Restaurant</h1>
       {rmAddress ? (
         <>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="space-y-4">
             <input
               type="text"
               placeholder="Restaurant Name"
               value={restaurantName}
               onChange={(e) => setRestaurantName(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
             />
             <input
               type="text"
               placeholder="Restaurant Address"
               value={restaurantAddress}
               onChange={(e) => setRestaurantAddress(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
             />
             <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-auto"
+              className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none"
               type="submit"
               disabled={isLoading || isFetching}
             >
@@ -89,7 +90,7 @@ export default function RegisterRestaurant() {
           </form>
         </>
       ) : (
-        <div>Please connect to a supported chain </div>
+        <div className="text-red-600 font-bold">Please connect to a supported chain</div>
       )}
     </div>
   );

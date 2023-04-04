@@ -1,7 +1,8 @@
 import styles from "../styles/Home.module.css"
 import { useMoralis } from "react-moralis"
+import { networkMapping } from "../constants"
 
-const supportedChains = ["31337", "11155111"]
+const supportedChains = Object.keys(networkMapping)
 
 export default function Home() {
     const { isWeb3Enabled, chainId } = useMoralis()

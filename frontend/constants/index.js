@@ -1,7 +1,7 @@
-const contractAddresses = require("./contractAddresses.json")
-const abi = require("./abi.json")
+const networkMapping = require("./networkMapping.json")
+const RestaurantManager = require("./RestaurantManager.json")
 
 module.exports = {
-    contractAddresses,
-    abi,
+    networkMapping,
+    RestaurantManager,
 }
