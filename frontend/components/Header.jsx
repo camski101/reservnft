@@ -6,12 +6,8 @@ export default function Header() {
         <nav className="p-5 border-b-2 flex flex-row justify-between items-center">
             <h1 className="py-4 px-4 font-bold text-3xl">ReservNFT</h1>
             <div className="flex flex-row items-center">
-                <Link href="/">
-                    <a className="mr-4 p-6">Home</a>
-                </Link>
-                <Link href="/register-restaurant">
-                    <a className="mr-4 p-6">Register a Restaurant</a>
-                </Link>
+                <Link href="/" className="mr-4 p-6">Home</Link>
+                <Link href="/register-restaurant" className="mr-4 p-6">Register a Restaurant</Link>
                 <ConnectButton moralisAuth={false} />
             </div>
         </nav>
