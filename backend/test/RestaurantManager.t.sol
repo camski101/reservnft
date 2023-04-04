@@ -27,7 +27,7 @@ contract RestaurantManagerTest is Test {
         );
 
         assertEq(
-            res.location,
+            res.businessAddress,
             "123 Main St, New York, NY 10001",
             "Restaurant location should be 123 Main St, New York, NY 10001"
         );

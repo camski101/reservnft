@@ -53,7 +53,7 @@ export class RestaurantRegistered__Params {
     return this._event.parameters[1].value.toBytes();
   }
 
-  get location(): Bytes {
+  get business_address(): Bytes {
     return this._event.parameters[2].value.toBytes();
   }
 }
@@ -67,7 +67,7 @@ export class RestaurantManager__getAllRestaurantsResultValue0Struct extends ethe
     return this[1].toString();
   }
 
-  get location(): string {
+  get business_address(): string {
     return this[2].toString();
   }
 
@@ -85,7 +85,7 @@ export class RestaurantManager__getRestaurantResultValue0Struct extends ethereum
     return this[1].toString();
   }
 
-  get location(): string {
+  get business_address(): string {
     return this[2].toString();
   }
 
@@ -278,7 +278,7 @@ export class RegisterRestaurantCall__Inputs {
     return this._call.inputValues[0].value.toString();
   }
 
-  get location(): string {
+  get business_address(): string {
     return this._call.inputValues[1].value.toString();
   }
 }

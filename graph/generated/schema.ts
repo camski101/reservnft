@@ -12,7 +12,7 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
-export class ExampleEntity extends Entity {
+export class RestaurantRegistered extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -20,17 +20,20 @@ export class ExampleEntity extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save ExampleEntity entity without an ID");
+    assert(
+      id !== null,
+      "Cannot save RestaurantRegistered entity without an ID"
+    );
     assert(
       id.kind == ValueKind.STRING,
-      "Cannot save ExampleEntity entity with non-string ID. " +
+      "Cannot save RestaurantRegistered entity with non-string ID. " +
         'Considering using .toHex() to convert the "id" to a string.'
     );
-    store.set("ExampleEntity", id.toString(), this);
+    store.set("RestaurantRegistered", id.toString(), this);
   }
 
-  static load(id: string): ExampleEntity | null {
-    return store.get("ExampleEntity", id) as ExampleEntity | null;
+  static load(id: string): RestaurantRegistered | null {
+    return store.get("RestaurantRegistered", id) as RestaurantRegistered | null;
   }
 
   get id(): string {
@@ -42,13 +45,68 @@ export class ExampleEntity extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get count(): BigInt {
-    let value = this.get("count");
-    return value.toBigInt();
+  get owner(): Bytes {
+    let value = this.get("owner");
+    return value.toBytes();
   }
 
-  set count(value: BigInt) {
-    this.set("count", Value.fromBigInt(value));
+  set owner(value: Bytes) {
+    this.set("owner", Value.fromBytes(value));
+  }
+
+  get name(): string {
+    let value = this.get("name");
+    return value.toString();
+  }
+
+  set name(value: string) {
+    this.set("name", Value.fromString(value));
+  }
+
+  get location(): string {
+    let value = this.get("location");
+    return value.toString();
+  }
+
+  set location(value: string) {
+    this.set("location", Value.fromString(value));
+  }
+}
+
+export class RestaurantDeactivated extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(
+      id !== null,
+      "Cannot save RestaurantDeactivated entity without an ID"
+    );
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save RestaurantDeactivated entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("RestaurantDeactivated", id.toString(), this);
+  }
+
+  static load(id: string): RestaurantDeactivated | null {
+    return store.get(
+      "RestaurantDeactivated",
+      id
+    ) as RestaurantDeactivated | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
   }
 
   get owner(): Bytes {

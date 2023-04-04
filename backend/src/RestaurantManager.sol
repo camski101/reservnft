@@ -13,7 +13,7 @@ contract RestaurantManager {
     struct Restaurant {
         address owner;
         string name;
-        string location;
+        string businessAddress;
         bool isActive;
     }
 
@@ -21,7 +21,7 @@ contract RestaurantManager {
     event RestaurantRegistered(
         address indexed owner,
         string indexed name,
-        string indexed location
+        string indexed businessAddress
     );
 
     /// @notice Emitted when a restaurant is deactivated
@@ -38,21 +38,21 @@ contract RestaurantManager {
 
     /// @notice Register a restaurant
     /// @param name Restaurant name
-    /// @param location Restaurant location
+    /// @param businessAddress Restaurant location
     function registerRestaurant(
         string calldata name,
-        string calldata location
+        string calldata businessAddress
     ) public {
         uint256 restaurantId = _restaurantCounter.current();
         restaurants[restaurantId] = Restaurant({
             owner: msg.sender,
             name: name,
-            location: location,
+            businessAddress: businessAddress,
             isActive: true
         });
         _restaurantCounter.increment();
 
-        emit RestaurantRegistered(msg.sender, name, location);
+        emit RestaurantRegistered(msg.sender, name, businessAddress);
     }
 
     /// @notice Deactivate a restaurant by its ID
