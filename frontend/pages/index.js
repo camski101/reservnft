@@ -16,7 +16,7 @@ export default function Home() {
                             Nice bro! You are connected to a supported chainId: {chainId}
                         </div>
                     ) : (
-                        <div>{`Please switch to a supported chainId. The supported Chain Ids are: ${supportedChains}`}</div>
+                        <div className="text-red-600 font-bold">{`Please switch to a supported chainId. The supported Chain Ids are: ${supportedChains}`}</div>
                     )}
                 </div>
             ) : (
