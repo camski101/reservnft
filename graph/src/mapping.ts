@@ -3,15 +3,27 @@ import {
   RestaurantRegistered as RestaurantRegisteredEvent
 } from "../generated/RestaurantManager/RestaurantManager"
 
-import { RestaurantDeactivated, RestaurantRegistered } from "../generated/schema"
+import { Restaurant } from "../generated/schema"
 
-export function handleRestaurantDeactivated(event: RestaurantRegisteredEvent): void {
+export function handleRestaurantRegistered(event: RestaurantRegisteredEvent): void {
 
-  let restaurantDeactivated = RestaurantDeactivated.load(event.params.restaurantAddress.toHex())
-  )
+  let restaurant = new Restaurant(event.params.restaurantId.toHex())
 
-  restaurantDeactivated.restaurantAddress = event.params.restaurantAddress
-  restaurantDeactivated.save()
+  restaurant.owner = event.params.owner
+  restaurant.name = event.params.name
+  restaurant.save()
 }
 
-export function handleRestaurantRegistered(event: RestaurantRegisteredEvent): void {}
+export function handleRestaurantDeactivated(event: RestaurantDeactivatedEvent): void {
+
+  let restaurant = Restaurant.load(event.params.restaurantId.toHex())
+
+  if (restaurant == null) {
+    restaurant = new Restaurant(event.params.restaurantId.toHex())
+  }
+
+  restaurant.owner = event.params.owner;
+  restaurant.id  = event.params.restaurantId.toHex();
+  restaurant.save()
+}
+

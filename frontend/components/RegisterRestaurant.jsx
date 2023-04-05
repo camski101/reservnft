@@ -33,7 +33,7 @@ export default function RegisterRestaurant() {
     const handleSubmit = async (e) => {
         e.preventDefault()
         await registerRestaurant({
-            params: { name: restaurantName, address: restaurantBusinessAddress },
+            params: { name: restaurantName, businessAddress: restaurantBusinessAddress },
             onSuccess: handleSuccess,
             onError: (error) => console.log(error),
         })
@@ -72,7 +72,7 @@ export default function RegisterRestaurant() {
                         />
                         <input
                             type="text"
-                            placeholder="Restaurant Address"
+                            placeholder="Restaurant Business Address"
                             value={restaurantBusinessAddress}
                             onChange={(e) => setRestaurantBusinessAddress(e.target.value)}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"

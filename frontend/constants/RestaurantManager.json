@@ -28,6 +28,12 @@
     "inputs": [
       {
         "indexed": true,
+        "internalType": "uint256",
+        "name": "restaurantId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
         "internalType": "address",
         "name": "owner",
         "type": "address"
@@ -36,12 +42,6 @@
         "indexed": true,
         "internalType": "string",
         "name": "name",
-        "type": "string"
-      },
-      {
-        "indexed": true,
-        "internalType": "string",
-        "name": "businessAddress",
         "type": "string"
       }
     ],

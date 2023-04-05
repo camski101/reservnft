@@ -45,15 +45,15 @@ export class RestaurantRegistered__Params {
     this._event = event;
   }
 
+  get restaurantId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
   get owner(): Address {
-    return this._event.parameters[0].value.toAddress();
+    return this._event.parameters[1].value.toAddress();
   }
 
   get name(): Bytes {
-    return this._event.parameters[1].value.toBytes();
-  }
-
-  get business_address(): Bytes {
     return this._event.parameters[2].value.toBytes();
   }
 }
@@ -67,7 +67,7 @@ export class RestaurantManager__getAllRestaurantsResultValue0Struct extends ethe
     return this[1].toString();
   }
 
-  get business_address(): string {
+  get businessAddress(): string {
     return this[2].toString();
   }
 
@@ -85,7 +85,7 @@ export class RestaurantManager__getRestaurantResultValue0Struct extends ethereum
     return this[1].toString();
   }
 
-  get business_address(): string {
+  get businessAddress(): string {
     return this[2].toString();
   }
 
@@ -119,6 +119,22 @@ export class RestaurantManager__restaurantsResult {
     map.set("value2", ethereum.Value.fromString(this.value2));
     map.set("value3", ethereum.Value.fromBoolean(this.value3));
     return map;
+  }
+
+  getOwner(): Address {
+    return this.value0;
+  }
+
+  getName(): string {
+    return this.value1;
+  }
+
+  getBusinessAddress(): string {
+    return this.value2;
+  }
+
+  getIsActive(): boolean {
+    return this.value3;
   }
 }
 
@@ -169,7 +185,9 @@ export class RestaurantManager extends ethereum.SmartContract {
       [ethereum.Value.fromUnsignedBigInt(restaurantId)]
     );
 
-    return result[0].toTuple() as RestaurantManager__getRestaurantResultValue0Struct;
+    return changetype<RestaurantManager__getRestaurantResultValue0Struct>(
+      result[0].toTuple()
+    );
   }
 
   try_getRestaurant(
@@ -185,7 +203,9 @@ export class RestaurantManager extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      value[0].toTuple() as RestaurantManager__getRestaurantResultValue0Struct
+      changetype<RestaurantManager__getRestaurantResultValue0Struct>(
+        value[0].toTuple()
+      )
     );
   }
 
@@ -278,7 +298,7 @@ export class RegisterRestaurantCall__Inputs {
     return this._call.inputValues[0].value.toString();
   }
 
-  get business_address(): string {
+  get businessAddress(): string {
     return this._call.inputValues[1].value.toString();
   }
 }

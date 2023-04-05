@@ -1,4 +1,4 @@
-specVersion: 0.0.2
+specVersion: 0.0.4
 schema:
   file: ./schema.graphql
 dataSources:
@@ -6,11 +6,12 @@ dataSources:
     name: RestaurantManager
     network: mumbai
     source:
-      address: "0x2d31Bc03c89076A7b8F7C9EbD619Bff0c7b2251E"
+      address: "0x849D09a32D831bb283f3A7D79682FA986B6b6eC7"
       abi: RestaurantManager
+      startBlock: 33979251 
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - RestaurantDeactivated
@@ -21,6 +22,6 @@ dataSources:
       eventHandlers:
         - event: RestaurantDeactivated(indexed address,indexed uint256)
           handler: handleRestaurantDeactivated
-        - event: RestaurantRegistered(indexed address,indexed string,indexed string)
+        - event: RestaurantRegistered(indexed uint256,indexed address,indexed string)
           handler: handleRestaurantRegistered
       file: ./src/mapping.ts

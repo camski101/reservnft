@@ -19,9 +19,9 @@ contract RestaurantManager {
 
     /// @notice Emitted when a restaurant is registered
     event RestaurantRegistered(
+        uint256 indexed restaurantId,
         address indexed owner,
-        string indexed name,
-        string indexed businessAddress
+        string indexed name
     );
 
     /// @notice Emitted when a restaurant is deactivated
@@ -52,7 +52,7 @@ contract RestaurantManager {
         });
         _restaurantCounter.increment();
 
-        emit RestaurantRegistered(msg.sender, name, businessAddress);
+        emit RestaurantRegistered(restaurantId, msg.sender, name);
     }
 
     /// @notice Deactivate a restaurant by its ID

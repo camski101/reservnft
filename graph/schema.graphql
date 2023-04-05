@@ -1,12 +1,7 @@
-type RestaurantRegistered @entity {
+type Restaurant @entity {
   id: ID!
   owner: Bytes!
-  name: String!
-  location: String!
-}
-
-type RestaurantDeactivated @entity {
-  id: ID!
-  owner: Bytes!
-  restaurantId: BigInt!
+  name: Bytes!
+  businessAddress: String!
+  isActive: Boolean!
 }
