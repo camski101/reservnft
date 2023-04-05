@@ -41,7 +41,7 @@
       {
         "indexed": true,
         "internalType": "string",
-        "name": "business_address",
+        "name": "businessAddress",
         "type": "string"
       }
     ],
@@ -79,7 +79,7 @@
           },
           {
             "internalType": "string",
-            "name": "business_address",
+            "name": "businessAddress",
             "type": "string"
           },
           {
@@ -120,7 +120,7 @@
           },
           {
             "internalType": "string",
-            "name": "business_address",
+            "name": "businessAddress",
             "type": "string"
           },
           {
@@ -146,7 +146,7 @@
       },
       {
         "internalType": "string",
-        "name": "business_address",
+        "name": "businessAddress",
         "type": "string"
       }
     ],
@@ -177,7 +177,7 @@
       },
       {
         "internalType": "string",
-        "name": "business_address",
+        "name": "businessAddress",
         "type": "string"
       },
       {
