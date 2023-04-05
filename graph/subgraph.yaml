@@ -6,7 +6,7 @@ dataSources:
     name: RestaurantManager
     network: mumbai
     source:
-      address: "0xD7520aAe34A29b3505FA5694166bDBF8F281824C"
+      address: "0x2d31Bc03c89076A7b8F7C9EbD619Bff0c7b2251E"
       abi: RestaurantManager
     mapping:
       kind: ethereum/events

@@ -39,7 +39,9 @@ update-abi:
 # assumes polygon mumbai
 
 update-address:
-	ADDRESS=$$(jq -r ".transactions[0].contractAddress" ./broadcast/${contract}.s.sol/80001/run-latest.json) && sed -i '' "s/\(address: \).*$$/\1\"$${ADDRESS}\"/" ../graph/subgraph.yaml
+	ADDRESS=$$(jq -r ".transactions[0].contractAddress" ./broadcast/${contract}.s.sol/80001/run-latest.json) && \
+	sed -i '' "s/\(address: \).*$$/\1\"$${ADDRESS}\"/" ../graph/subgraph.yaml && \
+	sed -i '' "s/\(\"80001\": {[^}]* \"${contract}\": \"\)[^\"]*\(\".*}\)/\1$${ADDRESS}\2/" ../frontend/constants/networkMapping.json
 
 # deploys to polygon mumbai - needs contract verification at some point
 
