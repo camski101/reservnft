@@ -25,7 +25,7 @@ export default function RegisterRestaurant() {
         functionName: "registerRestaurant",
         params: {
             name: restaurantName,
-            business_address: restaurantBusinessAddress,
+            businessAddress: restaurantBusinessAddress,
         },
     })
 
