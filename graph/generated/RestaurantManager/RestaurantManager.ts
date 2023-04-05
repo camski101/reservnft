@@ -56,6 +56,14 @@ export class RestaurantRegistered__Params {
   get name(): Bytes {
     return this._event.parameters[2].value.toBytes();
   }
+
+  get businessAddress(): string {
+    return this._event.parameters[3].value.toString();
+  }
+
+  get isActive(): boolean {
+    return this._event.parameters[4].value.toBoolean();
+  }
 }
 
 export class RestaurantManager__getAllRestaurantsResultValue0Struct extends ethereum.Tuple {

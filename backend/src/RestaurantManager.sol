@@ -21,7 +21,9 @@ contract RestaurantManager {
     event RestaurantRegistered(
         uint256 indexed restaurantId,
         address indexed owner,
-        string indexed name
+        string indexed name,
+        string businessAddress,
+        bool isActive
     );
 
     /// @notice Emitted when a restaurant is deactivated
@@ -52,7 +54,13 @@ contract RestaurantManager {
         });
         _restaurantCounter.increment();
 
-        emit RestaurantRegistered(restaurantId, msg.sender, name);
+        emit RestaurantRegistered(
+            restaurantId,
+            msg.sender,
+            name,
+            businessAddress,
+            true
+        );
     }
 
     /// @notice Deactivate a restaurant by its ID
