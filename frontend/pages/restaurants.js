@@ -1,6 +1,7 @@
 import styles from "@/styles/Home.module.css"
 import { useMoralis } from "react-moralis"
 import RegisterRestaurant from "@/components/RegisterRestaurant"
+import MyRestaurants from "@/components/MyRestaurants"
 
 import { networkMapping } from "@/constants"
 
@@ -18,7 +19,12 @@ export default function Home() {
                 <div>
                     {supportedChains.includes(parseInt(chainId).toString()) ? (
                         <div className="flex flex-row justify-center">
-                            <RegisterRestaurant className="p-8 bg-gray-100 rounded-lg shadow-lg" />
+                            <div className="flex-grow-3">
+                                <MyRestaurants className="p-8 bg-gray-100 rounded-lg shadow-lg" />
+                            </div>
+                            <div className="flex-grow-1">
+                                <RegisterRestaurant className="p-8 bg-gray-100 rounded-lg shadow-lg" />
+                            </div>
                         </div>
                     ) : (
                         <div className="text-red-600 font-bold">{`Please switch to a supported chainId. The supported Chain Ids are: ${supportedChains}`}</div>
