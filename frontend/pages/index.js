@@ -13,7 +13,7 @@ export default function Home() {
                 <div>
                     {supportedChains.includes(parseInt(chainId).toString()) ? (
                         <div className="flex flex-row">
-                            Nice bro! You are connected to a supported chainId: {chainId}
+                            Nice friend! You are connected to a supported chainId: {chainId}
                         </div>
                     ) : (
                         <div className="text-red-600 font-bold">{`Please switch to a supported chainId. The supported Chain Ids are: ${supportedChains}`}</div>
