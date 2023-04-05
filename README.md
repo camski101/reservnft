@@ -3,19 +3,19 @@
 Frontend
 - [x] NextJS boilerplate
 - [x] Metamask boilerplate
-- [ ] Add a restaurant
-- [ ] Remove restaurant
+- [x] Add a restaurant
+- [x] Remove restaurant
 - [ ] Create Reserv Slots
 - [ ] Buy Reserv NFTs
 - [ ] Sell Reserv NFTs
 
 Backend
-- [ ] Restaurant Contract
+- [x] Restaurant Contract
 - [ ] Reserv NFT Contract
 - [ ] Marketplace Interactions
 
 Graph
-- [ ] Boilerplate
+- [x] Boilerplate
 - [ ] Event Tables and custom queries
 - [ ] Displays in UI
 

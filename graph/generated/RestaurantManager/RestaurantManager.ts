@@ -53,8 +53,8 @@ export class RestaurantRegistered__Params {
     return this._event.parameters[1].value.toAddress();
   }
 
-  get name(): Bytes {
-    return this._event.parameters[2].value.toBytes();
+  get name(): string {
+    return this._event.parameters[2].value.toString();
   }
 
   get businessAddress(): string {

@@ -11,6 +11,8 @@ export function handleRestaurantRegistered(event: RestaurantRegisteredEvent): vo
 
   restaurant.owner = event.params.owner
   restaurant.name = event.params.name
+  restaurant.businessAddress = event.params.businessAddress
+  restaurant.isActive = event.params.isActive
   restaurant.save()
 }
 

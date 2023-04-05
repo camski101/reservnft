@@ -21,7 +21,7 @@ contract RestaurantManager {
     event RestaurantRegistered(
         uint256 indexed restaurantId,
         address indexed owner,
-        string indexed name,
+        string name,
         string businessAddress,
         bool isActive
     );

@@ -1,7 +1,7 @@
 type Restaurant @entity {
   id: ID!
   owner: Bytes!
-  name: Bytes!
+  name: String!
   businessAddress: String!
   isActive: Boolean!
 }

@@ -51,13 +51,13 @@ export class Restaurant extends Entity {
     this.set("owner", Value.fromBytes(value));
   }
 
-  get name(): Bytes {
+  get name(): string {
     let value = this.get("name");
-    return value!.toBytes();
+    return value!.toString();
   }
 
-  set name(value: Bytes) {
-    this.set("name", Value.fromBytes(value));
+  set name(value: string) {
+    this.set("name", Value.fromString(value));
   }
 
   get businessAddress(): string {
