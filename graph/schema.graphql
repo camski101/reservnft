@@ -4,5 +4,4 @@ type Restaurant @entity {
   name: String!
   businessAddress: String!
   isActive: Boolean!
-  tsAdded: BigInt!
 }
