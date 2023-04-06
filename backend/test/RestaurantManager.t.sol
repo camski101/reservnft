@@ -55,21 +55,21 @@ contract RestaurantManagerTest is Test {
         assertEq(rests.length, 2, "There should be two restaurants");
     }
 
-    function test_DeactivateRestaurant() public {
+    function test_ToggleIsActive() public {
         restaurantManager.registerRestaurant(
             "Hungry Hippos",
             "123 Main St, New York, NY 10001"
         );
 
-        restaurantManager.deactivateRestaurant(0);
+        restaurantManager.toggleIsActive(0);
 
-        RestaurantManager.Restaurant[] memory rests = restaurantManager
-            .getAllRestaurants();
+        RestaurantManager.Restaurant memory res = restaurantManager
+            .getRestaurant(0);
 
-        assertEq(rests.length, 0, "There should be zero active restaurants");
+        assertEq(res.isActive, false, "Restaurant should be inactive");
     }
 
-    function test_RevertWhen_DeactivateRestaurantByNonOwner() public {
+    function test_RevertWhen_ToggleIsActiveByNonOwner() public {
         restaurantManager.registerRestaurant(
             "Hungry Hippos",
             "123 Main St, New York, NY 10001"
@@ -79,6 +79,6 @@ contract RestaurantManagerTest is Test {
 
         vm.expectRevert(RestaurantManager__Unauthorized.selector);
 
-        restaurantManager.deactivateRestaurant(0);
+        restaurantManager.toggleIsActive(0);
     }
 }

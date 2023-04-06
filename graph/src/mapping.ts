@@ -1,5 +1,5 @@
 import {
-  RestaurantDeactivated as RestaurantDeactivatedEvent,
+  RestaurantToggleActive as RestaurantToggleActiveEvent,
   RestaurantRegistered as RestaurantRegisteredEvent
 } from "../generated/RestaurantManager/RestaurantManager"
 
@@ -19,7 +19,7 @@ export function handleRestaurantRegistered(event: RestaurantRegisteredEvent): vo
   restaurant.save()
 }
 
-export function handleRestaurantDeactivated(event: RestaurantDeactivatedEvent): void {
+export function handleRestaurantToggleActive(event: RestaurantToggleActiveEvent): void {
 
   let restaurant = Restaurant.load(event.params.restaurantId.toHex())
 
@@ -27,7 +27,7 @@ export function handleRestaurantDeactivated(event: RestaurantDeactivatedEvent): 
     restaurant = new Restaurant(event.params.restaurantId.toHex())
   }
   
-  restaurant.isActive = false;
+  restaurant.isActive = event.params.isActive;
   restaurant.save()
 }
 

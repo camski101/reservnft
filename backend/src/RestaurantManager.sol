@@ -26,7 +26,7 @@ contract RestaurantManager {
     );
 
     /// @notice Emitted when a restaurant is deactivated
-    event RestaurantDeactivated(uint256 indexed restaurantId);
+    event RestaurantToggleActive(uint256 indexed restaurantId, bool isActive);
 
     using Counters for Counters.Counter;
 
@@ -60,13 +60,16 @@ contract RestaurantManager {
 
     /// @notice Deactivate a restaurant by its ID
     /// @param restaurantId Restaurant ID
-    function deactivateRestaurant(uint256 restaurantId) public {
+    function toggleIsActive(uint256 restaurantId) public {
         if (msg.sender != restaurants[restaurantId].owner) {
             revert RestaurantManager__Unauthorized();
         }
-        restaurants[restaurantId].isActive = false;
 
-        emit RestaurantDeactivated(restaurantId);
+        bool isActive = restaurants[restaurantId].isActive;
+        bool newActive = restaurants[restaurantId].isActive = !isActive;
+
+        emit RestaurantToggleActive(restaurantId, newActive);
+        (restaurantId);
     }
 
     /// @notice Get a restaurant by its ID

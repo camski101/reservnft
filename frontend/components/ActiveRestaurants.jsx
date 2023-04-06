@@ -37,7 +37,7 @@ export default function ActiveRestaurants({ updateKey }) {
             <Table
                 columnsConfig="4fr 8fr 2fr"
                 data={data.map((restaurant) => [
-                    <div key={restaurant.businessAddress}>{restaurant.name}</div>,
+                    <div key={restaurant.id}>{restaurant.name}</div>,
                     <div>{restaurant.businessAddress}</div>,
                 ])}
                 header={[<span>Name</span>, <span>Address</span>]}

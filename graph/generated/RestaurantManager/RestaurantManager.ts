@@ -10,24 +10,6 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
-export class RestaurantDeactivated extends ethereum.Event {
-  get params(): RestaurantDeactivated__Params {
-    return new RestaurantDeactivated__Params(this);
-  }
-}
-
-export class RestaurantDeactivated__Params {
-  _event: RestaurantDeactivated;
-
-  constructor(event: RestaurantDeactivated) {
-    this._event = event;
-  }
-
-  get restaurantId(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-}
-
 export class RestaurantRegistered extends ethereum.Event {
   get params(): RestaurantRegistered__Params {
     return new RestaurantRegistered__Params(this);
@@ -55,6 +37,28 @@ export class RestaurantRegistered__Params {
 
   get businessAddress(): string {
     return this._event.parameters[3].value.toString();
+  }
+}
+
+export class RestaurantToggleActive extends ethereum.Event {
+  get params(): RestaurantToggleActive__Params {
+    return new RestaurantToggleActive__Params(this);
+  }
+}
+
+export class RestaurantToggleActive__Params {
+  _event: RestaurantToggleActive;
+
+  constructor(event: RestaurantToggleActive) {
+    this._event = event;
+  }
+
+  get restaurantId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get isActive(): boolean {
+    return this._event.parameters[1].value.toBoolean();
   }
 }
 
@@ -247,36 +251,6 @@ export class RestaurantManager extends ethereum.SmartContract {
   }
 }
 
-export class DeactivateRestaurantCall extends ethereum.Call {
-  get inputs(): DeactivateRestaurantCall__Inputs {
-    return new DeactivateRestaurantCall__Inputs(this);
-  }
-
-  get outputs(): DeactivateRestaurantCall__Outputs {
-    return new DeactivateRestaurantCall__Outputs(this);
-  }
-}
-
-export class DeactivateRestaurantCall__Inputs {
-  _call: DeactivateRestaurantCall;
-
-  constructor(call: DeactivateRestaurantCall) {
-    this._call = call;
-  }
-
-  get restaurantId(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-}
-
-export class DeactivateRestaurantCall__Outputs {
-  _call: DeactivateRestaurantCall;
-
-  constructor(call: DeactivateRestaurantCall) {
-    this._call = call;
-  }
-}
-
 export class RegisterRestaurantCall extends ethereum.Call {
   get inputs(): RegisterRestaurantCall__Inputs {
     return new RegisterRestaurantCall__Inputs(this);
@@ -307,6 +281,36 @@ export class RegisterRestaurantCall__Outputs {
   _call: RegisterRestaurantCall;
 
   constructor(call: RegisterRestaurantCall) {
+    this._call = call;
+  }
+}
+
+export class ToggleIsActiveCall extends ethereum.Call {
+  get inputs(): ToggleIsActiveCall__Inputs {
+    return new ToggleIsActiveCall__Inputs(this);
+  }
+
+  get outputs(): ToggleIsActiveCall__Outputs {
+    return new ToggleIsActiveCall__Outputs(this);
+  }
+}
+
+export class ToggleIsActiveCall__Inputs {
+  _call: ToggleIsActiveCall;
+
+  constructor(call: ToggleIsActiveCall) {
+    this._call = call;
+  }
+
+  get restaurantId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class ToggleIsActiveCall__Outputs {
+  _call: ToggleIsActiveCall;
+
+  constructor(call: ToggleIsActiveCall) {
     this._call = call;
   }
 }

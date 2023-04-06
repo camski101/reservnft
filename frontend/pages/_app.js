@@ -7,7 +7,7 @@ import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client"
 
 const client = new ApolloClient({
     cache: new InMemoryCache(),
-    uri: "https://api.studio.thegraph.com/query/44793/reservnft/0.0.10", // doesn't work in env for some reason
+    uri: "https://api.studio.thegraph.com/query/44793/reservnft/0.0.13", // doesn't work in env for some reason
 })
 
 function MyApp({ Component, pageProps }) {

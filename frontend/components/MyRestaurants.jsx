@@ -14,13 +14,14 @@ export default function MyRestaurants({ onDataChange, updateKey }) {
     const { GET_MY_RESTAURANTS } = subgraphQueries
 
     const [restaurantId, setRestaurantId] = useState(null)
-    const [shouldDeactivate, setShouldDeactivate] = useState(false)
+    const [isActive, setIsActive] = useState(null)
+    const [shouldToggle, setShouldToggle] = useState(false)
 
-    const { runContractFunction: deactivateRestaurant } = useWeb3Contract({
+    const { runContractFunction: toggleIsActive } = useWeb3Contract({
         abi: RestaurantManager,
         contractAddress: rmAddress,
-        functionName: "deactivateRestaurant",
-        params: { restaurantId: restaurantId },
+        functionName: "toggleIsActive",
+        params: { restaurantId: restaurantId, isActive: isActive },
     })
     const {
         loading,
@@ -51,21 +52,22 @@ export default function MyRestaurants({ onDataChange, updateKey }) {
         })
     }
 
-    const handleDeactivateRestaurantClick = async (e, id) => {
+    const handleToggleActiveClick = async (e, id, isActive) => {
         e.preventDefault()
         setRestaurantId(id)
-        setShouldDeactivate(true)
+        setIsActive(isActive)
+        setShouldToggle(true)
     }
 
     useEffect(() => {
-        if (shouldDeactivate && restaurantId !== null) {
-            deactivateRestaurant({
+        if (shouldToggle && restaurantId !== null && isActive !== null) {
+            toggleIsActive({
                 onSuccess: handleSuccess,
                 onError: (error) => console.log(error),
             })
-            setShouldDeactivate(false)
+            setShouldToggle(false)
         }
-    }, [shouldDeactivate, restaurantId, handleSuccess])
+    }, [shouldToggle, restaurantId, isActive, handleSuccess])
 
     useEffect(() => {
         refetch()
@@ -93,9 +95,13 @@ export default function MyRestaurants({ onDataChange, updateKey }) {
                     <Button
                         theme="primary"
                         type="button"
-                        text="Deactivate"
+                        text={restaurant.isActive ? "Deactivate" : "Activate"}
                         onClick={(e) =>
-                            handleDeactivateRestaurantClick(e, parseInt(restaurant.id.toString()))
+                            handleToggleActiveClick(
+                                e,
+                                parseInt(restaurant.id.toString()),
+                                !restaurant.isActive
+                            )
                         }
                     />,
                 ])}
@@ -103,7 +109,7 @@ export default function MyRestaurants({ onDataChange, updateKey }) {
                     <span>Name</span>,
                     <span>Address</span>,
                     <span>Status</span>,
-                    <span>Deactivate</span>,
+                    <span>Change Status</span>,
                 ]}
                 isColumnSortable={[true, false, false]}
                 maxPages={10}
