@@ -90,7 +90,6 @@ export default function MyRestaurants({ onDataChange, updateKey }) {
                     <div key={restaurant.id}>{restaurant.name}</div>,
                     <div>{restaurant.businessAddress}</div>,
                     <div>{restaurant.isActive ? "Active" : "Inactive"}</div>,
-                    <div>{parseInt(restaurant.id.toString())}</div>,
                     <Button
                         theme="primary"
                         type="button"
