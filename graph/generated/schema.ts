@@ -77,4 +77,13 @@ export class Restaurant extends Entity {
   set isActive(value: boolean) {
     this.set("isActive", Value.fromBoolean(value));
   }
+
+  get tsAdded(): BigInt {
+    let value = this.get("tsAdded");
+    return value!.toBigInt();
+  }
+
+  set tsAdded(value: BigInt) {
+    this.set("tsAdded", Value.fromBigInt(value));
+  }
 }

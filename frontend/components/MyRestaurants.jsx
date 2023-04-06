@@ -5,7 +5,7 @@ import { Table, Button, useNotification } from "web3uikit"
 import subgraphQueries from "../constants/subgraphQueries"
 import { RestaurantManager, networkMapping } from "../constants"
 
-export default function MyRestaurants({ onRestaurantRegistered }) {
+export default function MyRestaurants() {
     const { isWeb3Enabled, chainId: chainIdHex, account } = useMoralis()
     const chainId = parseInt(chainIdHex)
     const rmAddress =
@@ -36,10 +36,6 @@ export default function MyRestaurants({ onRestaurantRegistered }) {
         try {
             await tx.wait(1)
             handleNewNotification(tx)
-
-            if (onRestaurantRegistered) {
-                onRestaurantRegistered()
-            }
         } catch (error) {
             console.log(error)
         }
@@ -61,12 +57,6 @@ export default function MyRestaurants({ onRestaurantRegistered }) {
     }
 
     useEffect(() => {
-        if (onRestaurantRegistered) {
-            refetch()
-        }
-    }, [onRestaurantRegistered, refetch])
-
-    useEffect(() => {
         if (shouldDeactivate && restaurantId !== null) {
             deactivateRestaurant({
                 onSuccess: handleSuccess,
@@ -74,24 +64,15 @@ export default function MyRestaurants({ onRestaurantRegistered }) {
             })
             setShouldDeactivate(false)
         }
-    }, [shouldDeactivate, restaurantId, handleDeactivateRestaurantClick, handleSuccess])
+    }, [shouldDeactivate, restaurantId, handleSuccess])
 
     if (loading) return <div>Loading...</div>
     if (error) return <div>Error: {error.message}</div>
     if (!myRestaurants?.restaurants?.length) return null
 
-    // Separate active and inactive restaurants into two arrays
-    const activeRestaurants = myRestaurants.restaurants.filter((restaurant) => restaurant.isActive)
-    const inactiveRestaurants = myRestaurants.restaurants.filter(
-        (restaurant) => !restaurant.isActive
-    )
-
-    // Create tabs for active and inactive restaurants
-
     const data = myRestaurants.restaurants.map((restaurant) => {
         return {
             ...restaurant,
-            isActive: restaurant.isActive ? "Active" : "Inactive",
         }
     })
 
@@ -120,7 +101,7 @@ export default function MyRestaurants({ onRestaurantRegistered }) {
                     <span>Deactivate</span>,
                 ]}
                 isColumnSortable={[true, false, false]}
-                maxPages={3}
+                maxPages={10}
                 onPageNumberChanged={function noRefCheck() {}}
                 onRowClick={function noRefCheck() {}}
                 pageSize={5}

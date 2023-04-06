@@ -11,9 +11,9 @@ const GET_MY_RESTAURANTS = gql`
     }
 `
 
-const GET_ALL_RESTAURANTS = gql`
-    query AllRestaurants {
-        restaurants {
+const GET_ACTIVE_RESTAURANTS = gql`
+    query ActiveRestaurants {
+        restaurants(where: { isActive: true }) {
             name
             businessAddress
             isActive
@@ -22,4 +22,4 @@ const GET_ALL_RESTAURANTS = gql`
     }
 `
 
-export default { GET_MY_RESTAURANTS, GET_ALL_RESTAURANTS }
+export default { GET_MY_RESTAURANTS, GET_ACTIVE_RESTAURANTS }
