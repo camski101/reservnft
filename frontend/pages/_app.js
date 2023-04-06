@@ -7,7 +7,7 @@ import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client"
 
 const client = new ApolloClient({
     cache: new InMemoryCache(),
-    uri: "https://api.studio.thegraph.com/query/44793/reservnft/0.0.6",
+    uri: process.env.GRAPH_DEVELOPMENT_QUERY_URL, // needs to be updated in fleek every deploy for dev
 })
 
 function MyApp({ Component, pageProps }) {

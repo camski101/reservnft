@@ -22,15 +22,11 @@ contract RestaurantManager {
         uint256 indexed restaurantId,
         address indexed owner,
         string name,
-        string businessAddress,
-        bool isActive
+        string businessAddress
     );
 
     /// @notice Emitted when a restaurant is deactivated
-    event RestaurantDeactivated(
-        address indexed owner,
-        uint256 indexed restaurantId
-    );
+    event RestaurantDeactivated(uint256 indexed restaurantId);
 
     using Counters for Counters.Counter;
 
@@ -58,8 +54,7 @@ contract RestaurantManager {
             restaurantId,
             msg.sender,
             name,
-            businessAddress,
-            true
+            businessAddress
         );
     }
 
@@ -71,7 +66,7 @@ contract RestaurantManager {
         }
         restaurants[restaurantId].isActive = false;
 
-        emit RestaurantDeactivated(msg.sender, restaurantId);
+        emit RestaurantDeactivated(restaurantId);
     }
 
     /// @notice Get a restaurant by its ID

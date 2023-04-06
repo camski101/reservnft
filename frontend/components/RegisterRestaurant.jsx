@@ -1,9 +1,9 @@
 import { RestaurantManager, networkMapping } from "../constants"
 import { useMoralis, useWeb3Contract } from "react-moralis"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useNotification } from "web3uikit"
 
-export default function RegisterRestaurant() {
+export default function RegisterRestaurant({ onRestaurantRegistered }) {
     const { Moralis, isWeb3Enabled, chainId: chainIdHex } = useMoralis()
     const chainId = parseInt(chainIdHex)
     const rmAddress =
@@ -43,6 +43,10 @@ export default function RegisterRestaurant() {
         try {
             await tx.wait(1)
             handleNewNotification(tx)
+
+            if (onRestaurantRegistered) {
+                onRestaurantRegistered()
+            }
         } catch (error) {
             console.log(error)
         }

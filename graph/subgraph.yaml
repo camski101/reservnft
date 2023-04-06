@@ -6,7 +6,7 @@ dataSources:
     name: RestaurantManager
     network: mumbai
     source:
-      address: "0xC00D7c9A5465a8B54EBcf61bEAC1769d0BBb420b"
+      address: "0x3f9291Bf85069396D01045dfe97f30b139CB8434"
       abi: RestaurantManager
       startBlock: 33979251 
     mapping:
@@ -20,8 +20,8 @@ dataSources:
         - name: RestaurantManager
           file: ./abis/RestaurantManager.json
       eventHandlers:
-        - event: RestaurantDeactivated(indexed address,indexed uint256)
+        - event: RestaurantDeactivated(indexed uint256)
           handler: handleRestaurantDeactivated
-        - event: RestaurantRegistered(indexed uint256,indexed address,string,string,bool)
+        - event: RestaurantRegistered(indexed uint256,indexed address,string,string)
           handler: handleRestaurantRegistered
       file: ./src/mapping.ts

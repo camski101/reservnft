@@ -1,33 +1,94 @@
-import React from "react"
-import { useMoralisQuery, useMoralis } from "react-moralis"
+import React, { useEffect, useState } from "react"
+import { useMoralis, useWeb3Contract } from "react-moralis"
 import { useQuery } from "@apollo/client"
-import { Table, Tag, SvgMoreVert } from "web3uikit"
-import GET_MY_RESTAURANTS from "../constants/subgraphQueries"
+import { Table, Button, useNotification } from "web3uikit"
+import subgraphQueries from "../constants/subgraphQueries"
+import { RestaurantManager, networkMapping } from "../constants"
 
-export default function MyRestaurants() {
-    const { Moralis, chainId, isWeb3Enabled, account } = useMoralis()
-    const chainString = chainId ? parseInt(chainId).toString() : null
+export default function MyRestaurants({ onRestaurantRegistered }) {
+    const { isWeb3Enabled, chainId: chainIdHex, account } = useMoralis()
+    const chainId = parseInt(chainIdHex)
+    const rmAddress =
+        chainId in networkMapping ? networkMapping[chainId]["RestaurantManager"] : null
+    const dispatch = useNotification()
+    const { GET_MY_RESTAURANTS } = subgraphQueries
+
+    const [restaurantId, setRestaurantId] = useState(null)
+    const [shouldDeactivate, setShouldDeactivate] = useState(false)
+
+    const { runContractFunction: deactivateRestaurant } = useWeb3Contract({
+        abi: RestaurantManager,
+        contractAddress: rmAddress,
+        functionName: "deactivateRestaurant",
+        params: { restaurantId: restaurantId },
+    })
     const {
         loading,
         error,
         data: myRestaurants,
+        refetch,
     } = useQuery(GET_MY_RESTAURANTS, {
         variables: { ownerAddress: account },
         skip: !isWeb3Enabled || !account,
     })
 
+    const handleSuccess = async (tx) => {
+        try {
+            await tx.wait(1)
+            handleNewNotification(tx)
+
+            if (onRestaurantRegistered) {
+                onRestaurantRegistered()
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const handleNewNotification = () => {
+        dispatch({
+            type: "info",
+            message: "Transaction Complete!",
+            title: "Transaction Notification",
+            position: "topR",
+        })
+    }
+
+    const handleDeactivateRestaurantClick = async (e, id) => {
+        e.preventDefault()
+        setRestaurantId(id)
+        setShouldDeactivate(true)
+    }
+
+    useEffect(() => {
+        if (onRestaurantRegistered) {
+            refetch()
+        }
+    }, [onRestaurantRegistered, refetch])
+
+    useEffect(() => {
+        if (shouldDeactivate && restaurantId !== null) {
+            deactivateRestaurant({
+                onSuccess: handleSuccess,
+                onError: (error) => console.log(error),
+            })
+            setShouldDeactivate(false)
+        }
+    }, [shouldDeactivate, restaurantId, handleDeactivateRestaurantClick, handleSuccess])
+
     if (loading) return <div>Loading...</div>
     if (error) return <div>Error: {error.message}</div>
     if (!myRestaurants?.restaurants?.length) return null
 
-    const columns = [
-        { Header: "Name", accessor: "name" },
-        { Header: "Address", accessor: "businessAddress" },
-        { Header: "Status", accessor: "isActive" },
-    ]
+    // Separate active and inactive restaurants into two arrays
+    const activeRestaurants = myRestaurants.restaurants.filter((restaurant) => restaurant.isActive)
+    const inactiveRestaurants = myRestaurants.restaurants.filter(
+        (restaurant) => !restaurant.isActive
+    )
+
+    // Create tabs for active and inactive restaurants
 
     const data = myRestaurants.restaurants.map((restaurant) => {
-        console.log("restaurant:", restaurant)
         return {
             ...restaurant,
             isActive: restaurant.isActive ? "Active" : "Inactive",
@@ -38,13 +99,26 @@ export default function MyRestaurants() {
         <div className="p-5 border-2 border-gray-200 shadow-md rounded-lg">
             <h1 className="pb-4 font-bold text-3xl">My Restaurants</h1>
             <Table
-                columnsConfig="80px 4fr 2fr 1fr 80px"
+                columnsConfig="8fr 8fr 2fr 2fr 0fr"
                 data={data.map((restaurant) => [
-                    <div key={restaurant.businessAddress}>{restaurant.name}</div>,
+                    <div key={restaurant.id}>{restaurant.name}</div>,
                     <div>{restaurant.businessAddress}</div>,
                     <div>{restaurant.isActive ? "Active" : "Inactive"}</div>,
+                    <Button
+                        theme="primary"
+                        type="button"
+                        text="Deactivate"
+                        onClick={(e) =>
+                            handleDeactivateRestaurantClick(e, parseInt(restaurant.id.toString()))
+                        }
+                    />,
                 ])}
-                header={[<span>Name</span>, <span>Address</span>, <span>Status</span>]}
+                header={[
+                    <span>Name</span>,
+                    <span>Address</span>,
+                    <span>Status</span>,
+                    <span>Deactivate</span>,
+                ]}
                 isColumnSortable={[true, false, false]}
                 maxPages={3}
                 onPageNumberChanged={function noRefCheck() {}}

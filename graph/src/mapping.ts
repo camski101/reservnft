@@ -12,7 +12,7 @@ export function handleRestaurantRegistered(event: RestaurantRegisteredEvent): vo
   restaurant.owner = event.params.owner
   restaurant.name = event.params.name
   restaurant.businessAddress = event.params.businessAddress
-  restaurant.isActive = event.params.isActive
+  restaurant.isActive = true
   restaurant.save()
 }
 
@@ -23,9 +23,8 @@ export function handleRestaurantDeactivated(event: RestaurantDeactivatedEvent): 
   if (restaurant == null) {
     restaurant = new Restaurant(event.params.restaurantId.toHex())
   }
-
-  restaurant.owner = event.params.owner;
-  restaurant.id  = event.params.restaurantId.toHex();
+  
+  restaurant.isActive = false;
   restaurant.save()
 }
 
