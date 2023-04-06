@@ -34,9 +34,8 @@ export default function ActiveRestaurants() {
                 data={data.map((restaurant) => [
                     <div key={restaurant.businessAddress}>{restaurant.name}</div>,
                     <div>{restaurant.businessAddress}</div>,
-                    <div>{restaurant.isActive ? "Active" : "Inactive"}</div>,
                 ])}
-                header={[<span>Name</span>, <span>Address</span>, <span>Status</span>]}
+                header={[<span>Name</span>, <span>Address</span>]}
                 isColumnSortable={[true, false, false]}
                 maxPages={10}
                 onPageNumberChanged={function noRefCheck() {}}
