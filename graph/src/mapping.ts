@@ -13,6 +13,7 @@ export function handleRestaurantRegistered(event: RestaurantRegisteredEvent): vo
   restaurant.name = event.params.name
   restaurant.businessAddress = event.params.businessAddress
   restaurant.isActive = true
+  restaurant.tsAdded = event.block.timestamp
   restaurant.save()
 }
 
