@@ -5,7 +5,7 @@ import { Table, Button, useNotification } from "web3uikit"
 import subgraphQueries from "../constants/subgraphQueries"
 import { RestaurantManager, networkMapping } from "../constants"
 
-export default function MyRestaurants() {
+export default function MyRestaurants({ onDataChange, updateKey }) {
     const { isWeb3Enabled, chainId: chainIdHex, account } = useMoralis()
     const chainId = parseInt(chainIdHex)
     const rmAddress =
@@ -36,6 +36,7 @@ export default function MyRestaurants() {
         try {
             await tx.wait(1)
             handleNewNotification(tx)
+            onDataChange()
         } catch (error) {
             console.log(error)
         }
@@ -66,6 +67,10 @@ export default function MyRestaurants() {
         }
     }, [shouldDeactivate, restaurantId, handleSuccess])
 
+    useEffect(() => {
+        refetch()
+    }, [updateKey])
+
     if (loading) return <div>Loading...</div>
     if (error) return <div>Error: {error.message}</div>
     if (!myRestaurants?.restaurants?.length) return null
@@ -85,6 +90,7 @@ export default function MyRestaurants() {
                     <div key={restaurant.id}>{restaurant.name}</div>,
                     <div>{restaurant.businessAddress}</div>,
                     <div>{restaurant.isActive ? "Active" : "Inactive"}</div>,
+                    <div>{parseInt(restaurant.id.toString())}</div>,
                     <Button
                         theme="primary"
                         type="button"

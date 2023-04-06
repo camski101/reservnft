@@ -42,6 +42,15 @@ export class Restaurant extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get restaurantId(): BigInt {
+    let value = this.get("restaurantId");
+    return value!.toBigInt();
+  }
+
+  set restaurantId(value: BigInt) {
+    this.set("restaurantId", Value.fromBigInt(value));
+  }
+
   get owner(): Bytes {
     let value = this.get("owner");
     return value!.toBytes();

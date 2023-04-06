@@ -1,5 +1,6 @@
 type Restaurant @entity {
   id: ID!
+  restaurantId: BigInt!
   owner: Bytes!
   name: String!
   businessAddress: String!

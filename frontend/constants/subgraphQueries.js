@@ -2,7 +2,7 @@ import { gql } from "@apollo/client"
 
 const GET_MY_RESTAURANTS = gql`
     query MyRestaurants($ownerAddress: Bytes!) {
-        restaurants(where: { owner: $ownerAddress }) {
+        restaurants(where: { owner: $ownerAddress }, orderBy: restaurantId, orderDirection: desc) {
             name
             businessAddress
             isActive
@@ -13,7 +13,7 @@ const GET_MY_RESTAURANTS = gql`
 
 const GET_ACTIVE_RESTAURANTS = gql`
     query ActiveRestaurants {
-        restaurants(where: { isActive: true }) {
+        restaurants(where: { isActive: true }, orderBy: restaurantId, orderDirection: desc) {
             name
             businessAddress
             isActive

@@ -3,7 +3,7 @@ import { useMoralis, useWeb3Contract } from "react-moralis"
 import { useState } from "react"
 import { useNotification } from "web3uikit"
 
-export default function RegisterRestaurant() {
+export default function RegisterRestaurant({ onDataChange }) {
     const { Moralis, isWeb3Enabled, chainId: chainIdHex } = useMoralis()
     const chainId = parseInt(chainIdHex)
     const rmAddress =
@@ -52,6 +52,7 @@ export default function RegisterRestaurant() {
             setRestaurantName("")
             setRestaurantBusinessAddress("")
             setTransactionSuccess(true)
+            onDataChange()
         } catch (error) {
             console.log(error)
         }

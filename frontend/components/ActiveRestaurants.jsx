@@ -6,15 +6,20 @@ import subgraphQueries from "../constants/subgraphQueries"
 
 const { GET_ACTIVE_RESTAURANTS } = subgraphQueries
 
-export default function ActiveRestaurants() {
+export default function ActiveRestaurants({ updateKey }) {
     const { Moralis, chainId, isWeb3Enabled, account } = useMoralis()
     const {
         loading,
         error,
         data: activeRestaurants,
+        refetch,
     } = useQuery(GET_ACTIVE_RESTAURANTS, {
         skip: !isWeb3Enabled || !account,
     })
+
+    useEffect(() => {
+        refetch()
+    }, [updateKey])
 
     if (loading) return <div>Loading...</div>
     if (error) return <div>Error: {error.message}</div>
