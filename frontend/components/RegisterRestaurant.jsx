@@ -1,7 +1,7 @@
 import { RestaurantManager, networkMapping } from "../constants"
 import { useMoralis, useWeb3Contract } from "react-moralis"
 import { useState } from "react"
-import { useNotification } from "web3uikit"
+import { useNotification, Button, Loading } from "web3uikit"
 
 export default function RegisterRestaurant({ onDataChange }) {
     const { Moralis, isWeb3Enabled, chainId: chainIdHex } = useMoralis()
@@ -92,17 +92,19 @@ export default function RegisterRestaurant({ onDataChange }) {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                     disabled={!transactionSuccess}
                 />
-                <button
+                <Button
+                    theme="primary"
+                    text={
+                        isLoading || !transactionSuccess ? (
+                            <Loading size={20} spinnerColor="#ffffff" spinnerType="wave" />
+                        ) : (
+                            "Register Restaurant"
+                        )
+                    }
                     className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none"
                     type="submit"
-                    disabled={!transactionSuccess}
-                >
-                    {isLoading || !transactionSuccess ? (
-                        <div className="animate-spin spinner-border h-8 w-8 border-b-2 rounded-full"></div>
-                    ) : (
-                        "Register Restaurant"
-                    )}
-                </button>
+                    disabled={!transactionSuccess || !restaurantName || !restaurantBusinessAddress}
+                />
             </form>
         </div>
     )

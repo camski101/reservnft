@@ -88,6 +88,7 @@ export default function MyRestaurants({ onDataChange, updateKey }) {
     }
     if (error) return <div>Error: {error.message}</div>
     if (!myRestaurants?.restaurants?.length) return null
+    if (!account) return null
 
     const data = myRestaurants.restaurants.map((restaurant) => {
         return {
