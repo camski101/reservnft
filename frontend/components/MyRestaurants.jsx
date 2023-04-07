@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react"
 import { useMoralis, useWeb3Contract } from "react-moralis"
 import { useQuery } from "@apollo/client"
-import { Table, Button, useNotification } from "web3uikit"
+import { useNotification, Loading } from "web3uikit"
 import subgraphQueries from "../constants/subgraphQueries"
 import { RestaurantManager, networkMapping } from "../constants"
+import { RestaurantsTable } from "@/components/RestaurantsTable"
 
 export default function MyRestaurants({ onDataChange, updateKey }) {
     const { isWeb3Enabled, chainId: chainIdHex, account } = useMoralis()
@@ -29,7 +30,7 @@ export default function MyRestaurants({ onDataChange, updateKey }) {
         data: myRestaurants,
         refetch,
     } = useQuery(GET_MY_RESTAURANTS, {
-        variables: { ownerAddress: account },
+        variables: { ownerAddress: account ? account : null },
         skip: !isWeb3Enabled || !account,
     })
 
@@ -52,8 +53,7 @@ export default function MyRestaurants({ onDataChange, updateKey }) {
         })
     }
 
-    const handleToggleActiveClick = async (e, id, isActive) => {
-        e.preventDefault()
+    const handleToggleActiveClick = async (id, isActive) => {
         setRestaurantId(id)
         setIsActive(isActive)
         setShouldToggle(true)
@@ -73,7 +73,19 @@ export default function MyRestaurants({ onDataChange, updateKey }) {
         refetch()
     }, [updateKey])
 
-    if (loading) return <div>Loading...</div>
+    if (loading) {
+        return (
+            <div
+                style={{
+                    backgroundColor: "white",
+                    borderRadius: "8px",
+                    padding: "20px",
+                }}
+            >
+                <Loading />
+            </div>
+        )
+    }
     if (error) return <div>Error: {error.message}</div>
     if (!myRestaurants?.restaurants?.length) return null
 
@@ -84,38 +96,24 @@ export default function MyRestaurants({ onDataChange, updateKey }) {
     })
 
     return (
-        <div className="p-5 border-2 border-gray-200 shadow-md rounded-lg">
+        <div className="p-5 border-1">
             <h1 className="pb-4 font-bold text-3xl">My Restaurants</h1>
-            <Table
+            <RestaurantsTable
+                data={data}
                 columnsConfig="8fr 8fr 2fr 2fr 0fr"
-                data={data.map((restaurant) => [
-                    <div key={restaurant.id}>{restaurant.name}</div>,
-                    <div>{restaurant.businessAddress}</div>,
-                    <div>{restaurant.isActive ? "Active" : "Inactive"}</div>,
-                    <Button
-                        theme="primary"
-                        type="button"
-                        text={restaurant.isActive ? "Deactivate" : "Activate"}
-                        onClick={(e) =>
-                            handleToggleActiveClick(
-                                e,
-                                parseInt(restaurant.id.toString()),
-                                !restaurant.isActive
-                            )
-                        }
-                    />,
-                ])}
                 header={[
                     <span>Name</span>,
                     <span>Address</span>,
                     <span>Status</span>,
                     <span>Change Status</span>,
                 ]}
-                isColumnSortable={[true, false, false]}
-                maxPages={10}
-                onPageNumberChanged={function noRefCheck() {}}
-                onRowClick={function noRefCheck() {}}
-                pageSize={5}
+                showStatus={true}
+                onToggleStatus={(restaurant) =>
+                    handleToggleActiveClick(
+                        parseInt(restaurant.id.toString()),
+                        !restaurant.isActive
+                    )
+                }
             />
         </div>
     )

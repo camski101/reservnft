@@ -5,13 +5,9 @@ import MyRestaurants from "@/components/MyRestaurants"
 import ActiveRestaurants from "@/components/ActiveRestaurants"
 import React, { useState } from "react"
 import { v4 as uuidv4 } from "uuid"
-
-import { networkMapping } from "@/constants"
-
-const supportedChains = Object.keys(networkMapping)
+import { ChainCheck } from "@/components/ChainCheck"
 
 export default function Home() {
-    const { isWeb3Enabled, chainId } = useMoralis()
     const [updateKey, setUpdateKey] = useState(uuidv4())
 
     function handleDataChange() {
@@ -20,31 +16,19 @@ export default function Home() {
 
     return (
         <div className={`p-6 bg-white shadow-md rounded-lg ${styles.container}`}>
-            {isWeb3Enabled ? (
-                <div>
-                    {supportedChains.includes(parseInt(chainId).toString()) ? (
-                        <div className="flex flex-row justify-center">
-                            <div className="w-2/3">
-                                <MyRestaurants
-                                    onDataChange={handleDataChange}
-                                    updateKey={updateKey}
-                                />
-                                <ActiveRestaurants updateKey={updateKey} />
-                            </div>
-                            <div className="w-1/3 h-full">
-                                <RegisterRestaurant
-                                    onDataChange={handleDataChange}
-                                    className="p-8 bg-gray-100 rounded-lg shadow-lg h-full"
-                                />
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="text-red-600 font-bold">{`Please switch to a supported chainId. The supported Chain Ids are: ${supportedChains}`}</div>
-                    )}
+            <ChainCheck />
+            <div className="flex flex-row justify-center">
+                <div className="w-2/3">
+                    <MyRestaurants onDataChange={handleDataChange} updateKey={updateKey} />
+                    <ActiveRestaurants updateKey={updateKey} />
                 </div>
-            ) : (
-                <div className="text-red-600 font-bold">Please connect to a Wallet</div>
-            )}
+                <div className="w-1/3 h-full">
+                    <RegisterRestaurant
+                        onDataChange={handleDataChange}
+                        className="p-8 bg-gray-100 rounded-lg shadow-lg h-full"
+                    />
+                </div>
+            </div>
         </div>
     )
 }

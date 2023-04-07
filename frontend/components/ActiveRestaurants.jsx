@@ -1,8 +1,10 @@
 import React, { useEffect } from "react"
 import { useMoralis } from "react-moralis"
 import { useQuery } from "@apollo/client"
-import { Table } from "web3uikit"
-import subgraphQueries from "../constants/subgraphQueries"
+import { Table, Loading } from "web3uikit"
+import subgraphQueries from "@/constants/subgraphQueries"
+import Link from "next/link"
+import { RestaurantsTable } from "@/components/RestaurantsTable"
 
 const { GET_ACTIVE_RESTAURANTS } = subgraphQueries
 
@@ -21,7 +23,19 @@ export default function ActiveRestaurants({ updateKey }) {
         refetch()
     }, [updateKey])
 
-    if (loading) return <div>Loading...</div>
+    if (loading) {
+        return (
+            <div
+                style={{
+                    backgroundColor: "white",
+                    borderRadius: "8px",
+                    padding: "20px",
+                }}
+            >
+                <Loading />
+            </div>
+        )
+    }
     if (error) return <div>Error: {error.message}</div>
     if (!activeRestaurants?.restaurants?.length) return null
 
@@ -32,20 +46,13 @@ export default function ActiveRestaurants({ updateKey }) {
     })
 
     return (
-        <div className="p-5 border-2 border-gray-200 shadow-md rounded-lg">
+        <div className="p-5">
             <h1 className="pb-4 font-bold text-3xl">Active Restaurants</h1>
-            <Table
+            <RestaurantsTable
+                data={data}
                 columnsConfig="4fr 8fr 2fr"
-                data={data.map((restaurant) => [
-                    <div key={restaurant.id}>{restaurant.name}</div>,
-                    <div>{restaurant.businessAddress}</div>,
-                ])}
                 header={[<span>Name</span>, <span>Address</span>]}
-                isColumnSortable={[true, false, false]}
-                maxPages={10}
-                onPageNumberChanged={function noRefCheck() {}}
-                onRowClick={function noRefCheck() {}}
-                pageSize={5}
+                showStatus={false}
             />
         </div>
     )
