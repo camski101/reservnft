@@ -87,3 +87,125 @@ export class Restaurant extends Entity {
     this.set("isActive", Value.fromBoolean(value));
   }
 }
+
+export class Drop extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Drop entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Drop must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Drop", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Drop | null {
+    return changetype<Drop | null>(store.get("Drop", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get dropId(): BigInt {
+    let value = this.get("dropId");
+    return value!.toBigInt();
+  }
+
+  set dropId(value: BigInt) {
+    this.set("dropId", Value.fromBigInt(value));
+  }
+
+  get restaurantId(): BigInt {
+    let value = this.get("restaurantId");
+    return value!.toBigInt();
+  }
+
+  set restaurantId(value: BigInt) {
+    this.set("restaurantId", Value.fromBigInt(value));
+  }
+
+  get mintPrice(): BigInt {
+    let value = this.get("mintPrice");
+    return value!.toBigInt();
+  }
+
+  set mintPrice(value: BigInt) {
+    this.set("mintPrice", Value.fromBigInt(value));
+  }
+
+  get startDate(): BigInt {
+    let value = this.get("startDate");
+    return value!.toBigInt();
+  }
+
+  set startDate(value: BigInt) {
+    this.set("startDate", Value.fromBigInt(value));
+  }
+
+  get endDate(): BigInt {
+    let value = this.get("endDate");
+    return value!.toBigInt();
+  }
+
+  set endDate(value: BigInt) {
+    this.set("endDate", Value.fromBigInt(value));
+  }
+
+  get dailyStartTime(): BigInt {
+    let value = this.get("dailyStartTime");
+    return value!.toBigInt();
+  }
+
+  set dailyStartTime(value: BigInt) {
+    this.set("dailyStartTime", Value.fromBigInt(value));
+  }
+
+  get dailyEndTime(): BigInt {
+    let value = this.get("dailyEndTime");
+    return value!.toBigInt();
+  }
+
+  set dailyEndTime(value: BigInt) {
+    this.set("dailyEndTime", Value.fromBigInt(value));
+  }
+
+  get windowDuration(): BigInt {
+    let value = this.get("windowDuration");
+    return value!.toBigInt();
+  }
+
+  set windowDuration(value: BigInt) {
+    this.set("windowDuration", Value.fromBigInt(value));
+  }
+
+  get reservationsPerWindow(): BigInt {
+    let value = this.get("reservationsPerWindow");
+    return value!.toBigInt();
+  }
+
+  set reservationsPerWindow(value: BigInt) {
+    this.set("reservationsPerWindow", Value.fromBigInt(value));
+  }
+
+  get isActive(): boolean {
+    let value = this.get("isActive");
+    return value!.toBoolean();
+  }
+
+  set isActive(value: boolean) {
+    this.set("isActive", Value.fromBoolean(value));
+  }
+}

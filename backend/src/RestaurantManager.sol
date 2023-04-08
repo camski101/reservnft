@@ -83,13 +83,13 @@ contract RestaurantManager {
 
     /// @notice Event emitted when a restaurant's active status is toggled
     /// @param restaurantId The unique identifier of the restaurant
-    /// @param newActive The new active status of the restaurant
-    event RestaurantToggleActive(uint256 indexed restaurantId, bool newActive);
+    /// @param isActive The active status of the restaurant
+    event RestaurantToggleActive(uint256 indexed restaurantId, bool isActive);
 
     /// @notice Event emitted when a drop's active status is toggled
     /// @param dropId The unique identifier of the drop
-    /// @param newActive The new active status of the drop
-    event DropToggleActive(uint256 indexed dropId, bool newActive);
+    /// @param isActive The active status of the drop
+    event DropToggleActive(uint256 indexed dropId, bool isActive);
 
     constructor() {
         owner = msg.sender;

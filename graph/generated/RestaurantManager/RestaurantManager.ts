@@ -10,6 +10,78 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
+export class DropCreated extends ethereum.Event {
+  get params(): DropCreated__Params {
+    return new DropCreated__Params(this);
+  }
+}
+
+export class DropCreated__Params {
+  _event: DropCreated;
+
+  constructor(event: DropCreated) {
+    this._event = event;
+  }
+
+  get dropId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get restaurantId(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get mintPrice(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+
+  get startDate(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
+  }
+
+  get endDate(): BigInt {
+    return this._event.parameters[4].value.toBigInt();
+  }
+
+  get dailyStartTime(): BigInt {
+    return this._event.parameters[5].value.toBigInt();
+  }
+
+  get dailyEndTime(): BigInt {
+    return this._event.parameters[6].value.toBigInt();
+  }
+
+  get windowDuration(): BigInt {
+    return this._event.parameters[7].value.toBigInt();
+  }
+
+  get reservationsPerWindow(): i32 {
+    return this._event.parameters[8].value.toI32();
+  }
+}
+
+export class DropToggleActive extends ethereum.Event {
+  get params(): DropToggleActive__Params {
+    return new DropToggleActive__Params(this);
+  }
+}
+
+export class DropToggleActive__Params {
+  _event: DropToggleActive;
+
+  constructor(event: DropToggleActive) {
+    this._event = event;
+  }
+
+  get dropId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get isActive(): boolean {
+    return this._event.parameters[1].value.toBoolean();
+  }
+}
+
 export class RestaurantRegistered extends ethereum.Event {
   get params(): RestaurantRegistered__Params {
     return new RestaurantRegistered__Params(this);
@@ -62,21 +134,140 @@ export class RestaurantToggleActive__Params {
   }
 }
 
-export class RestaurantManager__getAllRestaurantsResultValue0Struct extends ethereum.Tuple {
-  get owner(): Address {
-    return this[0].toAddress();
+export class RestaurantManager__dropsResult {
+  value0: BigInt;
+  value1: BigInt;
+  value2: BigInt;
+  value3: BigInt;
+  value4: BigInt;
+  value5: BigInt;
+  value6: BigInt;
+  value7: BigInt;
+  value8: i32;
+  value9: boolean;
+
+  constructor(
+    value0: BigInt,
+    value1: BigInt,
+    value2: BigInt,
+    value3: BigInt,
+    value4: BigInt,
+    value5: BigInt,
+    value6: BigInt,
+    value7: BigInt,
+    value8: i32,
+    value9: boolean
+  ) {
+    this.value0 = value0;
+    this.value1 = value1;
+    this.value2 = value2;
+    this.value3 = value3;
+    this.value4 = value4;
+    this.value5 = value5;
+    this.value6 = value6;
+    this.value7 = value7;
+    this.value8 = value8;
+    this.value9 = value9;
   }
 
-  get name(): string {
-    return this[1].toString();
+  toMap(): TypedMap<string, ethereum.Value> {
+    let map = new TypedMap<string, ethereum.Value>();
+    map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
+    map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
+    map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
+    map.set("value3", ethereum.Value.fromUnsignedBigInt(this.value3));
+    map.set("value4", ethereum.Value.fromUnsignedBigInt(this.value4));
+    map.set("value5", ethereum.Value.fromUnsignedBigInt(this.value5));
+    map.set("value6", ethereum.Value.fromUnsignedBigInt(this.value6));
+    map.set("value7", ethereum.Value.fromUnsignedBigInt(this.value7));
+    map.set(
+      "value8",
+      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(this.value8))
+    );
+    map.set("value9", ethereum.Value.fromBoolean(this.value9));
+    return map;
   }
 
-  get businessAddress(): string {
-    return this[2].toString();
+  getDropId(): BigInt {
+    return this.value0;
+  }
+
+  getRestaurantId(): BigInt {
+    return this.value1;
+  }
+
+  getMintPrice(): BigInt {
+    return this.value2;
+  }
+
+  getStartDate(): BigInt {
+    return this.value3;
+  }
+
+  getEndDate(): BigInt {
+    return this.value4;
+  }
+
+  getDailyStartTime(): BigInt {
+    return this.value5;
+  }
+
+  getDailyEndTime(): BigInt {
+    return this.value6;
+  }
+
+  getWindowDuration(): BigInt {
+    return this.value7;
+  }
+
+  getReservationsPerWindow(): i32 {
+    return this.value8;
+  }
+
+  getIsActive(): boolean {
+    return this.value9;
+  }
+}
+
+export class RestaurantManager__getDropResultValue0Struct extends ethereum.Tuple {
+  get dropId(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get restaurantId(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get mintPrice(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get startDate(): BigInt {
+    return this[3].toBigInt();
+  }
+
+  get endDate(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get dailyStartTime(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get dailyEndTime(): BigInt {
+    return this[6].toBigInt();
+  }
+
+  get windowDuration(): BigInt {
+    return this[7].toBigInt();
+  }
+
+  get reservationsPerWindow(): i32 {
+    return this[8].toI32();
   }
 
   get isActive(): boolean {
-    return this[3].toBoolean();
+    return this[9].toBoolean();
   }
 }
 
@@ -147,37 +338,109 @@ export class RestaurantManager extends ethereum.SmartContract {
     return new RestaurantManager("RestaurantManager", address);
   }
 
-  getAllRestaurants(): Array<
-    RestaurantManager__getAllRestaurantsResultValue0Struct
-  > {
+  drops(param0: BigInt): RestaurantManager__dropsResult {
     let result = super.call(
-      "getAllRestaurants",
-      "getAllRestaurants():((address,string,string,bool)[])",
-      []
+      "drops",
+      "drops(uint256):(uint256,uint256,uint256,uint64,uint64,uint32,uint32,uint32,uint16,bool)",
+      [ethereum.Value.fromUnsignedBigInt(param0)]
     );
 
-    return result[0].toTupleArray<
-      RestaurantManager__getAllRestaurantsResultValue0Struct
-    >();
+    return new RestaurantManager__dropsResult(
+      result[0].toBigInt(),
+      result[1].toBigInt(),
+      result[2].toBigInt(),
+      result[3].toBigInt(),
+      result[4].toBigInt(),
+      result[5].toBigInt(),
+      result[6].toBigInt(),
+      result[7].toBigInt(),
+      result[8].toI32(),
+      result[9].toBoolean()
+    );
   }
 
-  try_getAllRestaurants(): ethereum.CallResult<
-    Array<RestaurantManager__getAllRestaurantsResultValue0Struct>
-  > {
+  try_drops(
+    param0: BigInt
+  ): ethereum.CallResult<RestaurantManager__dropsResult> {
     let result = super.tryCall(
-      "getAllRestaurants",
-      "getAllRestaurants():((address,string,string,bool)[])",
-      []
+      "drops",
+      "drops(uint256):(uint256,uint256,uint256,uint64,uint64,uint32,uint32,uint32,uint16,bool)",
+      [ethereum.Value.fromUnsignedBigInt(param0)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      value[0].toTupleArray<
-        RestaurantManager__getAllRestaurantsResultValue0Struct
-      >()
+      new RestaurantManager__dropsResult(
+        value[0].toBigInt(),
+        value[1].toBigInt(),
+        value[2].toBigInt(),
+        value[3].toBigInt(),
+        value[4].toBigInt(),
+        value[5].toBigInt(),
+        value[6].toBigInt(),
+        value[7].toBigInt(),
+        value[8].toI32(),
+        value[9].toBoolean()
+      )
     );
+  }
+
+  getDrop(dropId: BigInt): RestaurantManager__getDropResultValue0Struct {
+    let result = super.call(
+      "getDrop",
+      "getDrop(uint256):((uint256,uint256,uint256,uint64,uint64,uint32,uint32,uint32,uint16,bool))",
+      [ethereum.Value.fromUnsignedBigInt(dropId)]
+    );
+
+    return changetype<RestaurantManager__getDropResultValue0Struct>(
+      result[0].toTuple()
+    );
+  }
+
+  try_getDrop(
+    dropId: BigInt
+  ): ethereum.CallResult<RestaurantManager__getDropResultValue0Struct> {
+    let result = super.tryCall(
+      "getDrop",
+      "getDrop(uint256):((uint256,uint256,uint256,uint64,uint64,uint32,uint32,uint32,uint16,bool))",
+      [ethereum.Value.fromUnsignedBigInt(dropId)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(
+      changetype<RestaurantManager__getDropResultValue0Struct>(
+        value[0].toTuple()
+      )
+    );
+  }
+
+  getDropIDsByRestaurant(restaurantId: BigInt): Array<BigInt> {
+    let result = super.call(
+      "getDropIDsByRestaurant",
+      "getDropIDsByRestaurant(uint256):(uint256[])",
+      [ethereum.Value.fromUnsignedBigInt(restaurantId)]
+    );
+
+    return result[0].toBigIntArray();
+  }
+
+  try_getDropIDsByRestaurant(
+    restaurantId: BigInt
+  ): ethereum.CallResult<Array<BigInt>> {
+    let result = super.tryCall(
+      "getDropIDsByRestaurant",
+      "getDropIDsByRestaurant(uint256):(uint256[])",
+      [ethereum.Value.fromUnsignedBigInt(restaurantId)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigIntArray());
   }
 
   getRestaurant(
@@ -211,6 +474,101 @@ export class RestaurantManager extends ethereum.SmartContract {
         value[0].toTuple()
       )
     );
+  }
+
+  getRestaurantDropCount(restaurantId: BigInt): BigInt {
+    let result = super.call(
+      "getRestaurantDropCount",
+      "getRestaurantDropCount(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(restaurantId)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getRestaurantDropCount(
+    restaurantId: BigInt
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getRestaurantDropCount",
+      "getRestaurantDropCount(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(restaurantId)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getTimeSlotReservationCount(dropId: BigInt, timeSlotId: Bytes): BigInt {
+    let result = super.call(
+      "getTimeSlotReservationCount",
+      "getTimeSlotReservationCount(uint256,bytes32):(uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(dropId),
+        ethereum.Value.fromFixedBytes(timeSlotId)
+      ]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getTimeSlotReservationCount(
+    dropId: BigInt,
+    timeSlotId: Bytes
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getTimeSlotReservationCount",
+      "getTimeSlotReservationCount(uint256,bytes32):(uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(dropId),
+        ethereum.Value.fromFixedBytes(timeSlotId)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  owner(): Address {
+    let result = super.call("owner", "owner():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_owner(): ethereum.CallResult<Address> {
+    let result = super.tryCall("owner", "owner():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  restaurantDropCount(param0: BigInt): BigInt {
+    let result = super.call(
+      "restaurantDropCount",
+      "restaurantDropCount(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(param0)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_restaurantDropCount(param0: BigInt): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "restaurantDropCount",
+      "restaurantDropCount(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(param0)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   restaurants(param0: BigInt): RestaurantManager__restaurantsResult {
@@ -251,6 +609,90 @@ export class RestaurantManager extends ethereum.SmartContract {
   }
 }
 
+export class ConstructorCall extends ethereum.Call {
+  get inputs(): ConstructorCall__Inputs {
+    return new ConstructorCall__Inputs(this);
+  }
+
+  get outputs(): ConstructorCall__Outputs {
+    return new ConstructorCall__Outputs(this);
+  }
+}
+
+export class ConstructorCall__Inputs {
+  _call: ConstructorCall;
+
+  constructor(call: ConstructorCall) {
+    this._call = call;
+  }
+}
+
+export class ConstructorCall__Outputs {
+  _call: ConstructorCall;
+
+  constructor(call: ConstructorCall) {
+    this._call = call;
+  }
+}
+
+export class CreateDropCall extends ethereum.Call {
+  get inputs(): CreateDropCall__Inputs {
+    return new CreateDropCall__Inputs(this);
+  }
+
+  get outputs(): CreateDropCall__Outputs {
+    return new CreateDropCall__Outputs(this);
+  }
+}
+
+export class CreateDropCall__Inputs {
+  _call: CreateDropCall;
+
+  constructor(call: CreateDropCall) {
+    this._call = call;
+  }
+
+  get restaurantId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get mintPrice(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+
+  get startDate(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+
+  get endDate(): BigInt {
+    return this._call.inputValues[3].value.toBigInt();
+  }
+
+  get dailyStartTime(): BigInt {
+    return this._call.inputValues[4].value.toBigInt();
+  }
+
+  get dailyEndTime(): BigInt {
+    return this._call.inputValues[5].value.toBigInt();
+  }
+
+  get windowDuration(): BigInt {
+    return this._call.inputValues[6].value.toBigInt();
+  }
+
+  get reservationsPerWindow(): i32 {
+    return this._call.inputValues[7].value.toI32();
+  }
+}
+
+export class CreateDropCall__Outputs {
+  _call: CreateDropCall;
+
+  constructor(call: CreateDropCall) {
+    this._call = call;
+  }
+}
+
 export class RegisterRestaurantCall extends ethereum.Call {
   get inputs(): RegisterRestaurantCall__Inputs {
     return new RegisterRestaurantCall__Inputs(this);
@@ -285,20 +727,118 @@ export class RegisterRestaurantCall__Outputs {
   }
 }
 
-export class ToggleIsActiveCall extends ethereum.Call {
-  get inputs(): ToggleIsActiveCall__Inputs {
-    return new ToggleIsActiveCall__Inputs(this);
+export class SetReservNFTAddressCall extends ethereum.Call {
+  get inputs(): SetReservNFTAddressCall__Inputs {
+    return new SetReservNFTAddressCall__Inputs(this);
   }
 
-  get outputs(): ToggleIsActiveCall__Outputs {
-    return new ToggleIsActiveCall__Outputs(this);
+  get outputs(): SetReservNFTAddressCall__Outputs {
+    return new SetReservNFTAddressCall__Outputs(this);
   }
 }
 
-export class ToggleIsActiveCall__Inputs {
-  _call: ToggleIsActiveCall;
+export class SetReservNFTAddressCall__Inputs {
+  _call: SetReservNFTAddressCall;
 
-  constructor(call: ToggleIsActiveCall) {
+  constructor(call: SetReservNFTAddressCall) {
+    this._call = call;
+  }
+
+  get _reservNFTAddress(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class SetReservNFTAddressCall__Outputs {
+  _call: SetReservNFTAddressCall;
+
+  constructor(call: SetReservNFTAddressCall) {
+    this._call = call;
+  }
+}
+
+export class SetTimeSlotReservationCountCall extends ethereum.Call {
+  get inputs(): SetTimeSlotReservationCountCall__Inputs {
+    return new SetTimeSlotReservationCountCall__Inputs(this);
+  }
+
+  get outputs(): SetTimeSlotReservationCountCall__Outputs {
+    return new SetTimeSlotReservationCountCall__Outputs(this);
+  }
+}
+
+export class SetTimeSlotReservationCountCall__Inputs {
+  _call: SetTimeSlotReservationCountCall;
+
+  constructor(call: SetTimeSlotReservationCountCall) {
+    this._call = call;
+  }
+
+  get dropId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get timeSlotId(): Bytes {
+    return this._call.inputValues[1].value.toBytes();
+  }
+
+  get count(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+}
+
+export class SetTimeSlotReservationCountCall__Outputs {
+  _call: SetTimeSlotReservationCountCall;
+
+  constructor(call: SetTimeSlotReservationCountCall) {
+    this._call = call;
+  }
+}
+
+export class ToggleDropIsActiveCall extends ethereum.Call {
+  get inputs(): ToggleDropIsActiveCall__Inputs {
+    return new ToggleDropIsActiveCall__Inputs(this);
+  }
+
+  get outputs(): ToggleDropIsActiveCall__Outputs {
+    return new ToggleDropIsActiveCall__Outputs(this);
+  }
+}
+
+export class ToggleDropIsActiveCall__Inputs {
+  _call: ToggleDropIsActiveCall;
+
+  constructor(call: ToggleDropIsActiveCall) {
+    this._call = call;
+  }
+
+  get dropId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class ToggleDropIsActiveCall__Outputs {
+  _call: ToggleDropIsActiveCall;
+
+  constructor(call: ToggleDropIsActiveCall) {
+    this._call = call;
+  }
+}
+
+export class ToggleRestaurantIsActiveCall extends ethereum.Call {
+  get inputs(): ToggleRestaurantIsActiveCall__Inputs {
+    return new ToggleRestaurantIsActiveCall__Inputs(this);
+  }
+
+  get outputs(): ToggleRestaurantIsActiveCall__Outputs {
+    return new ToggleRestaurantIsActiveCall__Outputs(this);
+  }
+}
+
+export class ToggleRestaurantIsActiveCall__Inputs {
+  _call: ToggleRestaurantIsActiveCall;
+
+  constructor(call: ToggleRestaurantIsActiveCall) {
     this._call = call;
   }
 
@@ -307,10 +847,10 @@ export class ToggleIsActiveCall__Inputs {
   }
 }
 
-export class ToggleIsActiveCall__Outputs {
-  _call: ToggleIsActiveCall;
+export class ToggleRestaurantIsActiveCall__Outputs {
+  _call: ToggleRestaurantIsActiveCall;
 
-  constructor(call: ToggleIsActiveCall) {
+  constructor(call: ToggleRestaurantIsActiveCall) {
     this._call = call;
   }
 }

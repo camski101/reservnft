@@ -6,3 +6,17 @@ type Restaurant @entity {
   businessAddress: String!
   isActive: Boolean!
 }
+
+type Drop @entity {
+  id: ID!
+  dropId: BigInt!
+  restaurantId: BigInt!
+  mintPrice: BigInt!
+  startDate: BigInt!
+  endDate: BigInt!
+  dailyStartTime: BigInt!
+  dailyEndTime: BigInt!
+  windowDuration: BigInt!
+  reservationsPerWindow: BigInt!
+  isActive: Boolean!
+}

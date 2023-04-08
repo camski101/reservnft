@@ -6,7 +6,7 @@ dataSources:
     name: RestaurantManager
     network: mumbai
     source:
-      address: "0xDff9c30eF36B3BC96e69cfa557E5458A0373EF69"
+      address: "0x0686f7BA6afbe0B30422b4a2199535bC43352f60"
       abi: RestaurantManager
       startBlock: 33979251 
     mapping:
@@ -24,4 +24,8 @@ dataSources:
           handler: handleRestaurantToggleActive
         - event: RestaurantRegistered(indexed uint256,indexed address,string,string)
           handler: handleRestaurantRegistered
+        - event: DropCreated(indexed uint256,indexed uint256,uint256,uint64,uint64,uint32,uint32,uint32,uint16)
+          handler: handleDropCreated
+        - event: DropToggleActive(indexed uint256,bool)
+          handler: handleDropToggleActive
       file: ./src/mapping.ts
