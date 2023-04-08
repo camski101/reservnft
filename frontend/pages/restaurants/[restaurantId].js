@@ -1,18 +1,20 @@
 import React from "react"
 import { useQuery } from "@apollo/client"
 import { useRouter } from "next/router"
-import { Card, Typography, Loading } from "web3uikit"
+import { Card, Typography, Loading, Button } from "web3uikit"
 import subgraphQueries from "@/constants/subgraphQueries"
+import { useMoralis } from "react-moralis"
 
 const { GET_RESTAURANT_BY_ID } = subgraphQueries
 
 const Restaurant = () => {
+    const { account } = useMoralis()
     const router = useRouter()
     const { restaurantId } = router.query
 
     const { loading, error, data } = useQuery(GET_RESTAURANT_BY_ID, {
         variables: { id: restaurantId ? "0x" + restaurantId.toString(16) : null },
-        skip: !restaurantId,
+        skip: !restaurantId || !account,
     })
 
     if (loading) {
@@ -57,7 +59,10 @@ const Restaurant = () => {
                                     </Typography>
                                 </div>
                                 <Typography variant="body18">
-                                    <strong>Owner:</strong> {restaurant.owner}
+                                    <strong>Owner:</strong>{" "}
+                                    {restaurant.owner === account
+                                        ? `You (${restaurant.owner})`
+                                        : restaurant.owner}{" "}
                                 </Typography>
                             </div>
                             <div
@@ -65,7 +70,12 @@ const Restaurant = () => {
                                     width: "250px",
                                 }}
                             >
-                                <Card>Pretend NFT Card</Card>
+                                <div className="mb-2">
+                                    <Button theme="primary" text="Create a Drop" />
+                                </div>
+                                <div>
+                                    <Card>Pretend NFT Card - not a real drop yet</Card>
+                                </div>
                             </div>
                         </div>
                     </div>

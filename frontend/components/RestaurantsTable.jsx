@@ -7,7 +7,11 @@ export const RestaurantsTable = ({ data, columnsConfig, header, showStatus, onTo
         <Table
             columnsConfig={columnsConfig}
             data={data.map((restaurant) => [
-                <Link key={restaurant.id} href={`/restaurants/${restaurant.restaurantId}`}>
+                <Link
+                    className="text-green-600 hover:text-blue-500  cursor-pointer rounded-sm"
+                    key={restaurant.id}
+                    href={`/restaurants/${restaurant.restaurantId}`}
+                >
                     {restaurant.name}
                 </Link>,
                 <div>{restaurant.businessAddress}</div>,
