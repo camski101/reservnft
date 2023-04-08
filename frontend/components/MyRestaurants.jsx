@@ -21,7 +21,7 @@ export default function MyRestaurants({ onDataChange, updateKey }) {
     const { runContractFunction: toggleIsActive } = useWeb3Contract({
         abi: RestaurantManager,
         contractAddress: rmAddress,
-        functionName: "toggleIsActive",
+        functionName: "toggleRestaurantIsActive",
         params: { restaurantId: restaurantId, isActive: isActive },
     })
     const {
@@ -35,6 +35,7 @@ export default function MyRestaurants({ onDataChange, updateKey }) {
     })
 
     const handleSuccess = async (tx) => {
+        console.log("handleSuccess called")
         try {
             await tx.wait(1)
             handleNewNotification(tx)
@@ -61,6 +62,8 @@ export default function MyRestaurants({ onDataChange, updateKey }) {
 
     useEffect(() => {
         if (shouldToggle && restaurantId !== null && isActive !== null) {
+            console.log("Calling toggleIsActive", restaurantId, isActive) // Add this line
+
             toggleIsActive({
                 onSuccess: handleSuccess,
                 onError: (error) => console.log(error),
