@@ -2,129 +2,159 @@
 pragma solidity ^0.8.18;
 
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import {Counters} from "@openzeppelin/contracts/utils/Counters.sol";
+import {IERC721Metadata} from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+
+import {IRestaurantManager} from "../interfaces/IRestaurantManager.sol";
+
+error ReservNFT__InsufficientPayment();
+error ReservNFT__InactiveDrop();
+error ReservNFT__OutsideDropWindow();
+error ReservNFT__ExceedReservationsLimit();
+error ReservNFT__Unauthorized();
+error ReservNFT__NonexistentToken();
 
 /// @title ReservNFT
 /// @notice A contract for creating restaurant reservation NFTs with different drops and mint prices.
-contract ReservNFT is ERC721URIStorage, ReentrancyGuard {
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
+contract ReservNFT is ERC721, ReentrancyGuard {
+    uint256 private _tokenIds;
 
+    address public owner;
+    address private restaurantManagerAddress;
     // Mapping from token ID to reservation data
     mapping(uint256 => Reservation) public reservations;
-
-    // Mapping from drop ID to Drop data
-    mapping(uint256 => Drop) public drops;
+    mapping(uint256 => string) private _tokenURIs;
 
     /// @notice Reservation data structure
     struct Reservation {
-        uint256 tokenId;
         uint256 dropId;
         uint256 restaurantId;
-        string restaurantName;
-        uint256 reservationDate;
-        uint256 reservationTime;
-    }
-
-    /// @notice Drop data structure
-    struct Drop {
-        uint256 dropId;
-        uint256 restaurantId;
-        uint256 mintPrice;
-        bool isActive;
+        uint256 reservationTimestamp; // Represents both date and time
     }
 
     event ReservationCreated(
         uint256 tokenId,
         uint256 dropId,
         uint256 restaurantId,
-        string restaurantName,
-        uint256 reservationDate,
-        uint256 reservationTime
+        uint256 reservationTimestamp
     );
-    event DropCreated(uint256 dropId, uint256 restaurantId, uint256 mintPrice);
-    event DropStatusUpdated(uint256 dropId, bool isActive);
 
-    constructor() ERC721("ReservNFT", "RRNFT") {}
-
-    /// @notice Creates a new drop with the given parameters
-    /// @param dropId The unique identifier of the drop
-    /// @param restaurantId The unique identifier of the restaurant
-    /// @param mintPrice The price to mint a reservation NFT for this drop
-    function createDrop(
-        uint256 dropId,
-        uint256 restaurantId,
-        uint256 mintPrice
-    ) public {
-        require(
-            !drops[dropId].isActive,
-            "Drop ID already exists and is active"
-        );
-
-        drops[dropId] = Drop(dropId, restaurantId, mintPrice, true);
-        emit DropCreated(dropId, restaurantId, mintPrice);
+    modifier onlyOwner() {
+        if (msg.sender != owner) {
+            revert ReservNFT__Unauthorized();
+        }
+        _;
     }
 
-    /// @notice Updates the status of a drop
-    /// @param dropId The unique identifier of the drop
-    /// @param isActive The new status of the drop
-    function updateDropStatus(uint256 dropId, bool isActive) public {
+    constructor() ERC721("ReservNFT", "RRNFT") {
+        owner = msg.sender;
+    }
+
+    function _setTokenURI(
+        uint256 tokenId,
+        string memory _tokenURI
+    ) internal virtual {
+        if (!_exists(tokenId)) {
+            revert ReservNFT__NonexistentToken();
+        }
+        _tokenURIs[tokenId] = _tokenURI;
+    }
+
+    function tokenURI(
+        uint256 tokenId
+    ) public view virtual override returns (string memory) {
         require(
-            drops[dropId].isActive != isActive,
-            "Drop status is already set to the specified value"
+            _exists(tokenId),
+            "ERC721URIStorage: URI query for nonexistent token"
         );
-        drops[dropId].isActive = isActive;
-        emit DropStatusUpdated(dropId, isActive);
+
+        string memory _tokenURI = _tokenURIs[tokenId];
+        return _tokenURI;
+    }
+
+    function setRestaurantManagerAddress(
+        address _restaurantManagerAddress
+    ) public onlyOwner {
+        restaurantManagerAddress = _restaurantManagerAddress;
     }
 
     /// @notice Creates a reservation NFT for the specified drop
     /// @param dropId The unique identifier of the drop
-    /// @param restaurantName The name of the restaurant
-    /// @param reservationDate The date of the reservation
-    /// @param reservationTime The time of the reservation
+    /// @param reservationTimestamp The timestamp of the reservation
     /// @param tokenURI The token URI containing the metadata for the reservation NFT
     /// @return newItemId The unique identifier of the newly minted reservation NFT
     function createReservNFT(
         uint256 dropId,
-        string memory restaurantName,
-        uint256 reservationDate,
-        uint256 reservationTime,
+        uint256 reservationTimestamp,
         string memory tokenURI
     ) public payable nonReentrant returns (uint256) {
-        require(drops[dropId].isActive, "Drop is not active");
-        require(
-            msg.value >= drops[dropId].mintPrice,
-            "Not enough payment for minting"
+        // Retrieve drop details from RestaurantManager contract
+        IRestaurantManager restaurantManager = IRestaurantManager(
+            restaurantManagerAddress
         );
 
-        _tokenIds.increment();
-        uint256 newItemId = _tokenIds.current();
+        IRestaurantManager.Drop memory drop = restaurantManager.getDrop(dropId);
+
+        bytes32 timeSlotId = keccak256(abi.encodePacked(reservationTimestamp));
+        uint256 reservationCount = restaurantManager
+            .getTimeSlotReservationCount(dropId, timeSlotId);
+
+        if (reservationCount >= drop.reservationsPerWindow) {
+            revert ReservNFT__ExceedReservationsLimit();
+        }
+
+        // Check if the payment is sufficient
+        if (msg.value < drop.mintPrice) {
+            revert ReservNFT__InsufficientPayment();
+        }
+
+        // Check if the drop is active
+        if (!drop.isActive) {
+            revert ReservNFT__InactiveDrop();
+        }
+
+        // Check if the reservation timestamp is within the drop window
+        if (
+            reservationTimestamp < drop.startDate ||
+            reservationTimestamp > drop.endDate
+        ) {
+            revert ReservNFT__OutsideDropWindow();
+        }
+
+        restaurantManager.setTimeSlotReservationCount(
+            dropId,
+            timeSlotId,
+            ++reservationCount
+        );
+
+        // Retrieve restaurant details
+        IRestaurantManager.Restaurant memory restaurant = restaurantManager
+            .getRestaurant(drop.restaurantId);
+        string memory restaurantName = restaurant.name;
+
+        _tokenIds = _tokenIds + 1;
+        uint256 newItemId = _tokenIds;
+
+        reservations[newItemId] = Reservation(
+            dropId,
+            drop.restaurantId,
+            reservationTimestamp
+        );
 
         _mint(msg.sender, newItemId);
         _setTokenURI(newItemId, tokenURI);
 
-        reservations[newItemId] = Reservation(
-            newItemId,
-            dropId,
-            drops[dropId].restaurantId,
-            restaurantName,
-            reservationDate,
-            reservationTime
-        );
         emit ReservationCreated(
             newItemId,
             dropId,
-            drops[dropId].restaurantId,
-            restaurantName,
-            reservationDate,
-            reservationTime
+            drop.restaurantId,
+            reservationTimestamp
         );
 
-        if (msg.value > drops[dropId].mintPrice) {
-            // Refund any overpayment
-            payable(msg.sender).transfer(msg.value - drops[dropId].mintPrice);
+        // Handle mint price and refund any overpayment
+        if (msg.value > drop.mintPrice) {
+            uint256 refundAmount = msg.value - drop.mintPrice;
+            payable(msg.sender).transfer(refundAmount);
         }
 
         return newItemId;
@@ -139,10 +169,9 @@ contract ReservNFT is ERC721URIStorage, ReentrancyGuard {
         return reservations[tokenId];
     }
 
-    /// @notice Retrieves the details of a drop
-    /// @param dropId The unique identifier of the drop
-    /// @return A Drop struct containing the drop details
-    function getDropDetails(uint256 dropId) public view returns (Drop memory) {
-        return drops[dropId];
+    /// @notice Withdraws the contract balance to the owner
+    function withdraw() public onlyOwner {
+        uint256 balance = address(this).balance;
+        payable(owner).transfer(balance);
     }
 }
