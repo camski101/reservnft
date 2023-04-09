@@ -10,6 +10,8 @@ error RestaurantManager__DropAlreadyExists();
 error RestaurantManager__NotReservNFT();
 error RestaurantManager__DropDoesNotExist();
 error RestaurantManager__RestaurantDoesNotExist();
+error RestaurantManager__InvalidDropDates();
+error RestaurantManager__InvalidDropTimes();
 
 /// @title RestaurantManager
 /// @notice Register and manage restaurants
@@ -185,6 +187,14 @@ contract RestaurantManager {
     ) public {
         if (msg.sender != restaurants[restaurantId].owner) {
             revert RestaurantManager__Unauthorized();
+        }
+
+        if (startDate >= endDate) {
+            revert RestaurantManager__InvalidDropDates();
+        }
+
+        if (dailyStartTime >= dailyEndTime) {
+            revert RestaurantManager__InvalidDropTimes();
         }
 
         uint256 newDropId = _dropCounter;

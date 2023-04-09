@@ -252,4 +252,52 @@ contract RestaurantManagerTest is Test {
         vm.expectRevert(RestaurantManager__RestaurantDoesNotExist.selector);
         restaurantManager.getRestaurant(0);
     }
+
+    function test_RevertWhen_InvalidDropDates() public {
+        uint256 restaurantId = registerSampleRestaurant();
+
+        uint64 startDate = 1700000000;
+        uint64 endDate = 1700000000;
+        uint32 dailyStartTime = 28800; // 8:00 am in seconds
+        uint32 dailyEndTime = 79200; // 10:00 pm in seconds
+        uint32 windowDuration = 3600; // hourly windows in seconds
+        uint16 reservationsPerWindow = 10;
+
+        vm.expectRevert(RestaurantManager__InvalidDropDates.selector);
+
+        restaurantManager.createDrop(
+            0,
+            100,
+            startDate,
+            endDate,
+            dailyStartTime,
+            dailyEndTime,
+            windowDuration,
+            reservationsPerWindow
+        );
+    }
+
+    function test_RevertWhen_InvalidDropTimes() public {
+        uint256 restaurantId = registerSampleRestaurant();
+
+        uint64 startDate = 1700000000;
+        uint64 endDate = 1700003600;
+        uint32 dailyStartTime = 79200; // 8:00 am in seconds
+        uint32 dailyEndTime = 28800; // 10:00 pm in seconds
+        uint32 windowDuration = 3600; // hourly windows in seconds
+        uint16 reservationsPerWindow = 10;
+
+        vm.expectRevert(RestaurantManager__InvalidDropTimes.selector);
+
+        restaurantManager.createDrop(
+            0,
+            100,
+            startDate,
+            endDate,
+            dailyStartTime,
+            dailyEndTime,
+            windowDuration,
+            reservationsPerWindow
+        );
+    }
 }

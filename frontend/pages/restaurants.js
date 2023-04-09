@@ -7,7 +7,7 @@ import React, { useState } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { ChainCheck } from "@/components/ChainCheck"
 
-export default function Home() {
+export default function Restaurants() {
     const [updateKey, setUpdateKey] = useState(uuidv4())
 
     function handleDataChange() {

@@ -3,4 +3,4 @@
 // Buy reservations
 // Sell reservations
 
-export default function Home() {}
+export default function Reservations() {}

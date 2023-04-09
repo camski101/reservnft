@@ -37,4 +37,25 @@ const GET_RESTAURANT_BY_ID = gql`
     }
 `
 
-export default { GET_MY_RESTAURANTS, GET_ACTIVE_RESTAURANTS, GET_RESTAURANT_BY_ID }
+const GET_DROPS_BY_RESTAURANT_ID = gql`
+    query GET_DROPS_BY_RESTAURANT_ID($restaurantId: ID!) {
+        drops(where: { restaurantId: $restaurantId }, orderBy: dropId, orderDirection: desc) {
+            id
+            dropId
+            mintPrice
+            startDate
+            endDate
+            dailyStartTime
+            dailyEndTime
+            windowDuration
+            reservationsPerWindow
+        }
+    }
+`
+
+export default {
+    GET_MY_RESTAURANTS,
+    GET_ACTIVE_RESTAURANTS,
+    GET_RESTAURANT_BY_ID,
+    GET_DROPS_BY_RESTAURANT_ID,
+}
