@@ -7,7 +7,10 @@ import React, { useState } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { ChainCheck } from "@/components/ChainCheck"
 
-export default function Restaurants() {
+const RegisterRestaurant = lazy(() => import("@/components/RegisterRestaurant"))
+const ActiveRestaurants = lazy(() => import("@/components/ActiveRestaurants"))
+
+export default function RestaurantsComponent() {
     const [updateKey, setUpdateKey] = useState(uuidv4())
 
     function handleDataChange() {
@@ -19,8 +22,10 @@ export default function Restaurants() {
             <ChainCheck />
             <div className="flex flex-row justify-center">
                 <div className="w-2/3">
-                    <MyRestaurants onDataChange={handleDataChange} updateKey={updateKey} />
                     <ActiveRestaurants updateKey={updateKey} />
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <ActiveRestaurants updateKey={updateKey} />
+                    </Suspense>
                 </div>
                 <div className="w-1/3 h-full">
                     <RegisterRestaurant
