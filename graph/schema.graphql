@@ -20,3 +20,11 @@ type Drop @entity {
   reservationsPerWindow: BigInt!
   isActive: Boolean!
 }
+
+type Reservation @entity {
+  id: ID!
+  tokenId: BigInt!
+  dropId: BigInt!
+  restaurantId: BigInt!
+  reservationTimestamp: BigInt!
+}

@@ -1,4 +1,9 @@
 {
-    "31337": { "RestaurantManager": "0x5fbdb2315678afecb367f032d93f642f64180aa3" },
-    "80001": { "RestaurantManager": "0x0686f7BA6afbe0B30422b4a2199535bC43352f60" }
+  "31337": {
+    "RestaurantManager": "0x5fbdb2315678afecb367f032d93f642f64180aa3"
+  },
+  "80001": {
+    "RestaurantManager": "0xe46916184336B67534D58f97579B13423e997Ee7",
+    "ReservNFT": "0xFc5b04A76bBbE7694c02c7E40Ce7D7E6e6515A3c"
+  }
 }

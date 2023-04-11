@@ -5,9 +5,10 @@ import {
   DropToggleActive as DropToggleActiveEvent,
 } from "../generated/RestaurantManager/RestaurantManager"
 
-import { Restaurant, Drop } from "../generated/schema"
+import { Restaurant, Drop, Reservation } from "../generated/schema"
 import { BigInt } from "@graphprotocol/graph-ts";
 
+import { ReservationCreated as ReservationCreatedEvent } from "../generated/ReservNFT/ReservNFT"    
 
 export function handleRestaurantRegistered(event: RestaurantRegisteredEvent): void {
 
@@ -61,3 +62,14 @@ export function handleDropToggleActive(event: DropToggleActiveEvent): void {
   drop.isActive = event.params.isActive;
   drop.save()
 }
+
+export function handleReservationCreated(event: ReservationCreatedEvent): void {
+  let reservation = new Reservation(event.params.tokenId.toHex())
+  reservation.tokenId = event.params.tokenId
+  reservation.restaurantId = event.params.restaurantId
+  reservation.dropId = event.params.dropId
+  reservation.reservationTimestamp = event.params.reservationTimestamp
+  reservation.save()
+}
+
+

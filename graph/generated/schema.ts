@@ -209,3 +209,71 @@ export class Drop extends Entity {
     this.set("isActive", Value.fromBoolean(value));
   }
 }
+
+export class Reservation extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Reservation entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Reservation must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Reservation", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Reservation | null {
+    return changetype<Reservation | null>(store.get("Reservation", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get tokenId(): BigInt {
+    let value = this.get("tokenId");
+    return value!.toBigInt();
+  }
+
+  set tokenId(value: BigInt) {
+    this.set("tokenId", Value.fromBigInt(value));
+  }
+
+  get dropId(): BigInt {
+    let value = this.get("dropId");
+    return value!.toBigInt();
+  }
+
+  set dropId(value: BigInt) {
+    this.set("dropId", Value.fromBigInt(value));
+  }
+
+  get restaurantId(): BigInt {
+    let value = this.get("restaurantId");
+    return value!.toBigInt();
+  }
+
+  set restaurantId(value: BigInt) {
+    this.set("restaurantId", Value.fromBigInt(value));
+  }
+
+  get reservationTimestamp(): BigInt {
+    let value = this.get("reservationTimestamp");
+    return value!.toBigInt();
+  }
+
+  set reservationTimestamp(value: BigInt) {
+    this.set("reservationTimestamp", Value.fromBigInt(value));
+  }
+}

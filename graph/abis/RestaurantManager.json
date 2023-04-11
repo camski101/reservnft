@@ -16,6 +16,16 @@
   },
   {
     "inputs": [],
+    "name": "RestaurantManager__InvalidDropDates",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RestaurantManager__InvalidDropTimes",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "RestaurantManager__NotReservNFT",
     "type": "error"
   },

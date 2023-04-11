@@ -6,9 +6,9 @@ dataSources:
     name: RestaurantManager
     network: mumbai
     source:
-      address: "0x0686f7BA6afbe0B30422b4a2199535bC43352f60"
+      address: '0xe46916184336B67534D58f97579B13423e997Ee7'
       abi: RestaurantManager
-      startBlock: 33979251 
+      startBlock: 33979251
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -28,4 +28,24 @@ dataSources:
           handler: handleDropCreated
         - event: DropToggleActive(indexed uint256,bool)
           handler: handleDropToggleActive
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: ReservNFT
+    network: mumbai
+    source:
+      address: '0xFc5b04A76bBbE7694c02c7E40Ce7D7E6e6515A3c'
+      abi: ReservNFT
+      startBlock: 34247294
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - ReservationCreated
+      abis:
+        - name: ReservNFT
+          file: ./abis/ReservNFT.json
+      eventHandlers:
+        - event: ReservationCreated(indexed uint256,indexed uint256,indexed uint256,uint256)
+          handler: handleReservationCreated
       file: ./src/mapping.ts
