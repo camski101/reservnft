@@ -5,9 +5,10 @@ import moment from "moment-timezone"
 import { Card, Typography, Loading, Button } from "web3uikit"
 import subgraphQueries from "@/constants/subgraphQueries"
 import { useMoralis } from "react-moralis"
+import { formatDurationLabel } from "@/utils/dateUtils"
+
 import { DropModal } from "@/components/DropModal"
 import { MintModal } from "@/components/MintModal"
-import { formatDurationLabel } from "@/utils/dateUtils"
 
 const { GET_RESTAURANT_BY_ID, GET_DROPS_BY_RESTAURANT_ID } = subgraphQueries
 
@@ -82,7 +83,23 @@ export default function Restaurant() {
     }
     if (restaurantError) return <div>Error: {restaurantError.message}</div>
 
-    if (!restaurantData) return null
+    if (!restaurantData || !restaurantData.restaurant) {
+        return (
+            <div className="min-h-screen bg-gray-100">
+                <div className="py-10">
+                    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                        <div className="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                            <div className="p-6 sm:px-10 bg-white">
+                                <Typography variant="h2" className="mb-2">
+                                    No restaurant found.
+                                </Typography>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     const restaurant = restaurantData.restaurant
 
