@@ -2,7 +2,14 @@ import React from "react"
 import { Table, Button } from "web3uikit"
 import Link from "next/link"
 
-export const RestaurantsTable = ({ data, columnsConfig, header, showStatus, onToggleStatus }) => {
+export const RestaurantsTable = ({
+    data,
+    columnsConfig,
+    header,
+    showStatus,
+    onToggleStatus,
+    buttonLoading,
+}) => {
     return (
         <Table
             columnsConfig={columnsConfig}
@@ -21,7 +28,19 @@ export const RestaurantsTable = ({ data, columnsConfig, header, showStatus, onTo
                           <Button
                               onClick={() => onToggleStatus(restaurant)}
                               theme="primary"
-                              text={restaurant.isActive ? "Deactivate" : "Activate"}
+                              text={
+                                  buttonLoading ? (
+                                      <Loading
+                                          size={20}
+                                          spinnerColor="#ffffff"
+                                          spinnerType="wave"
+                                      />
+                                  ) : restaurant.isActive ? (
+                                      "Deactivate"
+                                  ) : (
+                                      "Activate"
+                                  )
+                              }
                           />,
                       ]
                     : []),

@@ -6,7 +6,7 @@ import subgraphQueries from "../constants/subgraphQueries"
 import { RestaurantManager, networkMapping } from "../constants"
 import { RestaurantsTable } from "@/components/RestaurantsTable"
 
-export default function MyRestaurants({ onDataChange, updateKey }) {
+export default function MyRestaurants() {
     const { isWeb3Enabled, chainId: chainIdHex, account } = useMoralis()
     const chainId = parseInt(chainIdHex)
     const rmAddress =
@@ -17,6 +17,7 @@ export default function MyRestaurants({ onDataChange, updateKey }) {
     const [restaurantId, setRestaurantId] = useState(null)
     const [isActive, setIsActive] = useState(null)
     const [shouldToggle, setShouldToggle] = useState(false)
+    const [buttonLoading, setButtonLoading] = useState(false)
 
     const { runContractFunction: toggleIsActive } = useWeb3Contract({
         abi: RestaurantManager,
@@ -34,27 +35,27 @@ export default function MyRestaurants({ onDataChange, updateKey }) {
         skip: !isWeb3Enabled || !account,
     })
 
+    const handleNewNotification = (type, message, title, tx) => {
+        dispatch({
+            type: type,
+            message: message,
+            title: title,
+            position: "topR",
+        })
+    }
+
     const handleSuccess = async (tx) => {
-        console.log("handleSuccess called")
         try {
             await tx.wait(1)
-            handleNewNotification(tx)
-            onDataChange()
+            handleNewNotification("info", "Transaction Complete!", "Transaction Notification", tx)
+            refetch()
         } catch (error) {
             console.log(error)
         }
     }
 
-    const handleNewNotification = () => {
-        dispatch({
-            type: "info",
-            message: "Transaction Complete!",
-            title: "Transaction Notification",
-            position: "topR",
-        })
-    }
-
     const handleToggleActiveClick = async (id, isActive) => {
+        setButtonLoading(true)
         setRestaurantId(id)
         setIsActive(isActive)
         setShouldToggle(true)
@@ -62,19 +63,16 @@ export default function MyRestaurants({ onDataChange, updateKey }) {
 
     useEffect(() => {
         if (shouldToggle && restaurantId !== null && isActive !== null) {
-            console.log("Calling toggleIsActive", restaurantId, isActive) // Add this line
+            console.log("Calling toggleIsActive", restaurantId, isActive)
 
             toggleIsActive({
                 onSuccess: handleSuccess,
                 onError: (error) => console.log(error),
             })
             setShouldToggle(false)
+            setButtonLoading(false)
         }
     }, [shouldToggle, restaurantId, isActive, handleSuccess])
-
-    useEffect(() => {
-        refetch()
-    }, [updateKey])
 
     if (loading) {
         return (
@@ -115,7 +113,8 @@ export default function MyRestaurants({ onDataChange, updateKey }) {
                 onToggleStatus={(restaurant) =>
                     handleToggleActiveClick(
                         parseInt(restaurant.id.toString()),
-                        !restaurant.isActive
+                        !restaurant.isActive,
+                        buttonLoading
                     )
                 }
             />
