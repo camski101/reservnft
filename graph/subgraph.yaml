@@ -33,7 +33,7 @@ dataSources:
     name: ReservNFT
     network: mumbai
     source:
-      address: '0xFc5b04A76bBbE7694c02c7E40Ce7D7E6e6515A3c'
+      address: '0xA82045A0573079C1b33d26E01E4337B2983EDe5D'
       abi: ReservNFT
       startBlock: 34247294
     mapping:

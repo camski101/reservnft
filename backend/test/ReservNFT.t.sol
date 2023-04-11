@@ -47,14 +47,12 @@ contract ReservNFTTest is Test {
     function _createReservNFT(
         uint256 dropId,
         uint256 reservationTimestamp,
-        string memory tokenURI,
         uint256 value
     ) internal returns (uint256) {
         return
             reservNFT.createReservNFT{value: value}(
                 dropId,
-                reservationTimestamp,
-                tokenURI
+                reservationTimestamp
             );
     }
 
@@ -63,8 +61,7 @@ contract ReservNFTTest is Test {
         uint256 reservationTimestamp = 1700000001; // Within the drop window
         uint256 tokenId = reservNFT.createReservNFT{value: 0.01 ether}(
             dropId,
-            reservationTimestamp,
-            "ipfs://test-uri"
+            reservationTimestamp
         );
 
         ReservNFT.Reservation memory reservation = reservNFT
@@ -82,8 +79,7 @@ contract ReservNFTTest is Test {
         vm.expectRevert(ReservNFT__InsufficientPayment.selector);
         reservNFT.createReservNFT{value: 0.005 ether}(
             dropId,
-            reservationTimestamp,
-            "ipfs://test-uri"
+            reservationTimestamp
         );
     }
 
@@ -96,8 +92,7 @@ contract ReservNFTTest is Test {
         vm.expectRevert(ReservNFT__InactiveDrop.selector);
         reservNFT.createReservNFT{value: 0.01 ether}(
             dropId,
-            reservationTimestamp,
-            "ipfs://test-uri"
+            reservationTimestamp
         );
     }
 
@@ -108,8 +103,7 @@ contract ReservNFTTest is Test {
         vm.expectRevert(ReservNFT__OutsideDropWindow.selector);
         reservNFT.createReservNFT{value: 0.01 ether}(
             dropId,
-            reservationTimestamp,
-            "ipfs://test-uri"
+            reservationTimestamp
         );
     }
 
@@ -123,8 +117,7 @@ contract ReservNFTTest is Test {
         for (uint8 i = 0; i < 10; i++) {
             reservNFT.createReservNFT{value: 0.01 ether}(
                 dropId,
-                reservationTimestamp,
-                "ipfs://test-uri"
+                reservationTimestamp
             );
         }
 
@@ -132,8 +125,7 @@ contract ReservNFTTest is Test {
         vm.expectRevert(ReservNFT__ExceedReservationsLimit.selector);
         reservNFT.createReservNFT{value: 0.01 ether}(
             dropId,
-            reservationTimestamp,
-            "ipfs://test-uri"
+            reservationTimestamp
         );
     }
 
@@ -142,8 +134,7 @@ contract ReservNFTTest is Test {
         uint256 reservationTimestamp = 1700000001; // Within the drop window
         uint256 tokenId = reservNFT.createReservNFT{value: 0.01 ether}(
             dropId,
-            reservationTimestamp,
-            "ipfs://test-uri"
+            reservationTimestamp
         );
 
         // Retrieve reservation details
@@ -164,8 +155,7 @@ contract ReservNFTTest is Test {
         // Mint with overpayment
         uint256 tokenId = reservNFT.createReservNFT{value: 0.02 ether}(
             dropId,
-            reservationTimestamp,
-            "ipfs://test-uri"
+            reservationTimestamp
         );
 
         // Verify that the refund was received
@@ -184,11 +174,39 @@ contract ReservNFTTest is Test {
     function test_tokenURI() public payable {
         uint256 dropId = 0;
         uint256 reservationTimestamp = 1700000001; // Within the drop window
-        string memory expectedTokenURI = "ipfs://test-uri";
         uint256 tokenId = reservNFT.createReservNFT{value: 0.01 ether}(
             dropId,
-            reservationTimestamp,
-            expectedTokenURI
+            reservationTimestamp
+        );
+
+        // Retrieve drop details from RestaurantManager contract
+
+        IRestaurantManager.Drop memory drop = IRestaurantManager(
+            address(restaurantManager)
+        ).getDrop(dropId);
+
+        // Define the imageURI based on your desired image
+        string
+            memory imageURI = "https://cdn.onlinewebfonts.com/svg/img_481205.png";
+
+        // Generate expected metadata JSON
+        string memory expectedTokenURI = string(
+            abi.encodePacked(
+                "data:application/json;base64,",
+                Base64.encode(
+                    bytes(
+                        abi.encodePacked(
+                            '{"name":"Reservation NFT", "description":"Restaurant reservation NFT", "attributes":[{"trait_type":"restaurantId","value":',
+                            Strings.toString(drop.restaurantId),
+                            '},{"trait_type":"reservationTimestamp","value":',
+                            Strings.toString(reservationTimestamp),
+                            '}], "image":"',
+                            imageURI,
+                            '"}'
+                        )
+                    )
+                )
+            )
         );
 
         // Retrieve tokenURI for the minted NFT
@@ -204,8 +222,7 @@ contract ReservNFTTest is Test {
         uint256 initialBalance = address(this).balance;
         reservNFT.createReservNFT{value: 0.01 ether}(
             dropId,
-            reservationTimestamp,
-            "ipfs://test-uri"
+            reservationTimestamp
         );
 
         // Withdraw contract balance to the owner

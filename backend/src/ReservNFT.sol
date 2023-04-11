@@ -4,6 +4,8 @@ pragma solidity ^0.8.18;
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {IERC721Metadata} from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
+import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 
 import {IRestaurantManager} from "../interfaces/IRestaurantManager.sol";
 
@@ -50,6 +52,40 @@ contract ReservNFT is ERC721, ReentrancyGuard {
         owner = msg.sender;
     }
 
+    // Generate metadata JSON for URI
+    function generateMetadataJson(
+        uint256 restaurantId,
+        uint256 reservationTimestamp
+    ) internal pure returns (string memory) {
+        // Define the imageURI based on your desired image
+        string
+            memory imageURI = "https://cdn.onlinewebfonts.com/svg/img_481205.png";
+        uint256 m_restaurantId = restaurantId;
+        uint256 m_reservationTimestamp = reservationTimestamp;
+
+        // Generate metadata JSON
+        string memory metadataJson = string(
+            abi.encodePacked(
+                "data:application/json;base64,",
+                Base64.encode(
+                    bytes(
+                        abi.encodePacked(
+                            '{"name":"Reservation NFT", "description":"Restaurant reservation NFT", "attributes":[{"trait_type":"restaurantId","value":',
+                            Strings.toString(m_restaurantId),
+                            '},{"trait_type":"reservationTimestamp","value":',
+                            Strings.toString(m_reservationTimestamp),
+                            '}], "image":"',
+                            imageURI,
+                            '"}'
+                        )
+                    )
+                )
+            )
+        );
+
+        return metadataJson;
+    }
+
     function _setTokenURI(
         uint256 tokenId,
         string memory _tokenURI
@@ -81,21 +117,23 @@ contract ReservNFT is ERC721, ReentrancyGuard {
     /// @notice Creates a reservation NFT for the specified drop
     /// @param dropId The unique identifier of the drop
     /// @param reservationTimestamp The timestamp of the reservation
-    /// @param tokenURI The token URI containing the metadata for the reservation NFT
     /// @return newItemId The unique identifier of the newly minted reservation NFT
     function createReservNFT(
         uint256 dropId,
-        uint256 reservationTimestamp,
-        string memory tokenURI
+        uint256 reservationTimestamp
     ) public payable nonReentrant returns (uint256) {
         // Retrieve drop details from RestaurantManager contract
         IRestaurantManager restaurantManager = IRestaurantManager(
             restaurantManagerAddress
         );
 
+        uint256 m_reservationTimestamp = reservationTimestamp;
+
         IRestaurantManager.Drop memory drop = restaurantManager.getDrop(dropId);
 
-        bytes32 timeSlotId = keccak256(abi.encodePacked(reservationTimestamp));
+        bytes32 timeSlotId = keccak256(
+            abi.encodePacked(m_reservationTimestamp)
+        );
         uint256 reservationCount = restaurantManager
             .getTimeSlotReservationCount(dropId, timeSlotId);
 
@@ -115,8 +153,8 @@ contract ReservNFT is ERC721, ReentrancyGuard {
 
         // Check if the reservation timestamp is within the drop window
         if (
-            reservationTimestamp < drop.startDate ||
-            reservationTimestamp > drop.endDate
+            m_reservationTimestamp < drop.startDate ||
+            m_reservationTimestamp > drop.endDate
         ) {
             revert ReservNFT__OutsideDropWindow();
         }
@@ -130,7 +168,12 @@ contract ReservNFT is ERC721, ReentrancyGuard {
         // Retrieve restaurant details
         IRestaurantManager.Restaurant memory restaurant = restaurantManager
             .getRestaurant(drop.restaurantId);
-        string memory restaurantName = restaurant.name;
+
+        // Generate metadata JSON string
+        string memory metadataJson = generateMetadataJson(
+            drop.restaurantId,
+            m_reservationTimestamp
+        );
 
         _tokenIds = _tokenIds + 1;
         uint256 newItemId = _tokenIds;
@@ -138,17 +181,17 @@ contract ReservNFT is ERC721, ReentrancyGuard {
         reservations[newItemId] = Reservation(
             dropId,
             drop.restaurantId,
-            reservationTimestamp
+            m_reservationTimestamp
         );
 
         _mint(msg.sender, newItemId);
-        _setTokenURI(newItemId, tokenURI);
+        _setTokenURI(newItemId, metadataJson);
 
         emit ReservationCreated(
             newItemId,
             dropId,
             drop.restaurantId,
-            reservationTimestamp
+            m_reservationTimestamp
         );
 
         // Handle mint price and refund any overpayment

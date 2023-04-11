@@ -188,11 +188,6 @@
         "internalType": "uint256",
         "name": "reservationTimestamp",
         "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "tokenURI",
-        "type": "string"
       }
     ],
     "name": "createReservNFT",
