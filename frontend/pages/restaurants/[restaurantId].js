@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { useQuery } from "@apollo/client"
 import { useRouter } from "next/router"
+import moment from "moment-timezone"
 import { Card, Typography, Loading, Button } from "web3uikit"
 import subgraphQueries from "@/constants/subgraphQueries"
 import { useMoralis } from "react-moralis"
@@ -28,6 +29,7 @@ export default function Restaurant() {
         loading: dropsLoading,
         error: dropsError,
         data: dropsData,
+        refetch,
     } = useQuery(GET_DROPS_BY_RESTAURANT_ID, {
         variables: { restaurantId: restaurantId },
         skip: !restaurantData || !restaurantId || !account,
@@ -48,6 +50,17 @@ export default function Restaurant() {
     const handleSubmit = (data) => {
         // Process form values from data object as needed
         setModalVisible(false)
+    }
+
+    const formatDurationLabel = (seconds) => {
+        const duration = moment.duration(seconds, "seconds")
+        const hours = duration.hours()
+        const minutes = duration.minutes()
+
+        if (hours === 0) {
+            return `${minutes} min`
+        }
+        return `${hours} hr`
     }
 
     if (restaurantLoading || !restaurantId) {
@@ -123,6 +136,7 @@ export default function Restaurant() {
                                             onSubmit={handleSubmit}
                                             restaurantId={restaurant.restaurantId}
                                             setButtonLoading={setButtonLoading}
+                                            refetchDrops={refetch}
                                         />
                                     </div>
                                 ) : (
@@ -137,18 +151,18 @@ export default function Restaurant() {
                                         >
                                             <Card>
                                                 <div>
-                                                    <Typography classname="mb-2 block">
+                                                    <Typography className="mb-2 block">
                                                         Drop ID: {drop.dropId}
                                                     </Typography>
                                                 </div>
                                                 <div>
-                                                    <Typography classname="mb-2 block">
+                                                    <Typography className="mb-2 block">
                                                         Mint Price:{" "}
                                                         {Moralis.Units.FromWei(drop.mintPrice)}
                                                     </Typography>
                                                 </div>
                                                 <div>
-                                                    <Typography classname="mb-2 block">
+                                                    <Typography className="mb-2 block">
                                                         Start Date:{" "}
                                                         {new Date(
                                                             parseInt(drop.startDate, 10) * 1000
@@ -156,7 +170,7 @@ export default function Restaurant() {
                                                     </Typography>
                                                 </div>
                                                 <div>
-                                                    <Typography classname="mb-2 block">
+                                                    <Typography className="mb-2 block">
                                                         End Date:{" "}
                                                         {new Date(
                                                             parseInt(drop.endDate, 10) * 1000
@@ -164,18 +178,33 @@ export default function Restaurant() {
                                                     </Typography>
                                                 </div>
                                                 <div>
-                                                    <Typography classname="mb-2 block">
-                                                        Daily Start Time: {drop.dailyStartTime}
+                                                    <Typography className="mb-2 block">
+                                                        Daily Start Time:{" "}
+                                                        {moment
+                                                            .tz(
+                                                                moment().format("YYYY-MM-DD"),
+                                                                "America/New_York"
+                                                            )
+                                                            .add(drop.dailyStartTime, "seconds")
+                                                            .format("hh:mm A")}
                                                     </Typography>
                                                 </div>
                                                 <div>
-                                                    <Typography classname="mb-2 block">
-                                                        Daily End Time: {drop.dailyEndTime}
+                                                    <Typography className="mb-2 block">
+                                                        Daily End Time:{" "}
+                                                        {moment
+                                                            .tz(
+                                                                moment().format("YYYY-MM-DD"),
+                                                                "America/New_York"
+                                                            )
+                                                            .add(drop.dailyEndTime, "seconds")
+                                                            .format("hh:mm A")}
                                                     </Typography>
                                                 </div>
                                                 <div>
-                                                    <Typography classname="mb-2 block">
-                                                        Window Duration: {drop.windowDuration}
+                                                    <Typography className="mb-2 block">
+                                                        Window Duration:{" "}
+                                                        {formatDurationLabel(drop.windowDuration)}
                                                     </Typography>
                                                 </div>
                                                 <div>

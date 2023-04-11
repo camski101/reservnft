@@ -1,18 +1,33 @@
-import React, { useState, useCallback } from "react"
+import React, { useState, useCallback, useEffect } from "react"
 import { Modal, Input, DatePicker, Dropdown, useNotification, Form } from "web3uikit"
 import moment from "moment-timezone"
 import { useMoralis, useWeb3Contract } from "react-moralis"
 import { RestaurantManager, networkMapping } from "../constants"
 
-export const DropModal = ({ isVisible, onClose, onSubmit, restaurantId, setButtonLoading }) => {
+export const DropModal = ({
+    isVisible,
+    onClose,
+    onSubmit,
+    restaurantId,
+    setButtonLoading,
+    refetchDrops,
+}) => {
+    const reservationOptions = [
+        { id: "900", label: "15 min" }, // 15 * 60
+        { id: "1800", label: "30 min" }, // 30 * 60
+        { id: "3600", label: "1 hr" }, // 60 * 60
+        { id: "7200", label: "2 hr" }, // 120 * 60
+        { id: "14400", label: "4 hr" }, // 240 * 60
+    ]
+
     const tz = moment.tz.guess()
     const [mintPrice, setMintPrice] = useState(0)
     const [uiMintPrice, setUIMintPrice] = useState(0)
-    const [startDate, setStartDate] = useState(moment.tz(new Date(), tz).unix()) // Set default start date
-    const [endDate, setEndDate] = useState(moment.tz(new Date(), tz).unix()) // Set default end date
+    const [startDate, setStartDate] = useState(moment.tz(new Date(), "America/New_York").unix())
+    const [endDate, setEndDate] = useState(moment.tz(new Date(), "America/New_York").unix())
     const [dailyStartTime, setDailyStartTime] = useState(null)
     const [dailyEndTime, setDailyEndTime] = useState(null)
-    const [windowDuration, setWindowDuration] = useState(null)
+    const [windowDuration, setWindowDuration] = useState(parseInt(reservationOptions[0].id))
     const [reservationsPerWindow, setReservationsPerWindow] = useState("")
 
     const { Moralis, chainId: chainIdHex } = useMoralis()
@@ -20,6 +35,10 @@ export const DropModal = ({ isVisible, onClose, onSubmit, restaurantId, setButto
     const rmAddress =
         chainId in networkMapping ? networkMapping[chainId]["RestaurantManager"] : null
     const dispatch = useNotification()
+
+    useEffect(() => {
+        handleWindowDurationChange(reservationOptions[0])
+    }, [])
 
     const {
         runContractFunction: createDrop,
@@ -58,7 +77,8 @@ export const DropModal = ({ isVisible, onClose, onSubmit, restaurantId, setButto
                 handleNewNotification(
                     "success",
                     "Transaction Complete!",
-                    "Transaction Notification"
+                    "Transaction Notification",
+                    tx
                 )
 
                 setMintPrice(0)
@@ -69,6 +89,7 @@ export const DropModal = ({ isVisible, onClose, onSubmit, restaurantId, setButto
                 setWindowDuration(null)
                 setReservationsPerWindow("")
                 setButtonLoading(false)
+                refetchDrops()
             } catch (error) {
                 console.log(error)
             }
@@ -87,13 +108,16 @@ export const DropModal = ({ isVisible, onClose, onSubmit, restaurantId, setButto
     const handleSubmit = async (data) => {
         data = {
             mintPrice: mintPrice,
-            startDate: moment.tz(startDate, tz).unix(),
-            endDate: moment.tz(endDate, tz).unix(),
+            startDate: startDate,
+            endDate: endDate,
             dailyStartTime,
             dailyEndTime,
             windowDuration,
             reservationsPerWindow,
         }
+
+        console.log(dailyStartTime)
+        console.log(dailyEndTime)
 
         await createDrop({
             onSuccess: (tx) => {
@@ -114,14 +138,6 @@ export const DropModal = ({ isVisible, onClose, onSubmit, restaurantId, setButto
             .toString()
             .padStart(2, "0")} ${period}`
     }
-
-    const reservationOptions = [
-        { id: "900", label: "15 min" }, // 15 * 60
-        { id: "1800", label: "30 min" }, // 30 * 60
-        { id: "3600", label: "1 hr" }, // 60 * 60
-        { id: "7200", label: "2 hr" }, // 120 * 60
-        { id: "14400", label: "4 hr" }, // 240 * 60
-    ]
 
     const [startTimeOptions, setStartTimeOptions] = useState([])
     const [endTimeOptions, setEndTimeOptions] = useState([])
@@ -210,22 +226,36 @@ export const DropModal = ({ isVisible, onClose, onSubmit, restaurantId, setButto
                         </div>
                         <div>
                             <label className="block text-gray-700 font-medium">
-                                Drop Start Date (UTC)
+                                Drop Start Date (EST)
                             </label>
                             <DatePicker
                                 className="mt-1 w-full"
                                 selectedDate={startDate}
-                                onChange={(date) => setStartDate(moment.tz(date.date, tz).unix())}
+                                onChange={(date) =>
+                                    setStartDate(
+                                        moment
+                                            .tz(date.date, "America/New_York")
+                                            .utcOffset(0)
+                                            .unix()
+                                    )
+                                }
                             />
                         </div>
                         <div>
                             <label className="block text-gray-700 font-medium">
-                                Drop End Date (UTC)
+                                Drop End Date (EST)
                             </label>
                             <DatePicker
                                 className="mt-1 w-full"
                                 selectedDate={endDate}
-                                onChange={(date) => setEndDate(moment.tz(date.date, tz).unix())}
+                                onChange={(date) =>
+                                    setEndDate(
+                                        moment
+                                            .tz(date.date, "America/New_York")
+                                            .utcOffset(0)
+                                            .unix()
+                                    )
+                                }
                             />
                         </div>
                         <div>
@@ -241,7 +271,7 @@ export const DropModal = ({ isVisible, onClose, onSubmit, restaurantId, setButto
                         <div className="">
                             <div className="z-10">
                                 <label className="block text-gray-700 font-medium">
-                                    Daily Start Time UTC:
+                                    Daily Start Time (EST):
                                 </label>
                                 <Dropdown
                                     className="mt-1 w-full"
@@ -253,7 +283,7 @@ export const DropModal = ({ isVisible, onClose, onSubmit, restaurantId, setButto
                             </div>
                             <div className="z-10">
                                 <label className="block text-gray-700 font-medium">
-                                    Daily End Time UTC:
+                                    Daily End Time (EST):
                                 </label>
                                 <Dropdown
                                     className="mt-1 w-full"
