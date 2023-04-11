@@ -13,6 +13,8 @@ export default function Restaurant() {
     const router = useRouter()
     const { restaurantId } = router.query
 
+    const [buttonLoading, setButtonLoading] = useState(false)
+
     const {
         loading: restaurantLoading,
         error: restaurantError,
@@ -35,6 +37,12 @@ export default function Restaurant() {
 
     const openModal = () => {
         setModalVisible(true)
+        setButtonLoading(true)
+    }
+
+    const handleOnClose = () => {
+        setModalVisible(false)
+        setButtonLoading(false)
     }
 
     const handleSubmit = (data) => {
@@ -60,8 +68,6 @@ export default function Restaurant() {
     if (!restaurantData) return null
 
     const restaurant = restaurantData.restaurant
-
-    console.log(dropsData)
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -98,14 +104,25 @@ export default function Restaurant() {
                                     <div className="w-full p-2">
                                         <Button
                                             theme="primary"
-                                            text="Create a Drop"
+                                            text={
+                                                buttonLoading ? (
+                                                    <Loading
+                                                        size={20}
+                                                        spinnerColor="#ffffff"
+                                                        spinnerType="wave"
+                                                    />
+                                                ) : (
+                                                    "Create a Drop"
+                                                )
+                                            }
                                             onClick={openModal}
                                         />
                                         <DropModal
                                             isVisible={modalVisible}
-                                            onClose={() => setModalVisible(false)}
+                                            onClose={handleOnClose}
                                             onSubmit={handleSubmit}
                                             restaurantId={restaurant.restaurantId}
+                                            setButtonLoading={setButtonLoading}
                                         />
                                     </div>
                                 ) : (

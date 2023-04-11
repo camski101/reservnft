@@ -1,12 +1,11 @@
-import React, { useState } from "react"
-import { Modal, Input, DatePicker, Dropdown, useNotification } from "web3uikit"
+import React, { useState, useCallback } from "react"
+import { Modal, Input, DatePicker, Dropdown, useNotification, Form } from "web3uikit"
 import moment from "moment-timezone"
 import { useMoralis, useWeb3Contract } from "react-moralis"
 import { RestaurantManager, networkMapping } from "../constants"
 
-export const DropModal = ({ isVisible, onClose, onSubmit, restaurantId }) => {
+export const DropModal = ({ isVisible, onClose, onSubmit, restaurantId, setButtonLoading }) => {
     const tz = moment.tz.guess()
-    const [transactionSuccess, setTransactionSuccess] = useState(true)
     const [mintPrice, setMintPrice] = useState(0)
     const [uiMintPrice, setUIMintPrice] = useState(0)
     const [startDate, setStartDate] = useState(moment.tz(new Date(), tz).unix()) // Set default start date
@@ -16,7 +15,7 @@ export const DropModal = ({ isVisible, onClose, onSubmit, restaurantId }) => {
     const [windowDuration, setWindowDuration] = useState(null)
     const [reservationsPerWindow, setReservationsPerWindow] = useState("")
 
-    const { Moralis, isWeb3Enabled, chainId: chainIdHex } = useMoralis()
+    const { Moralis, chainId: chainIdHex } = useMoralis()
     const chainId = parseInt(chainIdHex)
     const rmAddress =
         chainId in networkMapping ? networkMapping[chainId]["RestaurantManager"] : null
@@ -43,33 +42,47 @@ export const DropModal = ({ isVisible, onClose, onSubmit, restaurantId }) => {
         },
     })
 
-    const handleSuccess = async (tx) => {
-        try {
-            await tx.wait(1)
-            handleNewNotification(tx)
-
-            setMintPrice(0)
-            setStartDate(new Date())
-            setEndDate(new Date())
-            setDailyStartTime(null)
-            setDailyEndTime(null)
-            setWindowDuration(null)
-            setReservationsPerWindow("")
-
-            setTransactionSuccess(true)
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const handleNewNotification = () => {
+    const handleNewNotification = (type, message, title, tx) => {
         dispatch({
-            type: "info",
-            message: "Transaction Complete!",
-            title: "Transaction Notification",
+            type: type,
+            message: message,
+            title: title,
             position: "topR",
         })
     }
+
+    const handleSuccess = useCallback(
+        async (tx) => {
+            try {
+                await tx.wait(1)
+                handleNewNotification(
+                    "success",
+                    "Transaction Complete!",
+                    "Transaction Notification"
+                )
+
+                setMintPrice(0)
+                setStartDate(new Date())
+                setEndDate(new Date())
+                setDailyStartTime(null)
+                setDailyEndTime(null)
+                setWindowDuration(null)
+                setReservationsPerWindow("")
+                setButtonLoading(false)
+            } catch (error) {
+                console.log(error)
+            }
+        },
+        [handleNewNotification]
+    )
+
+    const handleError = useCallback(
+        (error) => {
+            setButtonLoading(false)
+            handleNewNotification("error", error.message, "Transaction Notification")
+        },
+        [handleNewNotification]
+    )
 
     const handleSubmit = async (data) => {
         data = {
@@ -82,16 +95,12 @@ export const DropModal = ({ isVisible, onClose, onSubmit, restaurantId }) => {
             reservationsPerWindow,
         }
 
-        console.log(data)
-
-        setTransactionSuccess(false)
-
         await createDrop({
             onSuccess: (tx) => {
                 handleSuccess(tx)
             },
             onError: (error) => {
-                console.log(error)
+                handleError(error)
             },
         })
 
@@ -171,8 +180,12 @@ export const DropModal = ({ isVisible, onClose, onSubmit, restaurantId }) => {
     return (
         <Modal
             isVisible={isVisible}
+            canOverflow={true}
             onCloseButtonPressed={onClose}
             onOk={handleSubmit}
+            okText="Create Drop"
+            onCancel={onClose}
+            cancelText="Cancel"
             className="bg-white rounded-lg p-6"
         >
             <div
@@ -220,39 +233,38 @@ export const DropModal = ({ isVisible, onClose, onSubmit, restaurantId }) => {
                                 Reservation Window:
                             </label>
                             <Dropdown
-                                className="mt-1 w-full"
+                                className=""
                                 onChange={handleWindowDurationChange}
                                 options={reservationOptions}
                             />
                         </div>
-                        {windowDuration && (
-                            <div className="space-y-4 max-h-[150px] overflow-y-auto relative">
-                                <div className="z-10">
-                                    <label className="block text-gray-700 font-medium">
-                                        Daily Start Time UTC:
-                                    </label>
-                                    <Dropdown
-                                        className="mt-1 w-full"
-                                        onChange={(selectedOption) =>
-                                            handleTimeChange(selectedOption, true)
-                                        }
-                                        options={startTimeOptions}
-                                    />
-                                </div>
-                                <div className="z-10">
-                                    <label className="block text-gray-700 font-medium">
-                                        Daily End Time UTC:
-                                    </label>
-                                    <Dropdown
-                                        className="mt-1 w-full"
-                                        onChange={(selectedOption) =>
-                                            handleTimeChange(selectedOption, false)
-                                        }
-                                        options={endTimeOptions}
-                                    />
-                                </div>
+                        <div className="">
+                            <div className="z-10">
+                                <label className="block text-gray-700 font-medium">
+                                    Daily Start Time UTC:
+                                </label>
+                                <Dropdown
+                                    className="mt-1 w-full"
+                                    onChange={(selectedOption) =>
+                                        handleTimeChange(selectedOption, true)
+                                    }
+                                    options={startTimeOptions}
+                                />
                             </div>
-                        )}
+                            <div className="z-10">
+                                <label className="block text-gray-700 font-medium">
+                                    Daily End Time UTC:
+                                </label>
+                                <Dropdown
+                                    className="mt-1 w-full"
+                                    onChange={(selectedOption) =>
+                                        handleTimeChange(selectedOption, false)
+                                    }
+                                    options={endTimeOptions}
+                                />
+                            </div>
+                        </div>
+
                         <div>
                             <label className="block text-gray-700 font-medium">
                                 Number of Reservations per Window
