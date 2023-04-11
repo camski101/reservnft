@@ -33,9 +33,9 @@ contract ReservNFT is ERC721, ReentrancyGuard {
     }
 
     event ReservationCreated(
-        uint256 tokenId,
-        uint256 dropId,
-        uint256 restaurantId,
+        uint256 indexed tokenId,
+        uint256 indexed dropId,
+        uint256 indexed restaurantId,
         uint256 reservationTimestamp
     );
 

@@ -40,12 +40,14 @@ update-abi:
 
 update-address:
 	ADDRESS=$$(jq -r ".transactions[0].contractAddress" ./broadcast/${contract}.s.sol/80001/run-latest.json) && \
-	sed -i '' "s/\(address: \).*$$/\1\"$${ADDRESS}\"/" ../graph/subgraph.yaml && \
-	sed -i '' "s/\(\"80001\": {[^}]* \"${contract}\": \"\)[^\"]*\(\".*}\)/\1$${ADDRESS}\2/" ../frontend/constants/networkMapping.json
+	node updateFiles.js ${contract} $${ADDRESS}
 
-# deploys to polygon mumbai - needs contract verification at some point
+verify:
+	ADDRESS=$$(jq -r ".transactions[0].contractAddress" ./broadcast/${contract}.s.sol/80001/run-latest.json) && \
+	forge verify-contract --verifier-url https://api-testnet.polygonscan.com/api/ $${ADDRESS} ${contract} --etherscan-api-key ${POLYGONSCAN_API_KEY}
 
-deploy-mumbai :; @forge script script/${contract}.s.sol:Deploy${contract} --rpc-url ${MUMBAI_RPC_URL}  --private-key ${PRIVATE_KEY} --broadcast  -vvvv && $(MAKE) update-abi && $(MAKE) update-address
+deploy-mumbai:
+	@forge script script/${contract}.s.sol:Deploy${contract} --rpc-url ${MUMBAI_RPC_URL}  --private-key ${PRIVATE_KEY} --broadcast  -vvvv && $(MAKE) update-abi && $(MAKE) update-address && $(MAKE) verify
 
 # This is the private key of account from the mnemonic from the "make anvil" command
 # deploys to local anvil

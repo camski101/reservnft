@@ -2,7 +2,6 @@
 
 pragma solidity ^0.8.18;
 
-import {Counters} from "@openzeppelin/contracts/utils/Counters.sol";
 import "../interfaces/IReservNFT.sol";
 
 error RestaurantManager__Unauthorized();
