@@ -494,10 +494,6 @@ export class CreateReservNFTCall__Inputs {
   get reservationTimestamp(): BigInt {
     return this._call.inputValues[1].value.toBigInt();
   }
-
-  get tokenURI(): string {
-    return this._call.inputValues[2].value.toString();
-  }
 }
 
 export class CreateReservNFTCall__Outputs {
