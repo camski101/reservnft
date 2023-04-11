@@ -6,6 +6,8 @@ import { Card, Typography, Loading, Button } from "web3uikit"
 import subgraphQueries from "@/constants/subgraphQueries"
 import { useMoralis } from "react-moralis"
 import { DropModal } from "@/components/DropModal"
+import { MintModal } from "@/components/MintModal"
+import { formatDurationLabel } from "@/utils/dateUtils"
 
 const { GET_RESTAURANT_BY_ID, GET_DROPS_BY_RESTAURANT_ID } = subgraphQueries
 
@@ -36,10 +38,15 @@ export default function Restaurant() {
     })
 
     const [modalVisible, setModalVisible] = useState(false)
+    const [mintModalVisible, setMintModalVisible] = useState(false)
 
     const openModal = () => {
         setModalVisible(true)
         setButtonLoading(true)
+    }
+
+    const openMintModal = () => {
+        setMintModalVisible(true)
     }
 
     const handleOnClose = () => {
@@ -47,20 +54,17 @@ export default function Restaurant() {
         setButtonLoading(false)
     }
 
+    const handleMintOnClose = () => {
+        setMintModalVisible(false)
+    }
+
     const handleSubmit = (data) => {
         // Process form values from data object as needed
         setModalVisible(false)
     }
 
-    const formatDurationLabel = (seconds) => {
-        const duration = moment.duration(seconds, "seconds")
-        const hours = duration.hours()
-        const minutes = duration.minutes()
-
-        if (hours === 0) {
-            return `${minutes} min`
-        }
-        return `${hours} hr`
+    const handleMintSubmit = (data) => {
+        setMintModalVisible(false)
     }
 
     if (restaurantLoading || !restaurantId) {

@@ -3,6 +3,7 @@ import { Modal, Input, DatePicker, Dropdown, useNotification, Form } from "web3u
 import moment from "moment-timezone"
 import { useMoralis, useWeb3Contract } from "react-moralis"
 import { RestaurantManager, networkMapping } from "../constants"
+import { generateTimeOptions } from "@/utils/dateUtils"
 
 export const DropModal = ({
     isVisible,
@@ -116,9 +117,6 @@ export const DropModal = ({
             reservationsPerWindow,
         }
 
-        console.log(dailyStartTime)
-        console.log(dailyEndTime)
-
         await createDrop({
             onSuccess: (tx) => {
                 handleSuccess(tx)
@@ -131,33 +129,8 @@ export const DropModal = ({
         onSubmit(data)
     }
 
-    const formatTimeLabel = (hours, minutes) => {
-        const period = hours >= 12 ? "PM" : "AM"
-        const formattedHours = hours % 12 || 12
-        return `${formattedHours.toString().padStart(2, "0")}:${minutes
-            .toString()
-            .padStart(2, "0")} ${period}`
-    }
-
     const [startTimeOptions, setStartTimeOptions] = useState([])
     const [endTimeOptions, setEndTimeOptions] = useState([])
-
-    const generateTimeOptions = (incrementInSeconds) => {
-        const timeOptions = []
-        const totalMinutes = 24 * 60
-        const increment = incrementInSeconds / 60 // Convert to minutes
-        for (let i = 0; i < totalMinutes; i += increment) {
-            const hours = Math.floor(i / 60)
-            const minutes = i % 60
-            const timeLabel = formatTimeLabel(hours, minutes)
-            timeOptions.push({ id: i * 60, label: timeLabel }) // Store in seconds
-        }
-        // Ensure the last option is "23:59"
-        if (timeOptions[timeOptions.length - 1].id !== 23 * 60 * 60 + 59 * 60) {
-            timeOptions.push({ id: 23 * 60 * 60 + 59 * 60, label: "11:59 PM" })
-        }
-        return timeOptions
-    }
 
     const handleTimeChange = (selectedOption, isStartTime) => {
         const selectedTimeInSeconds = parseInt(selectedOption.id)
