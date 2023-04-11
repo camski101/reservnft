@@ -57,7 +57,12 @@ export default function RegisterRestaurant({ onDataChange }) {
     const handleSuccess = async (tx) => {
         try {
             await tx.wait(1)
-            handleNewNotification("info", "Transaction Complete!", "Transaction Notification", tx)
+            handleNewNotification(
+                "success",
+                "Transaction Complete!",
+                "Transaction Notification",
+                tx
+            )
             setRestaurantName("")
             setRestaurantBusinessAddress("")
             setButtonLoading(false)

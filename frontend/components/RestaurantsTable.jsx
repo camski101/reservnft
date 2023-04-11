@@ -1,5 +1,5 @@
 import React from "react"
-import { Table, Button } from "web3uikit"
+import { Table, Button, Loading } from "web3uikit"
 import Link from "next/link"
 
 export const RestaurantsTable = ({
@@ -8,7 +8,8 @@ export const RestaurantsTable = ({
     header,
     showStatus,
     onToggleStatus,
-    buttonLoading,
+    loadingState,
+    setButtonLoading,
 }) => {
     return (
         <Table
@@ -26,10 +27,16 @@ export const RestaurantsTable = ({
                     ? [
                           <div>{restaurant.isActive ? "Active" : "Inactive"}</div>,
                           <Button
-                              onClick={() => onToggleStatus(restaurant)}
+                              onClick={() => {
+                                  setButtonLoading((prevButtonLoading) => ({
+                                      ...prevButtonLoading,
+                                      [restaurant.id]: true,
+                                  }))
+                                  onToggleStatus(restaurant, restaurant.id)
+                              }}
                               theme="primary"
                               text={
-                                  buttonLoading ? (
+                                  loadingState[restaurant.id] ? (
                                       <Loading
                                           size={20}
                                           spinnerColor="#ffffff"

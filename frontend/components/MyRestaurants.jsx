@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useCallback } from "react"
 import { useMoralis, useWeb3Contract } from "react-moralis"
 import { useQuery } from "@apollo/client"
 import { useNotification, Loading } from "web3uikit"
@@ -17,7 +17,9 @@ export default function MyRestaurants() {
     const [restaurantId, setRestaurantId] = useState(null)
     const [isActive, setIsActive] = useState(null)
     const [shouldToggle, setShouldToggle] = useState(false)
-    const [buttonLoading, setButtonLoading] = useState(false)
+
+    const [buttonLoading, setButtonLoading] = useState({})
+    const [buttonId, setButtonId] = useState(null)
 
     const { runContractFunction: toggleIsActive } = useWeb3Contract({
         abi: RestaurantManager,
@@ -44,35 +46,52 @@ export default function MyRestaurants() {
         })
     }
 
-    const handleSuccess = async (tx) => {
-        try {
-            await tx.wait(1)
-            handleNewNotification("info", "Transaction Complete!", "Transaction Notification", tx)
-            refetch()
-        } catch (error) {
-            console.log(error)
-        }
-    }
+    const handleSuccess = useCallback(
+        async (tx) => {
+            try {
+                await tx.wait(1)
+                handleNewNotification(
+                    "success",
+                    "Transaction Complete!",
+                    "Transaction Notification",
+                    tx
+                )
+                refetch()
+                setShouldToggle(false)
+                setButtonLoading((prevState) => ({ ...prevState, [buttonId]: false }))
+            } catch (error) {
+                console.log(error)
+                setShouldToggle(false)
+            }
+        },
+        [restaurantId, handleNewNotification, refetch]
+    )
 
-    const handleToggleActiveClick = async (id, isActive) => {
-        setButtonLoading(true)
+    const handleError = useCallback(
+        (error) => {
+            handleNewNotification("error", error.message, "Transaction Notification")
+            setButtonLoading((prevState) => ({ ...prevState, [buttonId]: false }))
+            setShouldToggle(false)
+        },
+        [restaurantId, handleNewNotification]
+    )
+
+    const handleToggleActiveClick = async (id, isActive, buttonId) => {
+        setButtonLoading((prevButtonLoading) => ({ ...prevButtonLoading, [buttonId]: true }))
         setRestaurantId(id)
+        setButtonId(buttonId)
         setIsActive(isActive)
         setShouldToggle(true)
     }
 
     useEffect(() => {
         if (shouldToggle && restaurantId !== null && isActive !== null) {
-            console.log("Calling toggleIsActive", restaurantId, isActive)
-
             toggleIsActive({
-                onSuccess: handleSuccess,
-                onError: (error) => console.log(error),
+                onSuccess: (tx) => handleSuccess(tx),
+                onError: (error) => handleError(error),
             })
-            setShouldToggle(false)
-            setButtonLoading(false)
         }
-    }, [shouldToggle, restaurantId, isActive, handleSuccess])
+    }, [shouldToggle, restaurantId, isActive])
 
     if (loading) {
         return (
@@ -114,9 +133,11 @@ export default function MyRestaurants() {
                     handleToggleActiveClick(
                         parseInt(restaurant.id.toString()),
                         !restaurant.isActive,
-                        buttonLoading
+                        restaurant.id
                     )
                 }
+                loadingState={buttonLoading}
+                setButtonLoading={setButtonLoading}
             />
         </div>
     )
