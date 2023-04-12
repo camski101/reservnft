@@ -19,6 +19,7 @@ error ReservNFT__NonexistentToken();
 error ReservNFT__OutsideDailyWindow();
 error ReservNFT__InvalidWindowDuration();
 error ReservNFT__NoBalanceAvailable();
+error ReservNFT__ZeroAddress();
 
 /// @title ReservNFT
 /// @notice A contract for creating restaurant reservation NFTs with different drops and mint prices.
@@ -38,11 +39,14 @@ contract ReservNFT is ERC721URIStorage, Ownable, ReentrancyGuard {
     }
 
     event ReservationCreated(
+        address indexed owner,
         uint256 indexed tokenId,
         uint256 indexed restaurantId,
-        uint256 indexed dropId,
+        uint256 dropId,
         uint256 reservationTimestamp
     );
+
+    event RestaurantManagerAddressSet(address indexed restaurantManagerAddress);
 
     constructor() ERC721("ReservNFT", "RRNFT") {}
 
@@ -85,7 +89,12 @@ contract ReservNFT is ERC721URIStorage, Ownable, ReentrancyGuard {
     function setRestaurantManagerAddress(
         address _restaurantManagerAddress
     ) public onlyOwner {
+        if (_restaurantManagerAddress == address(0)) {
+            revert ReservNFT__ZeroAddress();
+        }
         restaurantManagerAddress = _restaurantManagerAddress;
+
+        emit RestaurantManagerAddressSet(_restaurantManagerAddress);
     }
 
     /// @notice Creates a reservation NFT
@@ -164,22 +173,23 @@ contract ReservNFT is ERC721URIStorage, Ownable, ReentrancyGuard {
         _setTokenURI(newItemId, metadataJson);
 
         emit ReservationCreated(
+            msg.sender,
             newItemId,
             drop.restaurantId,
             dropId,
             reservationTimestamp
         );
 
+        // Transfer mint fee to restaurant owner
+        ownerBalances[
+            restaurantManager.getRestaurant(drop.restaurantId).owner
+        ] += drop.mintPrice;
+
         // Handle mint price and refund any overpayment
         if (msg.value > drop.mintPrice) {
             uint256 refundAmount = msg.value - drop.mintPrice;
             payable(msg.sender).transfer(refundAmount);
         }
-
-        // Transfer mint fee to restaurant owner
-        ownerBalances[
-            restaurantManager.getRestaurant(drop.restaurantId).owner
-        ] += drop.mintPrice;
 
         return newItemId;
     }

@@ -4,7 +4,7 @@ pragma solidity ^0.8.18;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
-import "../interfaces/IReservNFT.sol";
+import {IReservNFT} from "../interfaces/IReservNFT.sol";
 
 error RestaurantManager__Unauthorized();
 error RestaurantManager__DropAlreadyExists();
@@ -13,6 +13,7 @@ error RestaurantManager__DropDoesNotExist();
 error RestaurantManager__RestaurantDoesNotExist();
 error RestaurantManager__InvalidDropDates();
 error RestaurantManager__InvalidDropTimes();
+error RestaurantManager__ZeroAddress();
 
 /// @title RestaurantManager
 /// @notice Register and manage restaurants
@@ -24,7 +25,8 @@ contract RestaurantManager is Ownable {
 
     mapping(uint256 => Restaurant) public restaurants;
     mapping(uint256 => Drop) public drops;
-    mapping(uint256 => mapping(uint256 => uint256)) dropToTimeSlotReservationCount;
+    mapping(uint256 => mapping(uint256 => uint256))
+        public dropToTimeSlotReservationCount;
     mapping(uint256 => uint256) public restaurantDropCount;
 
     /// @dev Restaurant struct stores restaurant information
@@ -61,6 +63,8 @@ contract RestaurantManager is Ownable {
         string businessAddress
     );
 
+    event ReservNFTAddressSet(address indexed reservNFTAddress);
+
     /// @notice Event emitted when a drop is created
     /// @param dropId The unique identifier of the created drop
     /// @param restaurantId The unique identifier of the associated restaurant
@@ -93,8 +97,6 @@ contract RestaurantManager is Ownable {
     /// @param isActive The active status of the drop
     event DropIsActive(uint256 indexed dropId, bool isActive);
 
-    constructor() {}
-
     modifier onlyReservNFT() {
         if (msg.sender != reservNFTAddress) {
             revert RestaurantManager__NotReservNFT();
@@ -122,7 +124,13 @@ contract RestaurantManager is Ownable {
     /// @notice Set the address of the ReservNFT contract
     /// @param _reservNFTAddress Address of the ReservNFT contract
     function setReservNFTAddress(address _reservNFTAddress) public onlyOwner {
+        if (_reservNFTAddress == address(0)) {
+            revert RestaurantManager__ZeroAddress();
+        }
+
         reservNFTAddress = _reservNFTAddress;
+
+        emit ReservNFTAddressSet(reservNFTAddress);
     }
 
     /// @notice Register a restaurant
