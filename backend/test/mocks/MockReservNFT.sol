@@ -30,7 +30,6 @@ contract MockReservNFT is ERC721, IReservNFT {
     ) external view override returns (IReservNFT.Reservation memory) {
         return
             IReservNFT.Reservation({
-                tokenId: 0,
                 dropId: 0,
                 restaurantId: 0,
                 reservationTimestamp: 1700000001
