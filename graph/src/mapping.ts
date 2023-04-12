@@ -65,6 +65,7 @@ export function handleDropIsActive(event: DropIsActiveEvent): void {
 
 export function handleReservationCreated(event: ReservationCreatedEvent): void {
   let reservation = new Reservation(event.params.tokenId.toHex())
+  reservation.owner = event.params.owner
   reservation.tokenId = event.params.tokenId
   reservation.restaurantId = event.params.restaurantId
   reservation.dropId = event.params.dropId

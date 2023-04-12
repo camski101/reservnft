@@ -23,6 +23,7 @@ type Drop @entity {
 
 type Reservation @entity {
   id: ID!
+  owner: Bytes!
   tokenId: BigInt!
   dropId: BigInt!
   restaurantId: BigInt!

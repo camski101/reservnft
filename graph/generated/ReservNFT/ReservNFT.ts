@@ -137,20 +137,42 @@ export class ReservationCreated__Params {
     this._event = event;
   }
 
-  get tokenId(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
+  get owner(): Address {
+    return this._event.parameters[0].value.toAddress();
   }
 
-  get restaurantId(): BigInt {
+  get tokenId(): BigInt {
     return this._event.parameters[1].value.toBigInt();
   }
 
-  get dropId(): BigInt {
+  get restaurantId(): BigInt {
     return this._event.parameters[2].value.toBigInt();
   }
 
-  get reservationTimestamp(): BigInt {
+  get dropId(): BigInt {
     return this._event.parameters[3].value.toBigInt();
+  }
+
+  get reservationTimestamp(): BigInt {
+    return this._event.parameters[4].value.toBigInt();
+  }
+}
+
+export class RestaurantManagerAddressSet extends ethereum.Event {
+  get params(): RestaurantManagerAddressSet__Params {
+    return new RestaurantManagerAddressSet__Params(this);
+  }
+}
+
+export class RestaurantManagerAddressSet__Params {
+  _event: RestaurantManagerAddressSet;
+
+  constructor(event: RestaurantManagerAddressSet) {
+    this._event = event;
+  }
+
+  get restaurantManagerAddress(): Address {
+    return this._event.parameters[0].value.toAddress();
   }
 }
 

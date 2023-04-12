@@ -104,6 +104,24 @@ export class OwnershipTransferred__Params {
   }
 }
 
+export class ReservNFTAddressSet extends ethereum.Event {
+  get params(): ReservNFTAddressSet__Params {
+    return new ReservNFTAddressSet__Params(this);
+  }
+}
+
+export class ReservNFTAddressSet__Params {
+  _event: ReservNFTAddressSet;
+
+  constructor(event: ReservNFTAddressSet) {
+    this._event = event;
+  }
+
+  get reservNFTAddress(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+}
+
 export class RestaurantIsActive extends ethereum.Event {
   get params(): RestaurantIsActive__Params {
     return new RestaurantIsActive__Params(this);
@@ -358,6 +376,38 @@ export class RestaurantManager__restaurantsResult {
 export class RestaurantManager extends ethereum.SmartContract {
   static bind(address: Address): RestaurantManager {
     return new RestaurantManager("RestaurantManager", address);
+  }
+
+  dropToTimeSlotReservationCount(param0: BigInt, param1: BigInt): BigInt {
+    let result = super.call(
+      "dropToTimeSlotReservationCount",
+      "dropToTimeSlotReservationCount(uint256,uint256):(uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(param0),
+        ethereum.Value.fromUnsignedBigInt(param1)
+      ]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_dropToTimeSlotReservationCount(
+    param0: BigInt,
+    param1: BigInt
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "dropToTimeSlotReservationCount",
+      "dropToTimeSlotReservationCount(uint256,uint256):(uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(param0),
+        ethereum.Value.fromUnsignedBigInt(param1)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   drops(param0: BigInt): RestaurantManager__dropsResult {
@@ -631,32 +681,6 @@ export class RestaurantManager extends ethereum.SmartContract {
         value[3].toBoolean()
       )
     );
-  }
-}
-
-export class ConstructorCall extends ethereum.Call {
-  get inputs(): ConstructorCall__Inputs {
-    return new ConstructorCall__Inputs(this);
-  }
-
-  get outputs(): ConstructorCall__Outputs {
-    return new ConstructorCall__Outputs(this);
-  }
-}
-
-export class ConstructorCall__Inputs {
-  _call: ConstructorCall;
-
-  constructor(call: ConstructorCall) {
-    this._call = call;
-  }
-}
-
-export class ConstructorCall__Outputs {
-  _call: ConstructorCall;
-
-  constructor(call: ConstructorCall) {
-    this._call = call;
   }
 }
 
