@@ -23,8 +23,8 @@ contract ReservNFTTest is Test {
             "Test Restaurant",
             "123 Main St, New York, NY 10001"
         );
-        uint64 startDate = 1700000000;
-        uint64 endDate = 1700003600;
+        uint64 startDate = 1672560000; // January 1, 2023, 8:00 AM UTC
+        uint64 endDate = 1704060000; // December 31, 2023 10:00 PM UTC
         uint32 dailyStartTime = 28800; // 8:00 am in seconds
         uint32 dailyEndTime = 79200; // 10:00 pm in seconds
         uint32 windowDuration = 3600; // hourly windows in seconds
@@ -58,7 +58,8 @@ contract ReservNFTTest is Test {
 
     function test_createReservNFT() public payable {
         uint256 dropId = 0;
-        uint256 reservationTimestamp = 1700000001; // Within the drop window
+        uint256 reservationTimestamp = 1673384400; // January 10, 2023 21:00:00 UTC
+
         uint256 tokenId = reservNFT.createReservNFT{value: 0.01 ether}(
             dropId,
             reservationTimestamp
@@ -74,7 +75,7 @@ contract ReservNFTTest is Test {
 
     function testRevertWhen_createReservNFT_insufficientPayment() public {
         uint256 dropId = 0;
-        uint256 reservationTimestamp = 1700000001; // Within the drop window
+        uint256 reservationTimestamp = 1673384400; // January 10, 2023 21:00:00 UTC
         // Attempt to mint with insufficient payment
         vm.expectRevert(ReservNFT__InsufficientPayment.selector);
         reservNFT.createReservNFT{value: 0.005 ether}(
@@ -85,22 +86,11 @@ contract ReservNFTTest is Test {
 
     function testRevertWhen_createReservNFT_inactiveDrop() public {
         uint256 dropId = 0;
-        uint256 reservationTimestamp = 1700000001; // Within the drop window
+        uint256 reservationTimestamp = 1673384400; // January 10, 2023 21:00:00 UTC
         // Deactivate the drop
-        restaurantManager.toggleDropIsActive(dropId);
+        restaurantManager.setDropIsActive(dropId, false);
         // Attempt to mint from an inactive drop
         vm.expectRevert(ReservNFT__InactiveDrop.selector);
-        reservNFT.createReservNFT{value: 0.01 ether}(
-            dropId,
-            reservationTimestamp
-        );
-    }
-
-    function testRevertWhen_createReservNFT_outsideDropWindow() public {
-        uint256 dropId = 0;
-        uint256 reservationTimestamp = 170004000; // Outside the drop window
-        // Attempt to mint outside the drop window
-        vm.expectRevert(ReservNFT__OutsideDropWindow.selector);
         reservNFT.createReservNFT{value: 0.01 ether}(
             dropId,
             reservationTimestamp
@@ -112,7 +102,7 @@ contract ReservNFTTest is Test {
         payable
     {
         uint256 dropId = 0;
-        uint256 reservationTimestamp = 1700000001; // Within the drop window
+        uint256 reservationTimestamp = 1673384400; // January 10, 2023 21:00:00 UTC
         // Mint 10 NFTs for the given window
         for (uint8 i = 0; i < 10; i++) {
             reservNFT.createReservNFT{value: 0.01 ether}(
@@ -129,9 +119,15 @@ contract ReservNFTTest is Test {
         );
     }
 
+    function testRevertWhen_withdrawRestaurantOwnerBalance_noBalance() public {
+        // Attempt to withdraw when there is no balance available
+        vm.expectRevert(ReservNFT__NoBalanceAvailable.selector);
+        reservNFT.withdrawRestaurantOwnerBalance();
+    }
+
     function test_getReservationDetails() public payable {
         uint256 dropId = 0;
-        uint256 reservationTimestamp = 1700000001; // Within the drop window
+        uint256 reservationTimestamp = 1673384400; // January 10, 2023 21:00:00 UTC
         uint256 tokenId = reservNFT.createReservNFT{value: 0.01 ether}(
             dropId,
             reservationTimestamp
@@ -149,7 +145,7 @@ contract ReservNFTTest is Test {
 
     function test_createReservNFT_withOverpayment() public payable {
         uint256 dropId = 0;
-        uint256 reservationTimestamp = 1700000001; // Within the drop window
+        uint256 reservationTimestamp = 1673384400; // January 10, 2023 21:00:00 UTC
         uint256 initialBalance = address(this).balance;
 
         // Mint with overpayment
@@ -173,7 +169,7 @@ contract ReservNFTTest is Test {
 
     function test_tokenURI() public payable {
         uint256 dropId = 0;
-        uint256 reservationTimestamp = 1700000001; // Within the drop window
+        uint256 reservationTimestamp = 1673384400; // January 10, 2023 21:00:00 UTC
         uint256 tokenId = reservNFT.createReservNFT{value: 0.01 ether}(
             dropId,
             reservationTimestamp
@@ -216,22 +212,36 @@ contract ReservNFTTest is Test {
         assertEq(actualTokenURI, expectedTokenURI);
     }
 
-    function test_withdraw() public {
+    function testRevertWhen_createReservNFT_outsideDropWindow() public {
         uint256 dropId = 0;
-        uint256 reservationTimestamp = 1700000001; // Within the drop window
-        uint256 initialBalance = address(this).balance;
+        uint256 reservationTimestamp = 1641848400; // Jan 10 2022 21:00:00
+        // Attempt to mint outside the drop window
+        vm.expectRevert(ReservNFT__OutsideDropWindow.selector);
         reservNFT.createReservNFT{value: 0.01 ether}(
             dropId,
             reservationTimestamp
         );
+    }
 
-        // Withdraw contract balance to the owner
-        reservNFT.withdraw();
+    function testRevertWhen_createReservNFT_outsideDailyWindow() public {
+        uint256 dropId = 0;
+        uint256 reservationTimestamp = 1672556400; // January 1, 2023, 7:00 AM UTC
+        // Attempt to mint outside the daily window
+        vm.expectRevert(ReservNFT__OutsideDailyWindow.selector);
+        reservNFT.createReservNFT{value: 0.01 ether}(
+            dropId,
+            reservationTimestamp
+        );
+    }
 
-        // Verify that the contract balance is now zero
-        assertEq(address(reservNFT).balance, 0);
-
-        // Verify that the owner's balance has increased
-        assertEq(address(this).balance, initialBalance);
+    function testRevertWhen_createReservNFT_invalidWindowDuration() public {
+        uint256 dropId = 0;
+        uint256 reservationTimestamp = 1672561800; // Jan 1, 2023, 8:30 AM UTC
+        // Attempt to mint with an invalid window duration
+        vm.expectRevert(ReservNFT__InvalidWindowDuration.selector);
+        reservNFT.createReservNFT{value: 0.01 ether}(
+            dropId,
+            reservationTimestamp
+        );
     }
 }

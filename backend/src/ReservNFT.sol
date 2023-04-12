@@ -2,7 +2,8 @@
 pragma solidity ^0.8.18;
 
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import {IERC721Metadata} from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
+import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
@@ -15,44 +16,39 @@ error ReservNFT__OutsideDropWindow();
 error ReservNFT__ExceedReservationsLimit();
 error ReservNFT__Unauthorized();
 error ReservNFT__NonexistentToken();
+error ReservNFT__OutsideDailyWindow();
+error ReservNFT__InvalidWindowDuration();
+error ReservNFT__NoBalanceAvailable();
 
 /// @title ReservNFT
 /// @notice A contract for creating restaurant reservation NFTs with different drops and mint prices.
-contract ReservNFT is ERC721, ReentrancyGuard {
+contract ReservNFT is ERC721URIStorage, Ownable, ReentrancyGuard {
     uint256 private _tokenIds;
 
-    address public owner;
     address private restaurantManagerAddress;
     // Mapping from token ID to reservation data
     mapping(uint256 => Reservation) public reservations;
-    mapping(uint256 => string) private _tokenURIs;
+    mapping(address => uint256) public ownerBalances;
 
     /// @notice Reservation data structure
     struct Reservation {
-        uint256 dropId;
         uint256 restaurantId;
+        uint256 dropId;
         uint256 reservationTimestamp; // Represents both date and time
     }
 
     event ReservationCreated(
         uint256 indexed tokenId,
-        uint256 indexed dropId,
         uint256 indexed restaurantId,
+        uint256 indexed dropId,
         uint256 reservationTimestamp
     );
 
-    modifier onlyOwner() {
-        if (msg.sender != owner) {
-            revert ReservNFT__Unauthorized();
-        }
-        _;
-    }
+    constructor() ERC721("ReservNFT", "RRNFT") {}
 
-    constructor() ERC721("ReservNFT", "RRNFT") {
-        owner = msg.sender;
-    }
-
-    // Generate metadata JSON for URI
+    /// @notice Generates the metadata JSON for the reservation NFT
+    /// @param restaurantId The unique identifier of the restaurant
+    /// @param reservationTimestamp The timestamp of the reservation
     function generateMetadataJson(
         uint256 restaurantId,
         uint256 reservationTimestamp
@@ -60,8 +56,6 @@ contract ReservNFT is ERC721, ReentrancyGuard {
         // Define the imageURI based on your desired image
         string
             memory imageURI = "https://cdn.onlinewebfonts.com/svg/img_481205.png";
-        uint256 m_restaurantId = restaurantId;
-        uint256 m_reservationTimestamp = reservationTimestamp;
 
         // Generate metadata JSON
         string memory metadataJson = string(
@@ -71,9 +65,9 @@ contract ReservNFT is ERC721, ReentrancyGuard {
                     bytes(
                         abi.encodePacked(
                             '{"name":"Reservation NFT", "description":"Restaurant reservation NFT", "attributes":[{"trait_type":"restaurantId","value":',
-                            Strings.toString(m_restaurantId),
+                            Strings.toString(restaurantId),
                             '},{"trait_type":"reservationTimestamp","value":',
-                            Strings.toString(m_reservationTimestamp),
+                            Strings.toString(reservationTimestamp),
                             '}], "image":"',
                             imageURI,
                             '"}'
@@ -86,102 +80,84 @@ contract ReservNFT is ERC721, ReentrancyGuard {
         return metadataJson;
     }
 
-    function _setTokenURI(
-        uint256 tokenId,
-        string memory _tokenURI
-    ) internal virtual {
-        if (!_exists(tokenId)) {
-            revert ReservNFT__NonexistentToken();
-        }
-        _tokenURIs[tokenId] = _tokenURI;
-    }
-
-    function tokenURI(
-        uint256 tokenId
-    ) public view virtual override returns (string memory) {
-        require(
-            _exists(tokenId),
-            "ERC721URIStorage: URI query for nonexistent token"
-        );
-
-        string memory _tokenURI = _tokenURIs[tokenId];
-        return _tokenURI;
-    }
-
+    /// @notice Sets the address of the RestaurantManager contract
+    /// @param _restaurantManagerAddress The address of the RestaurantManager contract
     function setRestaurantManagerAddress(
         address _restaurantManagerAddress
     ) public onlyOwner {
         restaurantManagerAddress = _restaurantManagerAddress;
     }
 
-    /// @notice Creates a reservation NFT for the specified drop
+    /// @notice Creates a reservation NFT
     /// @param dropId The unique identifier of the drop
     /// @param reservationTimestamp The timestamp of the reservation
-    /// @return newItemId The unique identifier of the newly minted reservation NFT
     function createReservNFT(
         uint256 dropId,
         uint256 reservationTimestamp
     ) public payable nonReentrant returns (uint256) {
-        // Retrieve drop details from RestaurantManager contract
         IRestaurantManager restaurantManager = IRestaurantManager(
             restaurantManagerAddress
         );
-
-        uint256 m_reservationTimestamp = reservationTimestamp;
-
         IRestaurantManager.Drop memory drop = restaurantManager.getDrop(dropId);
 
-        bytes32 timeSlotId = keccak256(
-            abi.encodePacked(m_reservationTimestamp)
-        );
+        if (!drop.isActive) {
+            revert ReservNFT__InactiveDrop();
+        }
+
+        if (msg.value < drop.mintPrice) {
+            revert ReservNFT__InsufficientPayment();
+        }
+
+        uint256 secondsSinceMidnight = reservationTimestamp % 86400;
+
+        // Check if the reservation timestamp is before the daily start time or after the daily end time
+        if (
+            secondsSinceMidnight < drop.dailyStartTime ||
+            secondsSinceMidnight > drop.dailyEndTime
+        ) {
+            revert ReservNFT__OutsideDailyWindow();
+        }
+
+        // Check if the reservation timestamp is within the drop window
+        if (
+            reservationTimestamp < drop.startDate ||
+            reservationTimestamp > drop.endDate
+        ) {
+            revert ReservNFT__OutsideDropWindow();
+        }
+
+        // Check if the reservation timestamp falls on the specified window duration boundary
+        uint256 secondsSinceDailyStart = secondsSinceMidnight -
+            drop.dailyStartTime;
+        if (secondsSinceDailyStart % drop.windowDuration != 0) {
+            revert ReservNFT__InvalidWindowDuration();
+        }
+
         uint256 reservationCount = restaurantManager
-            .getTimeSlotReservationCount(dropId, timeSlotId);
+            .getTimeSlotReservationCount(dropId, reservationTimestamp);
 
         if (reservationCount >= drop.reservationsPerWindow) {
             revert ReservNFT__ExceedReservationsLimit();
         }
 
-        // Check if the payment is sufficient
-        if (msg.value < drop.mintPrice) {
-            revert ReservNFT__InsufficientPayment();
-        }
-
-        // Check if the drop is active
-        if (!drop.isActive) {
-            revert ReservNFT__InactiveDrop();
-        }
-
-        // Check if the reservation timestamp is within the drop window
-        if (
-            m_reservationTimestamp < drop.startDate ||
-            m_reservationTimestamp > drop.endDate
-        ) {
-            revert ReservNFT__OutsideDropWindow();
-        }
-
-        restaurantManager.setTimeSlotReservationCount(
-            dropId,
-            timeSlotId,
-            ++reservationCount
-        );
-
-        // Retrieve restaurant details
-        IRestaurantManager.Restaurant memory restaurant = restaurantManager
-            .getRestaurant(drop.restaurantId);
-
-        // Generate metadata JSON string
         string memory metadataJson = generateMetadataJson(
             drop.restaurantId,
-            m_reservationTimestamp
+            reservationTimestamp
         );
 
-        _tokenIds = _tokenIds + 1;
+        _tokenIds += 1;
         uint256 newItemId = _tokenIds;
 
         reservations[newItemId] = Reservation(
-            dropId,
             drop.restaurantId,
-            m_reservationTimestamp
+            dropId,
+            reservationTimestamp
+        );
+
+        restaurantManager.setTimeSlotReservationCount(
+            dropId,
+            reservationTimestamp,
+            reservationCount + 1
         );
 
         _mint(msg.sender, newItemId);
@@ -189,9 +165,9 @@ contract ReservNFT is ERC721, ReentrancyGuard {
 
         emit ReservationCreated(
             newItemId,
-            dropId,
             drop.restaurantId,
-            m_reservationTimestamp
+            dropId,
+            reservationTimestamp
         );
 
         // Handle mint price and refund any overpayment
@@ -200,7 +176,24 @@ contract ReservNFT is ERC721, ReentrancyGuard {
             payable(msg.sender).transfer(refundAmount);
         }
 
+        // Transfer mint fee to restaurant owner
+        ownerBalances[
+            restaurantManager.getRestaurant(drop.restaurantId).owner
+        ] += drop.mintPrice;
+
         return newItemId;
+    }
+
+    /// @notice Withdraws the balance of the restaurant owner
+    function withdrawRestaurantOwnerBalance() public nonReentrant {
+        uint256 balance = ownerBalances[msg.sender];
+
+        if (balance == 0) {
+            revert ReservNFT__NoBalanceAvailable();
+        }
+
+        ownerBalances[msg.sender] = 0;
+        payable(msg.sender).transfer(balance);
     }
 
     /// @notice Retrieves the details of a reservation
@@ -210,11 +203,5 @@ contract ReservNFT is ERC721, ReentrancyGuard {
         uint256 tokenId
     ) public view returns (Reservation memory) {
         return reservations[tokenId];
-    }
-
-    /// @notice Withdraws the contract balance to the owner
-    function withdraw() public onlyOwner {
-        uint256 balance = address(this).balance;
-        payable(owner).transfer(balance);
     }
 }

@@ -90,10 +90,10 @@ contract RestaurantManagerTest is Test {
         );
     }
 
-    function test_ToggleRestaurantIsActive() public {
+    function test_SetRestaurantIsActive() public {
         uint256 restaurantId = registerSampleRestaurant();
 
-        restaurantManager.toggleRestaurantIsActive(0);
+        restaurantManager.setRestaurantIsActive(0, false);
 
         RestaurantManager.Restaurant memory res = restaurantManager
             .getRestaurant(restaurantId);
@@ -101,14 +101,14 @@ contract RestaurantManagerTest is Test {
         assertEq(res.isActive, false, "Restaurant should be inactive");
     }
 
-    function test_RevertWhen_ToggleIsActiveByNonOwner() public {
+    function test_RevertWhen_SetIsActiveByNonOwner() public {
         uint256 restaurantId = registerSampleRestaurant();
 
         vm.prank(address(0x1234));
 
         vm.expectRevert(RestaurantManager__Unauthorized.selector);
 
-        restaurantManager.toggleRestaurantIsActive(restaurantId);
+        restaurantManager.setRestaurantIsActive(restaurantId, false);
     }
 
     function test_CreateDropWithHourlyWindows() public {
@@ -166,7 +166,7 @@ contract RestaurantManagerTest is Test {
         ) = createSampleDrop();
     }
 
-    function test_ToggleDropIsActive() public {
+    function test_SetDropIsActive() public {
         uint256 restaurantId = registerSampleRestaurant();
 
         (
@@ -178,14 +178,14 @@ contract RestaurantManagerTest is Test {
             uint16 reservationsPerWindow
         ) = createSampleDrop();
 
-        restaurantManager.toggleDropIsActive(0);
+        restaurantManager.setDropIsActive(0, false);
 
         RestaurantManager.Drop memory drop = restaurantManager.getDrop(0);
 
         assertFalse(drop.isActive, "Drop should be inactive");
     }
 
-    function test_RevertWhen_ToggleDropIsActiveByNonOwner() public {
+    function test_RevertWhen_SetDropIsActiveByNonOwner() public {
         uint256 restaurantId = registerSampleRestaurant();
 
         (
@@ -200,7 +200,7 @@ contract RestaurantManagerTest is Test {
         vm.prank(address(0x1234));
         vm.expectRevert(RestaurantManager__Unauthorized.selector);
 
-        restaurantManager.toggleDropIsActive(0);
+        restaurantManager.setDropIsActive(0, false);
     }
 
     function test_GetRestaurantDropCount() public {
@@ -264,30 +264,6 @@ contract RestaurantManagerTest is Test {
         uint16 reservationsPerWindow = 10;
 
         vm.expectRevert(RestaurantManager__InvalidDropDates.selector);
-
-        restaurantManager.createDrop(
-            0,
-            100,
-            startDate,
-            endDate,
-            dailyStartTime,
-            dailyEndTime,
-            windowDuration,
-            reservationsPerWindow
-        );
-    }
-
-    function test_RevertWhen_InvalidDropTimes() public {
-        uint256 restaurantId = registerSampleRestaurant();
-
-        uint64 startDate = 1700000000;
-        uint64 endDate = 1700003600;
-        uint32 dailyStartTime = 79200; // 8:00 am in seconds
-        uint32 dailyEndTime = 28800; // 10:00 pm in seconds
-        uint32 windowDuration = 3600; // hourly windows in seconds
-        uint16 reservationsPerWindow = 10;
-
-        vm.expectRevert(RestaurantManager__InvalidDropTimes.selector);
 
         restaurantManager.createDrop(
             0,

@@ -2,6 +2,8 @@
 
 pragma solidity ^0.8.18;
 
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+
 import "../interfaces/IReservNFT.sol";
 
 error RestaurantManager__Unauthorized();
@@ -14,16 +16,15 @@ error RestaurantManager__InvalidDropTimes();
 
 /// @title RestaurantManager
 /// @notice Register and manage restaurants
-contract RestaurantManager {
+contract RestaurantManager is Ownable {
     uint256 private _restaurantCounter;
     uint256 private _dropCounter;
 
-    address public owner;
     address private reservNFTAddress;
 
     mapping(uint256 => Restaurant) public restaurants;
     mapping(uint256 => Drop) public drops;
-    mapping(uint256 => mapping(bytes32 => uint256)) dropToTimeSlotReservationCount;
+    mapping(uint256 => mapping(uint256 => uint256)) dropToTimeSlotReservationCount;
     mapping(uint256 => uint256) public restaurantDropCount;
 
     /// @dev Restaurant struct stores restaurant information
@@ -85,23 +86,14 @@ contract RestaurantManager {
     /// @notice Event emitted when a restaurant's active status is toggled
     /// @param restaurantId The unique identifier of the restaurant
     /// @param isActive The active status of the restaurant
-    event RestaurantToggleActive(uint256 indexed restaurantId, bool isActive);
+    event RestaurantIsActive(uint256 indexed restaurantId, bool isActive);
 
     /// @notice Event emitted when a drop's active status is toggled
     /// @param dropId The unique identifier of the drop
     /// @param isActive The active status of the drop
-    event DropToggleActive(uint256 indexed dropId, bool isActive);
+    event DropIsActive(uint256 indexed dropId, bool isActive);
 
-    constructor() {
-        owner = msg.sender;
-    }
-
-    modifier onlyOwner() {
-        if (msg.sender != owner) {
-            revert RestaurantManager__Unauthorized();
-        }
-        _;
-    }
+    constructor() {}
 
     modifier onlyReservNFT() {
         if (msg.sender != reservNFTAddress) {
@@ -109,6 +101,23 @@ contract RestaurantManager {
         }
         _;
     }
+
+    modifier onlyRestaurantOwner(uint256 restaurantId) {
+        if (msg.sender != restaurants[restaurantId].owner) {
+            revert RestaurantManager__Unauthorized();
+        }
+        _;
+    }
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    /// @return Documents the return variables of a contract’s function state variable
+    /// @inheritdoc	Copies all missing tags from the base function (must be followed by the contract name)ow
+
+    /// @notice Explain to an end user what this does
+    /// @dev Explain to a developer any extra details
+    /// @return Documents the return variables of a contract’s function state variable
+    /// @inheritdoc	Copies all missing tags from the base function (must be followed by the contract name)o
 
     /// @notice Set the address of the ReservNFT contract
     /// @param _reservNFTAddress Address of the ReservNFT contract
@@ -140,17 +149,16 @@ contract RestaurantManager {
         );
     }
 
-    /// @notice toggles status of a restaurant by its ID
+    /// @notice changes status of a restaurant by its ID
     /// @param restaurantId Restaurant ID
-    function toggleRestaurantIsActive(uint256 restaurantId) public {
+    function setRestaurantIsActive(
+        uint256 restaurantId,
+        bool isActive
+    ) public onlyRestaurantOwner(restaurantId) {
         Restaurant storage restaurant = restaurants[restaurantId];
 
-        if (msg.sender != restaurant.owner) {
-            revert RestaurantManager__Unauthorized();
-        }
-
-        bool newActive = restaurant.isActive = !restaurant.isActive;
-        emit RestaurantToggleActive(restaurantId, newActive);
+        restaurant.isActive = isActive;
+        emit RestaurantIsActive(restaurantId, isActive);
     }
 
     /// @notice Get a restaurant by its ID
@@ -183,17 +191,9 @@ contract RestaurantManager {
         uint32 dailyEndTime,
         uint32 windowDuration,
         uint16 reservationsPerWindow
-    ) public {
-        if (msg.sender != restaurants[restaurantId].owner) {
-            revert RestaurantManager__Unauthorized();
-        }
-
+    ) public onlyRestaurantOwner(restaurantId) {
         if (startDate >= endDate) {
             revert RestaurantManager__InvalidDropDates();
-        }
-
-        if (dailyStartTime >= dailyEndTime) {
-            revert RestaurantManager__InvalidDropTimes();
         }
 
         uint256 newDropId = _dropCounter;
@@ -204,20 +204,7 @@ contract RestaurantManager {
 
         ++_dropCounter;
 
-        uint256 numDays = (1 + endDate - startDate) / 86400; // 86400 seconds in a day
-        uint256 slotsPerDay = (dailyEndTime - dailyStartTime) / windowDuration;
-        uint256 totalSlots = numDays * slotsPerDay;
-
-        for (uint256 i = 0; i < totalSlots; i++) {
-            uint256 reservationTimestamp = startDate + (i * windowDuration);
-            bytes32 timeSlotId = keccak256(
-                abi.encodePacked(reservationTimestamp)
-            );
-            // Starting count of reservations per slot - should be less than reservationsPerWindow
-            dropToTimeSlotReservationCount[newDropId][timeSlotId] = 0;
-        }
-
-        restaurantDropCount[restaurantId]++;
+        ++restaurantDropCount[restaurantId];
 
         drops[newDropId] = Drop({
             dropId: newDropId,
@@ -245,9 +232,7 @@ contract RestaurantManager {
         );
     }
 
-    /// @notice Updates the status of a drop
-    /// @param dropId The unique identifier of the drop
-    function toggleDropIsActive(uint256 dropId) public {
+    function setDropIsActive(uint256 dropId, bool isActive) public {
         Drop storage drop = drops[dropId];
         uint256 restaurantId = drop.restaurantId;
 
@@ -255,8 +240,8 @@ contract RestaurantManager {
             revert RestaurantManager__Unauthorized();
         }
 
-        bool newActive = drop.isActive = !drop.isActive;
-        emit DropToggleActive(dropId, newActive);
+        drop.isActive = isActive;
+        emit DropIsActive(dropId, isActive);
     }
 
     /// @notice Retrieves the details of a drop
@@ -290,17 +275,17 @@ contract RestaurantManager {
 
     function getTimeSlotReservationCount(
         uint256 dropId,
-        bytes32 timeSlotId
+        uint256 reservationTimestamp
     ) public view returns (uint256) {
-        return dropToTimeSlotReservationCount[dropId][timeSlotId];
+        return dropToTimeSlotReservationCount[dropId][reservationTimestamp];
     }
 
     function setTimeSlotReservationCount(
         uint256 dropId,
-        bytes32 timeSlotId,
+        uint256 reservationTimestamp,
         uint256 count
     ) external onlyReservNFT {
-        dropToTimeSlotReservationCount[dropId][timeSlotId] = count;
+        dropToTimeSlotReservationCount[dropId][reservationTimestamp] = count;
     }
 
     function getRestaurantDropCount(

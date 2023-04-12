@@ -30,7 +30,7 @@ interface IRestaurantManager {
         string businessAddress
     );
 
-    event RestaurantToggleActive(uint256 indexed restaurantId, bool isActive);
+    event RestaurantIsActive(uint256 indexed restaurantId, bool isActive);
 
     event DropCreated(
         uint256 indexed dropId,
@@ -44,14 +44,14 @@ interface IRestaurantManager {
         uint16 reservationsPerWindow
     );
 
-    event DropToggleActive(uint256 indexed dropId, bool isActive);
+    event DropIsActive(uint256 indexed dropId, bool isActive);
 
     function registerRestaurant(
         string calldata name,
         string calldata businessAddress
     ) external;
 
-    function toggleRestaurantIsActive(uint256 restaurantId) external;
+    function setRestaurantIsActive(uint256 restaurantId) external;
 
     function getRestaurant(
         uint256 restaurantId
@@ -68,7 +68,7 @@ interface IRestaurantManager {
         uint16 reservationsPerWindow
     ) external;
 
-    function toggleDropIsActive(uint256 dropId) external;
+    function setDropIsActive(uint256 dropId) external;
 
     function getDrop(uint256 dropId) external view returns (Drop memory);
 
@@ -78,12 +78,12 @@ interface IRestaurantManager {
 
     function getTimeSlotReservationCount(
         uint256 dropId,
-        bytes32 timeSlotId
+        uint256 reservationTimestamp
     ) external view returns (uint256);
 
     function setTimeSlotReservationCount(
         uint256 dropId,
-        bytes32 timeSlotId,
+        uint256 reservationTimestamp,
         uint256 count
     ) external;
 }
