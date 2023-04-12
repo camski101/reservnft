@@ -20,12 +20,10 @@ export const DropModal = ({
         { id: "7200", label: "2 hr" }, // 120 * 60
         { id: "14400", label: "4 hr" }, // 240 * 60
     ]
-
-    const tz = moment.tz.guess()
     const [mintPrice, setMintPrice] = useState(0)
     const [uiMintPrice, setUIMintPrice] = useState(0)
-    const [startDate, setStartDate] = useState(moment.tz(new Date(), "America/New_York").unix())
-    const [endDate, setEndDate] = useState(moment.tz(new Date(), "America/New_York").unix())
+    const [startDate, setStartDate] = useState(moment.utc(new Date()).unix())
+    const [endDate, setEndDate] = useState(moment.utc(new Date()).unix())
     const [dailyStartTime, setDailyStartTime] = useState(null)
     const [dailyEndTime, setDailyEndTime] = useState(null)
     const [windowDuration, setWindowDuration] = useState(parseInt(reservationOptions[0].id))
@@ -117,6 +115,11 @@ export const DropModal = ({
             reservationsPerWindow,
         }
 
+        console.log(startDate)
+        console.log(endDate)
+        console.log(dailyStartTime)
+        console.log(dailyEndTime)
+
         await createDrop({
             onSuccess: (tx) => {
                 handleSuccess(tx)
@@ -136,12 +139,26 @@ export const DropModal = ({
         const selectedTimeInSeconds = parseInt(selectedOption.id)
         if (isStartTime) {
             setDailyStartTime(selectedTimeInSeconds)
+            setStartDate(
+                moment
+                    .utc(startDate * 1000)
+                    .startOf("day")
+                    .add(selectedTimeInSeconds, "seconds")
+                    .unix()
+            )
             const endTimeOptions = generateTimeOptions(windowDuration).filter(
                 (option) => parseInt(option.id) > selectedTimeInSeconds
             )
             setEndTimeOptions(endTimeOptions)
         } else {
             setDailyEndTime(selectedTimeInSeconds)
+            setEndDate(
+                moment
+                    .utc(endDate * 1000)
+                    .startOf("day")
+                    .add(selectedTimeInSeconds, "seconds")
+                    .unix()
+            )
             const startTimeOptions = generateTimeOptions(windowDuration).filter(
                 (option) => parseInt(option.id) < selectedTimeInSeconds
             )
@@ -199,7 +216,7 @@ export const DropModal = ({
                         </div>
                         <div>
                             <label className="block text-gray-700 font-medium">
-                                Drop Start Date (EST)
+                                Drop Start Date (UTC)
                             </label>
                             <DatePicker
                                 className="mt-1 w-full"
@@ -207,8 +224,9 @@ export const DropModal = ({
                                 onChange={(date) =>
                                     setStartDate(
                                         moment
-                                            .tz(date.date, "America/New_York")
-                                            .utcOffset(0)
+                                            .utc(date.date)
+                                            .startOf("day")
+                                            .add(dailyStartTime, "seconds")
                                             .unix()
                                     )
                                 }
@@ -216,7 +234,7 @@ export const DropModal = ({
                         </div>
                         <div>
                             <label className="block text-gray-700 font-medium">
-                                Drop End Date (EST)
+                                Drop End Date (UTC)
                             </label>
                             <DatePicker
                                 className="mt-1 w-full"
@@ -224,8 +242,9 @@ export const DropModal = ({
                                 onChange={(date) =>
                                     setEndDate(
                                         moment
-                                            .tz(date.date, "America/New_York")
-                                            .utcOffset(0)
+                                            .utc(date.date)
+                                            .startOf("day")
+                                            .add(dailyEndTime, "seconds")
                                             .unix()
                                     )
                                 }
