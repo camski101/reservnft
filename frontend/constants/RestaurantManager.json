@@ -1,11 +1,6 @@
 [
   {
     "inputs": [],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "inputs": [],
     "name": "RestaurantManager__DropAlreadyExists",
     "type": "error"
   },
@@ -32,6 +27,11 @@
   {
     "inputs": [],
     "name": "RestaurantManager__Unauthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RestaurantManager__ZeroAddress",
     "type": "error"
   },
   {
@@ -138,6 +138,19 @@
     "inputs": [
       {
         "indexed": true,
+        "internalType": "address",
+        "name": "reservNFTAddress",
+        "type": "address"
+      }
+    ],
+    "name": "ReservNFTAddressSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
         "internalType": "uint256",
         "name": "restaurantId",
         "type": "uint256"
@@ -229,6 +242,30 @@
     "name": "createDrop",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "dropToTimeSlotReservationCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

@@ -21,10 +21,10 @@ export default function MyRestaurants() {
     const [buttonLoading, setButtonLoading] = useState({})
     const [buttonId, setButtonId] = useState(null)
 
-    const { runContractFunction: toggleIsActive } = useWeb3Contract({
+    const { runContractFunction: setRestaurantIsActive } = useWeb3Contract({
         abi: RestaurantManager,
         contractAddress: rmAddress,
-        functionName: "toggleRestaurantIsActive",
+        functionName: "setRestaurantIsActive",
         params: { restaurantId: restaurantId, isActive: isActive },
     })
     const {
@@ -86,7 +86,7 @@ export default function MyRestaurants() {
 
     useEffect(() => {
         if (shouldToggle && restaurantId !== null && isActive !== null) {
-            toggleIsActive({
+            setRestaurantIsActive({
                 onSuccess: (tx) => handleSuccess(tx),
                 onError: (error) => handleError(error),
             })

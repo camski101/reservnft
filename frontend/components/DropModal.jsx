@@ -27,7 +27,7 @@ export const DropModal = ({
     const [dailyStartTime, setDailyStartTime] = useState(null)
     const [dailyEndTime, setDailyEndTime] = useState(null)
     const [windowDuration, setWindowDuration] = useState(parseInt(reservationOptions[0].id))
-    const [reservationsPerWindow, setReservationsPerWindow] = useState("")
+    const [reservationsPerWindow, setReservationsPerWindow] = useState("5")
 
     const { Moralis, chainId: chainIdHex } = useMoralis()
     const chainId = parseInt(chainIdHex)
@@ -85,7 +85,7 @@ export const DropModal = ({
                 setEndDate(new Date())
                 setDailyStartTime(null)
                 setDailyEndTime(null)
-                setWindowDuration(null)
+                setWindowDuration(parseInt(reservationOptions[0].id))
                 setReservationsPerWindow("")
                 setButtonLoading(false)
                 refetchDrops()
