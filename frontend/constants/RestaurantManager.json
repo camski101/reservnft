@@ -21,11 +21,6 @@
   },
   {
     "inputs": [],
-    "name": "RestaurantManager__InvalidDropTimes",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "RestaurantManager__NotReservNFT",
     "type": "error"
   },
@@ -116,7 +111,45 @@
         "type": "bool"
       }
     ],
-    "name": "DropToggleActive",
+    "name": "DropIsActive",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "restaurantId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "isActive",
+        "type": "bool"
+      }
+    ],
+    "name": "RestaurantIsActive",
     "type": "event"
   },
   {
@@ -148,25 +181,6 @@
       }
     ],
     "name": "RestaurantRegistered",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "restaurantId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "bool",
-        "name": "isActive",
-        "type": "bool"
-      }
-    ],
-    "name": "RestaurantToggleActive",
     "type": "event"
   },
   {
@@ -439,9 +453,9 @@
         "type": "uint256"
       },
       {
-        "internalType": "bytes32",
-        "name": "timeSlotId",
-        "type": "bytes32"
+        "internalType": "uint256",
+        "name": "reservationTimestamp",
+        "type": "uint256"
       }
     ],
     "name": "getTimeSlotReservationCount",
@@ -482,6 +496,13 @@
       }
     ],
     "name": "registerRestaurant",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -542,6 +563,24 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "dropId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "isActive",
+        "type": "bool"
+      }
+    ],
+    "name": "setDropIsActive",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "_reservNFTAddress",
         "type": "address"
@@ -556,13 +595,31 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "restaurantId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "isActive",
+        "type": "bool"
+      }
+    ],
+    "name": "setRestaurantIsActive",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "dropId",
         "type": "uint256"
       },
       {
-        "internalType": "bytes32",
-        "name": "timeSlotId",
-        "type": "bytes32"
+        "internalType": "uint256",
+        "name": "reservationTimestamp",
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
@@ -578,25 +635,12 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "dropId",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
       }
     ],
-    "name": "toggleDropIsActive",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "restaurantId",
-        "type": "uint256"
-      }
-    ],
-    "name": "toggleRestaurantIsActive",
+    "name": "transferOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

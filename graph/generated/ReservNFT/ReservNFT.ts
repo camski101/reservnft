@@ -62,6 +62,68 @@ export class ApprovalForAll__Params {
   }
 }
 
+export class BatchMetadataUpdate extends ethereum.Event {
+  get params(): BatchMetadataUpdate__Params {
+    return new BatchMetadataUpdate__Params(this);
+  }
+}
+
+export class BatchMetadataUpdate__Params {
+  _event: BatchMetadataUpdate;
+
+  constructor(event: BatchMetadataUpdate) {
+    this._event = event;
+  }
+
+  get _fromTokenId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get _toTokenId(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+}
+
+export class MetadataUpdate extends ethereum.Event {
+  get params(): MetadataUpdate__Params {
+    return new MetadataUpdate__Params(this);
+  }
+}
+
+export class MetadataUpdate__Params {
+  _event: MetadataUpdate;
+
+  constructor(event: MetadataUpdate) {
+    this._event = event;
+  }
+
+  get _tokenId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+}
+
+export class OwnershipTransferred extends ethereum.Event {
+  get params(): OwnershipTransferred__Params {
+    return new OwnershipTransferred__Params(this);
+  }
+}
+
+export class OwnershipTransferred__Params {
+  _event: OwnershipTransferred;
+
+  constructor(event: OwnershipTransferred) {
+    this._event = event;
+  }
+
+  get previousOwner(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get newOwner(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
 export class ReservationCreated extends ethereum.Event {
   get params(): ReservationCreated__Params {
     return new ReservationCreated__Params(this);
@@ -79,11 +141,11 @@ export class ReservationCreated__Params {
     return this._event.parameters[0].value.toBigInt();
   }
 
-  get dropId(): BigInt {
+  get restaurantId(): BigInt {
     return this._event.parameters[1].value.toBigInt();
   }
 
-  get restaurantId(): BigInt {
+  get dropId(): BigInt {
     return this._event.parameters[2].value.toBigInt();
   }
 
@@ -119,11 +181,11 @@ export class Transfer__Params {
 }
 
 export class ReservNFT__getReservationDetailsResultValue0Struct extends ethereum.Tuple {
-  get dropId(): BigInt {
+  get restaurantId(): BigInt {
     return this[0].toBigInt();
   }
 
-  get restaurantId(): BigInt {
+  get dropId(): BigInt {
     return this[1].toBigInt();
   }
 
@@ -151,11 +213,11 @@ export class ReservNFT__reservationsResult {
     return map;
   }
 
-  getDropId(): BigInt {
+  getRestaurantId(): BigInt {
     return this.value0;
   }
 
-  getRestaurantId(): BigInt {
+  getDropId(): BigInt {
     return this.value1;
   }
 
@@ -296,6 +358,29 @@ export class ReservNFT extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  ownerBalances(param0: Address): BigInt {
+    let result = super.call(
+      "ownerBalances",
+      "ownerBalances(address):(uint256)",
+      [ethereum.Value.fromAddress(param0)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_ownerBalances(param0: Address): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "ownerBalances",
+      "ownerBalances(address):(uint256)",
+      [ethereum.Value.fromAddress(param0)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   ownerOf(tokenId: BigInt): Address {
@@ -508,6 +593,32 @@ export class CreateReservNFTCall__Outputs {
   }
 }
 
+export class RenounceOwnershipCall extends ethereum.Call {
+  get inputs(): RenounceOwnershipCall__Inputs {
+    return new RenounceOwnershipCall__Inputs(this);
+  }
+
+  get outputs(): RenounceOwnershipCall__Outputs {
+    return new RenounceOwnershipCall__Outputs(this);
+  }
+}
+
+export class RenounceOwnershipCall__Inputs {
+  _call: RenounceOwnershipCall;
+
+  constructor(call: RenounceOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class RenounceOwnershipCall__Outputs {
+  _call: RenounceOwnershipCall;
+
+  constructor(call: RenounceOwnershipCall) {
+    this._call = call;
+  }
+}
+
 export class SafeTransferFromCall extends ethereum.Call {
   get inputs(): SafeTransferFromCall__Inputs {
     return new SafeTransferFromCall__Inputs(this);
@@ -690,28 +801,58 @@ export class TransferFromCall__Outputs {
   }
 }
 
-export class WithdrawCall extends ethereum.Call {
-  get inputs(): WithdrawCall__Inputs {
-    return new WithdrawCall__Inputs(this);
+export class TransferOwnershipCall extends ethereum.Call {
+  get inputs(): TransferOwnershipCall__Inputs {
+    return new TransferOwnershipCall__Inputs(this);
   }
 
-  get outputs(): WithdrawCall__Outputs {
-    return new WithdrawCall__Outputs(this);
+  get outputs(): TransferOwnershipCall__Outputs {
+    return new TransferOwnershipCall__Outputs(this);
   }
 }
 
-export class WithdrawCall__Inputs {
-  _call: WithdrawCall;
+export class TransferOwnershipCall__Inputs {
+  _call: TransferOwnershipCall;
 
-  constructor(call: WithdrawCall) {
+  constructor(call: TransferOwnershipCall) {
+    this._call = call;
+  }
+
+  get newOwner(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class TransferOwnershipCall__Outputs {
+  _call: TransferOwnershipCall;
+
+  constructor(call: TransferOwnershipCall) {
     this._call = call;
   }
 }
 
-export class WithdrawCall__Outputs {
-  _call: WithdrawCall;
+export class WithdrawRestaurantOwnerBalanceCall extends ethereum.Call {
+  get inputs(): WithdrawRestaurantOwnerBalanceCall__Inputs {
+    return new WithdrawRestaurantOwnerBalanceCall__Inputs(this);
+  }
 
-  constructor(call: WithdrawCall) {
+  get outputs(): WithdrawRestaurantOwnerBalanceCall__Outputs {
+    return new WithdrawRestaurantOwnerBalanceCall__Outputs(this);
+  }
+}
+
+export class WithdrawRestaurantOwnerBalanceCall__Inputs {
+  _call: WithdrawRestaurantOwnerBalanceCall;
+
+  constructor(call: WithdrawRestaurantOwnerBalanceCall) {
+    this._call = call;
+  }
+}
+
+export class WithdrawRestaurantOwnerBalanceCall__Outputs {
+  _call: WithdrawRestaurantOwnerBalanceCall;
+
+  constructor(call: WithdrawRestaurantOwnerBalanceCall) {
     this._call = call;
   }
 }

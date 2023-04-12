@@ -21,17 +21,22 @@
   },
   {
     "inputs": [],
-    "name": "ReservNFT__NonexistentToken",
+    "name": "ReservNFT__InvalidWindowDuration",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ReservNFT__NoBalanceAvailable",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ReservNFT__OutsideDailyWindow",
     "type": "error"
   },
   {
     "inputs": [],
     "name": "ReservNFT__OutsideDropWindow",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "ReservNFT__Unauthorized",
     "type": "error"
   },
   {
@@ -88,6 +93,57 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_fromTokenId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_toTokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "BatchMetadataUpdate",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "MetadataUpdate",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "uint256",
         "name": "tokenId",
@@ -96,13 +152,13 @@
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "dropId",
+        "name": "restaurantId",
         "type": "uint256"
       },
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "restaurantId",
+        "name": "dropId",
         "type": "uint256"
       },
       {
@@ -234,12 +290,12 @@
         "components": [
           {
             "internalType": "uint256",
-            "name": "dropId",
+            "name": "restaurantId",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "restaurantId",
+            "name": "dropId",
             "type": "uint256"
           },
           {
@@ -309,6 +365,25 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "ownerBalances",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
@@ -326,6 +401,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -337,12 +419,12 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "dropId",
+        "name": "restaurantId",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "restaurantId",
+        "name": "dropId",
         "type": "uint256"
       },
       {
@@ -511,8 +593,21 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
-    "name": "withdraw",
+    "name": "withdrawRestaurantOwnerBalance",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

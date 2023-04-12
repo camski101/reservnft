@@ -60,20 +60,64 @@ export class DropCreated__Params {
   }
 }
 
-export class DropToggleActive extends ethereum.Event {
-  get params(): DropToggleActive__Params {
-    return new DropToggleActive__Params(this);
+export class DropIsActive extends ethereum.Event {
+  get params(): DropIsActive__Params {
+    return new DropIsActive__Params(this);
   }
 }
 
-export class DropToggleActive__Params {
-  _event: DropToggleActive;
+export class DropIsActive__Params {
+  _event: DropIsActive;
 
-  constructor(event: DropToggleActive) {
+  constructor(event: DropIsActive) {
     this._event = event;
   }
 
   get dropId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get isActive(): boolean {
+    return this._event.parameters[1].value.toBoolean();
+  }
+}
+
+export class OwnershipTransferred extends ethereum.Event {
+  get params(): OwnershipTransferred__Params {
+    return new OwnershipTransferred__Params(this);
+  }
+}
+
+export class OwnershipTransferred__Params {
+  _event: OwnershipTransferred;
+
+  constructor(event: OwnershipTransferred) {
+    this._event = event;
+  }
+
+  get previousOwner(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get newOwner(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
+export class RestaurantIsActive extends ethereum.Event {
+  get params(): RestaurantIsActive__Params {
+    return new RestaurantIsActive__Params(this);
+  }
+}
+
+export class RestaurantIsActive__Params {
+  _event: RestaurantIsActive;
+
+  constructor(event: RestaurantIsActive) {
+    this._event = event;
+  }
+
+  get restaurantId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
 
@@ -109,28 +153,6 @@ export class RestaurantRegistered__Params {
 
   get businessAddress(): string {
     return this._event.parameters[3].value.toString();
-  }
-}
-
-export class RestaurantToggleActive extends ethereum.Event {
-  get params(): RestaurantToggleActive__Params {
-    return new RestaurantToggleActive__Params(this);
-  }
-}
-
-export class RestaurantToggleActive__Params {
-  _event: RestaurantToggleActive;
-
-  constructor(event: RestaurantToggleActive) {
-    this._event = event;
-  }
-
-  get restaurantId(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-
-  get isActive(): boolean {
-    return this._event.parameters[1].value.toBoolean();
   }
 }
 
@@ -501,13 +523,16 @@ export class RestaurantManager extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  getTimeSlotReservationCount(dropId: BigInt, timeSlotId: Bytes): BigInt {
+  getTimeSlotReservationCount(
+    dropId: BigInt,
+    reservationTimestamp: BigInt
+  ): BigInt {
     let result = super.call(
       "getTimeSlotReservationCount",
-      "getTimeSlotReservationCount(uint256,bytes32):(uint256)",
+      "getTimeSlotReservationCount(uint256,uint256):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(dropId),
-        ethereum.Value.fromFixedBytes(timeSlotId)
+        ethereum.Value.fromUnsignedBigInt(reservationTimestamp)
       ]
     );
 
@@ -516,14 +541,14 @@ export class RestaurantManager extends ethereum.SmartContract {
 
   try_getTimeSlotReservationCount(
     dropId: BigInt,
-    timeSlotId: Bytes
+    reservationTimestamp: BigInt
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "getTimeSlotReservationCount",
-      "getTimeSlotReservationCount(uint256,bytes32):(uint256)",
+      "getTimeSlotReservationCount(uint256,uint256):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(dropId),
-        ethereum.Value.fromFixedBytes(timeSlotId)
+        ethereum.Value.fromUnsignedBigInt(reservationTimestamp)
       ]
     );
     if (result.reverted) {
@@ -727,6 +752,66 @@ export class RegisterRestaurantCall__Outputs {
   }
 }
 
+export class RenounceOwnershipCall extends ethereum.Call {
+  get inputs(): RenounceOwnershipCall__Inputs {
+    return new RenounceOwnershipCall__Inputs(this);
+  }
+
+  get outputs(): RenounceOwnershipCall__Outputs {
+    return new RenounceOwnershipCall__Outputs(this);
+  }
+}
+
+export class RenounceOwnershipCall__Inputs {
+  _call: RenounceOwnershipCall;
+
+  constructor(call: RenounceOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class RenounceOwnershipCall__Outputs {
+  _call: RenounceOwnershipCall;
+
+  constructor(call: RenounceOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class SetDropIsActiveCall extends ethereum.Call {
+  get inputs(): SetDropIsActiveCall__Inputs {
+    return new SetDropIsActiveCall__Inputs(this);
+  }
+
+  get outputs(): SetDropIsActiveCall__Outputs {
+    return new SetDropIsActiveCall__Outputs(this);
+  }
+}
+
+export class SetDropIsActiveCall__Inputs {
+  _call: SetDropIsActiveCall;
+
+  constructor(call: SetDropIsActiveCall) {
+    this._call = call;
+  }
+
+  get dropId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get isActive(): boolean {
+    return this._call.inputValues[1].value.toBoolean();
+  }
+}
+
+export class SetDropIsActiveCall__Outputs {
+  _call: SetDropIsActiveCall;
+
+  constructor(call: SetDropIsActiveCall) {
+    this._call = call;
+  }
+}
+
 export class SetReservNFTAddressCall extends ethereum.Call {
   get inputs(): SetReservNFTAddressCall__Inputs {
     return new SetReservNFTAddressCall__Inputs(this);
@@ -757,6 +842,40 @@ export class SetReservNFTAddressCall__Outputs {
   }
 }
 
+export class SetRestaurantIsActiveCall extends ethereum.Call {
+  get inputs(): SetRestaurantIsActiveCall__Inputs {
+    return new SetRestaurantIsActiveCall__Inputs(this);
+  }
+
+  get outputs(): SetRestaurantIsActiveCall__Outputs {
+    return new SetRestaurantIsActiveCall__Outputs(this);
+  }
+}
+
+export class SetRestaurantIsActiveCall__Inputs {
+  _call: SetRestaurantIsActiveCall;
+
+  constructor(call: SetRestaurantIsActiveCall) {
+    this._call = call;
+  }
+
+  get restaurantId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get isActive(): boolean {
+    return this._call.inputValues[1].value.toBoolean();
+  }
+}
+
+export class SetRestaurantIsActiveCall__Outputs {
+  _call: SetRestaurantIsActiveCall;
+
+  constructor(call: SetRestaurantIsActiveCall) {
+    this._call = call;
+  }
+}
+
 export class SetTimeSlotReservationCountCall extends ethereum.Call {
   get inputs(): SetTimeSlotReservationCountCall__Inputs {
     return new SetTimeSlotReservationCountCall__Inputs(this);
@@ -778,8 +897,8 @@ export class SetTimeSlotReservationCountCall__Inputs {
     return this._call.inputValues[0].value.toBigInt();
   }
 
-  get timeSlotId(): Bytes {
-    return this._call.inputValues[1].value.toBytes();
+  get reservationTimestamp(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
   }
 
   get count(): BigInt {
@@ -795,62 +914,32 @@ export class SetTimeSlotReservationCountCall__Outputs {
   }
 }
 
-export class ToggleDropIsActiveCall extends ethereum.Call {
-  get inputs(): ToggleDropIsActiveCall__Inputs {
-    return new ToggleDropIsActiveCall__Inputs(this);
+export class TransferOwnershipCall extends ethereum.Call {
+  get inputs(): TransferOwnershipCall__Inputs {
+    return new TransferOwnershipCall__Inputs(this);
   }
 
-  get outputs(): ToggleDropIsActiveCall__Outputs {
-    return new ToggleDropIsActiveCall__Outputs(this);
+  get outputs(): TransferOwnershipCall__Outputs {
+    return new TransferOwnershipCall__Outputs(this);
   }
 }
 
-export class ToggleDropIsActiveCall__Inputs {
-  _call: ToggleDropIsActiveCall;
+export class TransferOwnershipCall__Inputs {
+  _call: TransferOwnershipCall;
 
-  constructor(call: ToggleDropIsActiveCall) {
+  constructor(call: TransferOwnershipCall) {
     this._call = call;
   }
 
-  get dropId(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
+  get newOwner(): Address {
+    return this._call.inputValues[0].value.toAddress();
   }
 }
 
-export class ToggleDropIsActiveCall__Outputs {
-  _call: ToggleDropIsActiveCall;
+export class TransferOwnershipCall__Outputs {
+  _call: TransferOwnershipCall;
 
-  constructor(call: ToggleDropIsActiveCall) {
-    this._call = call;
-  }
-}
-
-export class ToggleRestaurantIsActiveCall extends ethereum.Call {
-  get inputs(): ToggleRestaurantIsActiveCall__Inputs {
-    return new ToggleRestaurantIsActiveCall__Inputs(this);
-  }
-
-  get outputs(): ToggleRestaurantIsActiveCall__Outputs {
-    return new ToggleRestaurantIsActiveCall__Outputs(this);
-  }
-}
-
-export class ToggleRestaurantIsActiveCall__Inputs {
-  _call: ToggleRestaurantIsActiveCall;
-
-  constructor(call: ToggleRestaurantIsActiveCall) {
-    this._call = call;
-  }
-
-  get restaurantId(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-}
-
-export class ToggleRestaurantIsActiveCall__Outputs {
-  _call: ToggleRestaurantIsActiveCall;
-
-  constructor(call: ToggleRestaurantIsActiveCall) {
+  constructor(call: TransferOwnershipCall) {
     this._call = call;
   }
 }

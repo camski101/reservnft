@@ -1,8 +1,8 @@
 import {
-  RestaurantToggleActive as RestaurantToggleActiveEvent,
+  RestaurantIsActive as RestaurantIsActiveEvent,
   RestaurantRegistered as RestaurantRegisteredEvent,
   DropCreated as DropCreatedEvent,
-  DropToggleActive as DropToggleActiveEvent,
+  DropIsActive as DropIsActiveEvent,
 } from "../generated/RestaurantManager/RestaurantManager"
 
 import { Restaurant, Drop, Reservation } from "../generated/schema"
@@ -22,7 +22,7 @@ export function handleRestaurantRegistered(event: RestaurantRegisteredEvent): vo
   restaurant.save()
 }
 
-export function handleRestaurantToggleActive(event: RestaurantToggleActiveEvent): void {
+export function handleRestaurantIsActive(event: RestaurantIsActiveEvent): void {
 
   let restaurant = Restaurant.load(event.params.restaurantId.toHex())
 
@@ -51,7 +51,7 @@ export function handleDropCreated(event: DropCreatedEvent): void {
     drop.save()
 }
 
-export function handleDropToggleActive(event: DropToggleActiveEvent): void {
+export function handleDropIsActive(event: DropIsActiveEvent): void {
 
   let drop = Drop.load(event.params.dropId.toHex())
 
