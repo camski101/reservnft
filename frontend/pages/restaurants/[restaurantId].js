@@ -1,14 +1,11 @@
 import React, { useState } from "react"
 import { useQuery } from "@apollo/client"
 import { useRouter } from "next/router"
-import moment from "moment-timezone"
-import { Card, Typography, Loading, Button } from "web3uikit"
+import { Typography, Loading, Button } from "web3uikit"
 import subgraphQueries from "@/constants/subgraphQueries"
 import { useMoralis } from "react-moralis"
-import { formatDurationLabel } from "@/utils/dateUtils"
-
+import { DropCard } from "@/components/DropCard"
 import { DropModal } from "@/components/DropModal"
-import { MintModal } from "@/components/MintModal"
 
 const { GET_RESTAURANT_BY_ID, GET_DROPS_BY_RESTAURANT_ID } = subgraphQueries
 
@@ -39,15 +36,9 @@ export default function Restaurant() {
     })
 
     const [modalVisible, setModalVisible] = useState(false)
-    const [mintModalVisible, setMintModalVisible] = useState(false)
-
     const openModal = () => {
         setModalVisible(true)
         setButtonLoading(true)
-    }
-
-    const openMintModal = () => {
-        setMintModalVisible(true)
     }
 
     const handleOnClose = () => {
@@ -55,17 +46,8 @@ export default function Restaurant() {
         setButtonLoading(false)
     }
 
-    const handleMintOnClose = () => {
-        setMintModalVisible(false)
-    }
-
     const handleSubmit = (data) => {
-        // Process form values from data object as needed
         setModalVisible(false)
-    }
-
-    const handleMintSubmit = (data) => {
-        setMintModalVisible(false)
     }
 
     if (restaurantLoading || !restaurantId) {
@@ -166,76 +148,7 @@ export default function Restaurant() {
 
                                 {dropsData &&
                                     dropsData.drops.map((drop) => (
-                                        <div
-                                            key={drop.id}
-                                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 p-2"
-                                        >
-                                            <Card>
-                                                <div>
-                                                    <Typography className="mb-2 block">
-                                                        Drop ID: {drop.dropId}
-                                                    </Typography>
-                                                </div>
-                                                <div>
-                                                    <Typography className="mb-2 block">
-                                                        Mint Price:{" "}
-                                                        {Moralis.Units.FromWei(drop.mintPrice)}
-                                                    </Typography>
-                                                </div>
-                                                <div>
-                                                    <Typography className="mb-2 block">
-                                                        Start Date:{" "}
-                                                        {new Date(
-                                                            parseInt(drop.startDate, 10) * 1000
-                                                        ).toLocaleDateString()}
-                                                    </Typography>
-                                                </div>
-                                                <div>
-                                                    <Typography className="mb-2 block">
-                                                        End Date:{" "}
-                                                        {new Date(
-                                                            parseInt(drop.endDate, 10) * 1000
-                                                        ).toLocaleDateString()}
-                                                    </Typography>
-                                                </div>
-                                                <div>
-                                                    <Typography className="mb-2 block">
-                                                        Daily Start Time:{" "}
-                                                        {moment
-                                                            .tz(
-                                                                moment().format("YYYY-MM-DD"),
-                                                                "America/New_York"
-                                                            )
-                                                            .add(drop.dailyStartTime, "seconds")
-                                                            .format("hh:mm A")}
-                                                    </Typography>
-                                                </div>
-                                                <div>
-                                                    <Typography className="mb-2 block">
-                                                        Daily End Time:{" "}
-                                                        {moment
-                                                            .tz(
-                                                                moment().format("YYYY-MM-DD"),
-                                                                "America/New_York"
-                                                            )
-                                                            .add(drop.dailyEndTime, "seconds")
-                                                            .format("hh:mm A")}
-                                                    </Typography>
-                                                </div>
-                                                <div>
-                                                    <Typography className="mb-2 block">
-                                                        Window Duration:{" "}
-                                                        {formatDurationLabel(drop.windowDuration)}
-                                                    </Typography>
-                                                </div>
-                                                <div>
-                                                    <Typography>
-                                                        Reservations per Window:{" "}
-                                                        {drop.reservationsPerWindow}
-                                                    </Typography>
-                                                </div>
-                                            </Card>
-                                        </div>
+                                        <DropCard key={drop.id} drop={drop} />
                                     ))}
                             </div>
                         </div>

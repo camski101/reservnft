@@ -53,9 +53,18 @@ const GET_DROPS_BY_RESTAURANT_ID = gql`
     }
 `
 
+const GET_RESERVATION_TIMESTAMP_BY_DROP_ID = gql`
+    query GetReservationTimestampCount($dropId: ID!) {
+        reservations(where: { dropId: $dropId }) {
+            reservationTimestamp
+        }
+    }
+`
+
 export default {
     GET_MY_RESTAURANTS,
     GET_ACTIVE_RESTAURANTS,
     GET_RESTAURANT_BY_ID,
     GET_DROPS_BY_RESTAURANT_ID,
+    GET_RESERVATION_TIMESTAMP_BY_DROP_ID,
 }

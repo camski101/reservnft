@@ -35,3 +35,34 @@ export const generateTimeOptions = (incrementInSeconds) => {
     }
     return timeOptions
 }
+
+export const generateReservationSlots = (
+    startDate,
+    endDate,
+    dailyStartTime,
+    dailyEndTime,
+    windowDuration
+) => {
+    const slots = []
+    const startMoment = moment.unix(startDate).utc().startOf("day")
+    const endMoment = moment.unix(endDate).utc().startOf("day")
+    const dailyStart = moment.duration(dailyStartTime, "seconds")
+    const dailyEnd = moment.duration(dailyEndTime, "seconds")
+    const windowDurationMoment = moment.duration(windowDuration, "seconds")
+
+    for (
+        let currentDate = startMoment;
+        currentDate.isSameOrBefore(endMoment);
+        currentDate.add(1, "day")
+    ) {
+        let currentTime = currentDate.clone().add(dailyStart)
+        const dailyEndMoment = currentDate.clone().add(dailyEnd)
+
+        while (currentTime.isBefore(dailyEndMoment)) {
+            slots.push(currentTime.toISOString())
+            currentTime.add(windowDurationMoment)
+        }
+    }
+
+    return slots
+}
