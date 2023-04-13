@@ -1,0 +1,685 @@
+[
+  {
+    "inputs": [],
+    "name": "RestaurantManager__DropAlreadyExists",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RestaurantManager__DropDoesNotExist",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RestaurantManager__InvalidDropDates",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RestaurantManager__NotReservNFT",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RestaurantManager__RestaurantDoesNotExist",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RestaurantManager__Unauthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RestaurantManager__ZeroAddress",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "dropId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "restaurantId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "mintPrice",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint64",
+        "name": "startDate",
+        "type": "uint64"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint64",
+        "name": "endDate",
+        "type": "uint64"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint32",
+        "name": "dailyStartTime",
+        "type": "uint32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint32",
+        "name": "dailyEndTime",
+        "type": "uint32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint32",
+        "name": "windowDuration",
+        "type": "uint32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint16",
+        "name": "reservationsPerWindow",
+        "type": "uint16"
+      }
+    ],
+    "name": "DropCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "dropId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "isActive",
+        "type": "bool"
+      }
+    ],
+    "name": "DropIsActive",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "reservNFTAddress",
+        "type": "address"
+      }
+    ],
+    "name": "ReservNFTAddressSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "restaurantId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "isActive",
+        "type": "bool"
+      }
+    ],
+    "name": "RestaurantIsActive",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "restaurantId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "businessAddress",
+        "type": "string"
+      }
+    ],
+    "name": "RestaurantRegistered",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "restaurantId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "mintPrice",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint64",
+        "name": "startDate",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint64",
+        "name": "endDate",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint32",
+        "name": "dailyStartTime",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "dailyEndTime",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "windowDuration",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint16",
+        "name": "reservationsPerWindow",
+        "type": "uint16"
+      }
+    ],
+    "name": "createDrop",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "dropToTimeSlotReservationCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "drops",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "dropId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "restaurantId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "mintPrice",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint64",
+        "name": "startDate",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint64",
+        "name": "endDate",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint32",
+        "name": "dailyStartTime",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "dailyEndTime",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "windowDuration",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint16",
+        "name": "reservationsPerWindow",
+        "type": "uint16"
+      },
+      {
+        "internalType": "bool",
+        "name": "isActive",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "dropId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getDrop",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "dropId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "restaurantId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "mintPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "startDate",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "endDate",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint32",
+            "name": "dailyStartTime",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "dailyEndTime",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "windowDuration",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint16",
+            "name": "reservationsPerWindow",
+            "type": "uint16"
+          },
+          {
+            "internalType": "bool",
+            "name": "isActive",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct RestaurantManager.Drop",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "restaurantId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getDropIDsByRestaurant",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "result",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "restaurantId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getRestaurant",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "businessAddress",
+            "type": "string"
+          },
+          {
+            "internalType": "bool",
+            "name": "isActive",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct RestaurantManager.Restaurant",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "restaurantId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getRestaurantDropCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "dropId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "reservationTimestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "getTimeSlotReservationCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "businessAddress",
+        "type": "string"
+      }
+    ],
+    "name": "registerRestaurant",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "restaurantDropCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "restaurants",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "businessAddress",
+        "type": "string"
+      },
+      {
+        "internalType": "bool",
+        "name": "isActive",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "dropId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "isActive",
+        "type": "bool"
+      }
+    ],
+    "name": "setDropIsActive",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_reservNFTAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setReservNFTAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "restaurantId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "isActive",
+        "type": "bool"
+      }
+    ],
+    "name": "setRestaurantIsActive",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "dropId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "reservationTimestamp",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "count",
+        "type": "uint256"
+      }
+    ],
+    "name": "setTimeSlotReservationCount",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
