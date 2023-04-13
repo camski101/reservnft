@@ -3,7 +3,7 @@ import { Modal, Input, DatePicker, Dropdown, useNotification, Form } from "web3u
 import moment from "moment-timezone"
 import { useMoralis, useWeb3Contract } from "react-moralis"
 import { RestaurantManager, networkMapping } from "../constants"
-import { generateTimeOptions } from "@/utils/dateUtils"
+import { generateTimeOptions } from "../utils/dateUtils"
 
 export const DropModal = ({
     isVisible,

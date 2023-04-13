@@ -1,18 +1,18 @@
 import React, { useState } from "react"
 import { useQuery } from "@apollo/client"
-import { useRouter } from "next/router"
+import { useParams } from "react-router-dom" // Import useParams from react-router-dom
+
 import { Typography, Loading, Button } from "web3uikit"
-import subgraphQueries from "@/constants/subgraphQueries"
+import subgraphQueries from "../constants/subgraphQueries"
 import { useMoralis } from "react-moralis"
-import { DropCard } from "@/components/DropCard"
-import { DropModal } from "@/components/DropModal"
+import { DropCard } from "../components/DropCard"
+import { DropModal } from "../components/DropModal"
 
 const { GET_RESTAURANT_BY_ID, GET_DROPS_BY_RESTAURANT_ID } = subgraphQueries
 
 export default function Restaurant() {
     const { Moralis, account } = useMoralis()
-    const router = useRouter()
-    const { restaurantId } = router.query
+    const { restaurantId } = useParams() // Use useParams to get restaurantId
 
     const [buttonLoading, setButtonLoading] = useState(false)
 

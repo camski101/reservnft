@@ -3,24 +3,30 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "next dev",
-        "build": "next build",
-        "start": "next start",
-        "lint": "next lint"
+        "start": "react-app-rewired start",
+        "build": "react-app-rewired build",
+        "test": "react-app-rewired test",
+        "eject": "react-scripts eject"
     },
     "dependencies": {
         "@apollo/client": "^3.7.11",
         "@walletconnect/web3-provider": "^1.8.0",
         "@web3auth/web3auth": "^2.1.3",
+        "crypto-browserify": "^3.12.0",
         "graphql": "^16.6.0",
+        "https-browserify": "^1.0.0",
         "magic-sdk": "^16.0.1",
         "moment-timezone": "^0.5.43",
         "moralis": "^1.8.0",
         "moralis-v1": "^1.12.0",
-        "next": "13.2.4",
-        "react": "18.2.0",
-        "react-dom": "18.2.0",
+        "os-browserify": "^0.3.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
         "react-moralis": "^1.4.0",
+        "react-router-dom": "^6.10.0",
+        "react-scripts": "^5.0.1",
+        "stream-browserify": "^3.0.0",
+        "stream-http": "^3.2.0",
         "web3uikit": "^1.0.4"
     },
     "devDependencies": {
@@ -28,6 +34,19 @@
         "eslint": "8.13.0",
         "eslint-config-next": "12.1.5",
         "postcss": "^8.4.12",
+        "react-app-rewired": "^2.2.1",
         "tailwindcss": "^3.0.24"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
     }
 }

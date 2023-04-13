@@ -1,11 +1,11 @@
 import React, { useState } from "react"
 import { useQuery } from "@apollo/client"
 import { Card, Typography, Modal, useNotification, Loading } from "web3uikit"
-import { generateReservationSlots } from "@/utils/dateUtils"
+import { generateReservationSlots } from "../utils/dateUtils"
 import { useWeb3Contract, useMoralis } from "react-moralis"
 import { ReservNFT, networkMapping } from "../constants"
-import { CustomDateTimeSelector } from "@/components/CustomDateTimeSelector"
-import subgraphQueries from "@/constants/subgraphQueries"
+import { CustomDateTimeSelector } from "../components/CustomDateTimeSelector"
+import subgraphQueries from "../constants/subgraphQueries"
 
 const { GET_RESERVATION_TIMESTAMP_BY_DROP_ID } = subgraphQueries
 

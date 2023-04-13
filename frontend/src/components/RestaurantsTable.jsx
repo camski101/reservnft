@@ -1,6 +1,6 @@
 import React from "react"
 import { Table, Button, Loading } from "web3uikit"
-import Link from "next/link"
+import { Link } from "react-router-dom"
 
 export const RestaurantsTable = ({
     data,
@@ -16,9 +16,9 @@ export const RestaurantsTable = ({
             columnsConfig={columnsConfig}
             data={data.map((restaurant) => [
                 <Link
-                    className="text-green-600 hover:text-blue-500  cursor-pointer rounded-sm"
+                    className="text-green-600 hover:text-blue-500 cursor-pointer rounded-sm"
                     key={parseInt(restaurant.id, 16)}
-                    href={`/restaurants/${parseInt(restaurant.id, 16)}`}
+                    to={`/restaurants/${parseInt(restaurant.id, 16)}`}
                 >
                     {restaurant.name}
                 </Link>,

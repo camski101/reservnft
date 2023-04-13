@@ -1,5 +1,5 @@
 {
-    "site":{
+    "site": {
         "id": "97878ff2-a4f8-43a1-9a4c-ef359f657af4",
         "name": "jolly-voice-8243",
         "source": "github",
@@ -7,10 +7,10 @@
         "team": "FinTech 564 Blockchain Group 5"
     },
     "build": {
-      "image": "fleek/next-js:node-16",
-      "command": "yarn && yarn run build && yarn next export",
-      "publicDir": "out",
-      "baseDir": "",
-      "rootDir": ""
+        "image": "fleek/create-react-app:node-16",
+        "command": "yarn && yarn run build",
+        "publicDir": "build",
+        "baseDir": "",
+        "rootDir": ""
     }
-   }
+}

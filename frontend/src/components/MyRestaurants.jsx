@@ -4,7 +4,7 @@ import { useQuery } from "@apollo/client"
 import { useNotification, Loading } from "web3uikit"
 import subgraphQueries from "../constants/subgraphQueries"
 import { RestaurantManager, networkMapping } from "../constants"
-import { RestaurantsTable } from "@/components/RestaurantsTable"
+import { RestaurantsTable } from "../components/RestaurantsTable"
 
 export default function MyRestaurants() {
     const { isWeb3Enabled, chainId: chainIdHex, account } = useMoralis()
