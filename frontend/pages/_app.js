@@ -1,4 +1,7 @@
 import { MoralisProvider } from "react-moralis"
+import { useEffect } from "react"
+import { useRouter } from "next/router"
+
 import { NotificationProvider } from "web3uikit"
 import "../styles/globals.css"
 import Head from "next/head"
@@ -11,6 +14,22 @@ const client = new ApolloClient({
 })
 
 function MyApp({ Component, pageProps }) {
+    const router = useRouter() // Add this line
+
+    useEffect(() => {
+        const handleHashChange = () => {
+            const hash = window.location.hash.substr(1)
+            if (hash) {
+                router.push(`/${hash}`)
+            }
+        }
+
+        window.addEventListener("hashchange", handleHashChange)
+
+        return () => {
+            window.removeEventListener("hashchange", handleHashChange)
+        }
+    }, [])
     return (
         <div>
             <Head>
