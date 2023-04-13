@@ -35,6 +35,7 @@ contract Marketplace is ReentrancyGuard {
     );
 
     event ReservationBought(
+        address indexed seller,
         address indexed buyer,
         uint256 indexed tokenId,
         uint256 price
@@ -125,7 +126,12 @@ contract Marketplace is ReentrancyGuard {
             tokenId
         );
 
-        emit ReservationBought(msg.sender, tokenId, listedReservation.price);
+        emit ReservationBought(
+            listedReservation.seller,
+            msg.sender,
+            tokenId,
+            listedReservation.price
+        );
     }
 
     /// @notice Cancel a reservation listing

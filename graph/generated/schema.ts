@@ -276,37 +276,98 @@ export class Reservation extends Entity {
     this.set("reservationTimestamp", Value.fromBigInt(value));
   }
 
-  get restaurant(): string | null {
+  get restaurant(): string {
     let value = this.get("restaurant");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
+    return value!.toString();
   }
 
-  set restaurant(value: string | null) {
-    if (!value) {
-      this.unset("restaurant");
-    } else {
-      this.set("restaurant", Value.fromString(<string>value));
-    }
+  set restaurant(value: string) {
+    this.set("restaurant", Value.fromString(value));
   }
 
-  get drop(): string | null {
+  get drop(): string {
     let value = this.get("drop");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
+    return value!.toString();
+  }
+
+  set drop(value: string) {
+    this.set("drop", Value.fromString(value));
+  }
+
+  get status(): string {
+    let value = this.get("status");
+    return value!.toString();
+  }
+
+  set status(value: string) {
+    this.set("status", Value.fromString(value));
+  }
+}
+
+export class Listing extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Listing entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Listing must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Listing", id.toString(), this);
     }
   }
 
-  set drop(value: string | null) {
-    if (!value) {
-      this.unset("drop");
-    } else {
-      this.set("drop", Value.fromString(<string>value));
-    }
+  static load(id: string): Listing | null {
+    return changetype<Listing | null>(store.get("Listing", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get tokenId(): BigInt {
+    let value = this.get("tokenId");
+    return value!.toBigInt();
+  }
+
+  set tokenId(value: BigInt) {
+    this.set("tokenId", Value.fromBigInt(value));
+  }
+
+  get seller(): Bytes {
+    let value = this.get("seller");
+    return value!.toBytes();
+  }
+
+  set seller(value: Bytes) {
+    this.set("seller", Value.fromBytes(value));
+  }
+
+  get buyer(): Bytes {
+    let value = this.get("buyer");
+    return value!.toBytes();
+  }
+
+  set buyer(value: Bytes) {
+    this.set("buyer", Value.fromBytes(value));
+  }
+
+  get price(): BigInt {
+    let value = this.get("price");
+    return value!.toBigInt();
+  }
+
+  set price(value: BigInt) {
+    this.set("price", Value.fromBigInt(value));
   }
 }

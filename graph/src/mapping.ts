@@ -5,10 +5,15 @@ import {
   DropIsActive as DropIsActiveEvent,
 } from "../generated/RestaurantManager/RestaurantManager"
 
-import { Restaurant, Drop, Reservation } from "../generated/schema"
-import { BigInt } from "@graphprotocol/graph-ts";
-
 import { ReservationCreated as ReservationCreatedEvent } from "../generated/ReservNFT/ReservNFT"    
+import {
+  ReservationListed as ReservationListedEvent, 
+  ReservationBought as ReservationBoughtEvent, 
+  ReservationCancelled as ReservationCancelledEvent
+} from "../generated/Marketplace/Marketplace"
+
+import { Restaurant, Drop, Reservation, Listing } from "../generated/schema"
+import { BigInt, Address } from "@graphprotocol/graph-ts";
 
 export function handleRestaurantRegistered(event: RestaurantRegisteredEvent): void {
 
@@ -73,6 +78,7 @@ export function handleReservationCreated(event: ReservationCreatedEvent): void {
   reservation.restaurantId = event.params.restaurantId.toHex()
   reservation.dropId = event.params.dropId.toHex()
   reservation.reservationTimestamp = event.params.reservationTimestamp
+  reservation.status = "owned";
 
   let restaurant = Restaurant.load(event.params.restaurantId.toHex());
   if (restaurant != null) {
@@ -86,7 +92,66 @@ export function handleReservationCreated(event: ReservationCreatedEvent): void {
     reservation.drop = drop.id;
   }
   reservation.save()
+}
+
+export function handleReservationListed(event: ReservationListedEvent): void {
+
+  let listing = new Listing(event.params.tokenId.toHex() + event.params.seller.toHex())
+  let reservation = Reservation.load(event.params.tokenId.toHex())
+
+  if (reservation == null) {
+    reservation = new Reservation(event.params.tokenId.toHex())
+  }
+
+  listing.tokenId = event.params.tokenId
+  listing.seller = event.params.seller
+  listing.buyer = Address.fromString("0x0000000000000000000000000000000000000000")
+  listing.price = event.params.price
+
+  reservation.status = "listed";
+
+  listing.save()
+  reservation.save()
+}
+export function handleReservationBought(event: ReservationBoughtEvent): void {
+
+  let reservation = Reservation.load(event.params.tokenId.toHex())
+  let listing = Listing.load(event.params.tokenId.toHex() + event.params.seller.toHex())
+  if (reservation == null) {
+    reservation = new Reservation(event.params.tokenId.toHex())
+  }
+
+  if (listing == null) {
+    listing = new Listing(event.params.tokenId.toHex() + event.params.seller.toHex())
+  }
+
+  listing.buyer = event.params.buyer
+  reservation.owner = event.params.buyer;
+  reservation.status = "owned";
+
+  listing.save()
+  reservation.save()
 
 }
+export function handleReservationCancelled(event: ReservationCancelledEvent): void {
+  let reservation = Reservation.load(event.params.tokenId.toHex())
+  let listing = Listing.load(event.params.tokenId.toHex() + event.params.seller.toHex())
+  if (reservation == null) {
+    reservation = new Reservation(event.params.tokenId.toHex())
+  }
+
+  if (listing == null) {
+    listing = new Listing(event.params.tokenId.toHex() + event.params.seller.toHex())
+  }
+
+  listing!.buyer = Address.fromString("0x000000000000000000000000000000000000dEaD")
+
+  reservation.status = "owned";
+
+  listing!.save()
+  reservation.save()
+}
+
+
 
 

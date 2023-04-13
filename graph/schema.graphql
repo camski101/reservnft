@@ -26,6 +26,15 @@ type Reservation @entity {
   dropId: ID!
   restaurantId: ID!
   reservationTimestamp: BigInt!
-  restaurant: Restaurant
-  drop: Drop
+  restaurant: Restaurant!
+  drop: Drop!
+  status: String!
+}
+
+type Listing @entity {
+  id: ID!
+  tokenId: BigInt!
+  seller: Bytes!
+  buyer: Bytes!
+  price: BigInt!
 }
