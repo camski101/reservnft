@@ -20,6 +20,7 @@ error ReservNFT__OutsideDailyWindow();
 error ReservNFT__InvalidWindowDuration();
 error ReservNFT__NoBalanceAvailable();
 error ReservNFT__ZeroAddress();
+error ReservNFT__TransferFailed();
 
 /// @title ReservNFT
 /// @notice A contract for creating restaurant reservation NFTs with different drops and mint prices.
@@ -198,12 +199,15 @@ contract ReservNFT is ERC721URIStorage, Ownable, ReentrancyGuard {
     function withdrawRestaurantOwnerBalance() public nonReentrant {
         uint256 balance = ownerBalances[msg.sender];
 
-        if (balance == 0) {
+        if (balance <= 0) {
             revert ReservNFT__NoBalanceAvailable();
         }
 
         ownerBalances[msg.sender] = 0;
-        payable(msg.sender).transfer(balance);
+        (bool success, ) = payable(msg.sender).call{value: balance}("");
+        if (!success) {
+            revert ReservNFT__TransferFailed();
+        }
     }
 
     /// @notice Retrieves the details of a reservation

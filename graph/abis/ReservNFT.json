@@ -41,6 +41,11 @@
   },
   {
     "inputs": [],
+    "name": "ReservNFT__TransferFailed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "ReservNFT__ZeroAddress",
     "type": "error"
   },

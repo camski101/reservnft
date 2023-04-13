@@ -6,7 +6,7 @@ dataSources:
     name: RestaurantManager
     network: mumbai
     source:
-      address: '0xD0AC62e5824d2633FB705d7bF057c64E6Fcba756'
+      address: '0x03800426cFBD3541f34d83250993a2C04694a877'
       abi: RestaurantManager
       startBlock: 33979251
     mapping:
@@ -33,7 +33,7 @@ dataSources:
     name: ReservNFT
     network: mumbai
     source:
-      address: '0xAB763e19EAB4cAD3c7Eb09c1aD8315Dec7b41f8f'
+      address: '0x3F79Ec9a375E1583626Dae0B7bb6B2e0aB1b33d1'
       abi: ReservNFT
       startBlock: 34247294
     mapping:
