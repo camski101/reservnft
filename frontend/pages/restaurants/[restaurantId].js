@@ -31,7 +31,7 @@ export default function Restaurant() {
         data: dropsData,
         refetch,
     } = useQuery(GET_DROPS_BY_RESTAURANT_ID, {
-        variables: { restaurantId: restaurantId },
+        variables: { restaurantId: restaurantId ? "0x" + restaurantId.toString(16) : null },
         skip: !restaurantData || !restaurantId || !account,
     })
 
@@ -50,7 +50,7 @@ export default function Restaurant() {
         setModalVisible(false)
     }
 
-    if (restaurantLoading || !restaurantId) {
+    if (restaurantLoading || dropsLoading || !restaurantId) {
         return (
             <div
                 style={{
@@ -137,7 +137,7 @@ export default function Restaurant() {
                                             isVisible={modalVisible}
                                             onClose={handleOnClose}
                                             onSubmit={handleSubmit}
-                                            restaurantId={restaurant.restaurantId}
+                                            restaurantId={parseInt(restaurant.id, 16)}
                                             setButtonLoading={setButtonLoading}
                                             refetchDrops={refetch}
                                         />
@@ -145,7 +145,6 @@ export default function Restaurant() {
                                 ) : (
                                     <></>
                                 )}
-
                                 {dropsData &&
                                     dropsData.drops.map((drop) => (
                                         <DropCard key={drop.id} drop={drop} />

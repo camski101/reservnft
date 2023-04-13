@@ -1,6 +1,5 @@
 type Restaurant @entity {
   id: ID!
-  restaurantId: BigInt!
   owner: Bytes!
   name: String!
   businessAddress: String!
@@ -9,8 +8,7 @@ type Restaurant @entity {
 
 type Drop @entity {
   id: ID!
-  dropId: BigInt!
-  restaurantId: BigInt!
+  restaurantId: ID!
   mintPrice: BigInt!
   startDate: BigInt!
   endDate: BigInt!
@@ -19,13 +17,15 @@ type Drop @entity {
   windowDuration: BigInt!
   reservationsPerWindow: BigInt!
   isActive: Boolean!
+  restaurant: Restaurant
 }
 
 type Reservation @entity {
   id: ID!
   owner: Bytes!
-  tokenId: BigInt!
-  dropId: BigInt!
-  restaurantId: BigInt!
+  dropId: ID!
+  restaurantId: ID!
   reservationTimestamp: BigInt!
+  restaurant: Restaurant
+  drop: Drop
 }

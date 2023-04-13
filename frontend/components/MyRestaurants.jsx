@@ -131,9 +131,9 @@ export default function MyRestaurants() {
                 showStatus={true}
                 onToggleStatus={(restaurant) =>
                     handleToggleActiveClick(
-                        parseInt(restaurant.id.toString()),
+                        parseInt(restaurant.id, 16),
                         !restaurant.isActive,
-                        restaurant.id
+                        parseInt(restaurant.id, 16)
                     )
                 }
                 loadingState={buttonLoading}

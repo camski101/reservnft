@@ -19,7 +19,6 @@ export const DropCard = ({ drop }) => {
     const [buttonLoading, setButtonLoading] = useState(false)
     const [formDisabled, setFormDisabled] = useState(false)
 
-    const [dropId, setDropId] = useState(0)
     const [reservationTimestamp, setReservationTimestamp] = useState(0)
 
     const {
@@ -32,7 +31,7 @@ export const DropCard = ({ drop }) => {
         contractAddress: reservAddress,
         functionName: "createReservNFT",
         params: {
-            dropId: drop.dropId,
+            dropId: parseInt(drop.id, 16),
             reservationTimestamp: reservationTimestamp,
         },
         msgValue: drop.mintPrice,
@@ -111,7 +110,7 @@ export const DropCard = ({ drop }) => {
         refetch: refetchMintedReservations,
     } = useQuery(GET_RESERVATION_TIMESTAMP_BY_DROP_ID, {
         variables: {
-            dropId: drop.dropId,
+            dropId: drop.id,
         },
     })
 
@@ -149,7 +148,7 @@ export const DropCard = ({ drop }) => {
         <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 p-2">
             <Card onClick={openMintModal}>
                 <div>
-                    <Typography className="mb-2 block">Drop ID: {drop.dropId}</Typography>
+                    <Typography className="mb-2 block">Drop ID: {parseInt(drop.id)}</Typography>
                     <Typography className="mb-2 block">
                         Mint Price: {Moralis.Units.FromWei(drop.mintPrice)} MATIC
                     </Typography>

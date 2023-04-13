@@ -14,20 +14,20 @@ dataSources:
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
-        - RestaurantToggleActive
+        - RestaurantIsActive
         - RestaurantRegistered
       abis:
         - name: RestaurantManager
           file: ./abis/RestaurantManager.json
       eventHandlers:
         - event: RestaurantIsActive(indexed uint256,bool)
-          handler: handleRestaurantToggleActive
+          handler: handleRestaurantIsActive
         - event: RestaurantRegistered(indexed uint256,indexed address,string,string)
           handler: handleRestaurantRegistered
         - event: DropCreated(indexed uint256,indexed uint256,uint256,uint64,uint64,uint32,uint32,uint32,uint16)
           handler: handleDropCreated
         - event: DropIsActive(indexed uint256,bool)
-          handler: handleDropToggleActive
+          handler: handleDropIsActive
       file: ./src/mapping.ts
   - kind: ethereum/contract
     name: ReservNFT

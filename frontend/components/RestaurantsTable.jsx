@@ -17,8 +17,8 @@ export const RestaurantsTable = ({
             data={data.map((restaurant) => [
                 <Link
                     className="text-green-600 hover:text-blue-500  cursor-pointer rounded-sm"
-                    key={restaurant.id}
-                    href={`/restaurants/${restaurant.restaurantId}`}
+                    key={parseInt(restaurant.id, 16)}
+                    href={`/restaurants/${parseInt(restaurant.id, 16)}`}
                 >
                     {restaurant.name}
                 </Link>,
@@ -30,13 +30,13 @@ export const RestaurantsTable = ({
                               onClick={() => {
                                   setButtonLoading((prevButtonLoading) => ({
                                       ...prevButtonLoading,
-                                      [restaurant.id]: true,
+                                      [parseInt(restaurant.id, 16)]: true,
                                   }))
-                                  onToggleStatus(restaurant, restaurant.id)
+                                  onToggleStatus(restaurant, parseInt(restaurant.id, 16))
                               }}
                               theme="primary"
                               text={
-                                  loadingState[restaurant.id] ? (
+                                  loadingState[parseInt(restaurant.id, 16)] ? (
                                       <Loading
                                           size={20}
                                           spinnerColor="#ffffff"

@@ -42,15 +42,6 @@ export class Restaurant extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get restaurantId(): BigInt {
-    let value = this.get("restaurantId");
-    return value!.toBigInt();
-  }
-
-  set restaurantId(value: BigInt) {
-    this.set("restaurantId", Value.fromBigInt(value));
-  }
-
   get owner(): Bytes {
     let value = this.get("owner");
     return value!.toBytes();
@@ -119,22 +110,13 @@ export class Drop extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get dropId(): BigInt {
-    let value = this.get("dropId");
-    return value!.toBigInt();
-  }
-
-  set dropId(value: BigInt) {
-    this.set("dropId", Value.fromBigInt(value));
-  }
-
-  get restaurantId(): BigInt {
+  get restaurantId(): string {
     let value = this.get("restaurantId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set restaurantId(value: BigInt) {
-    this.set("restaurantId", Value.fromBigInt(value));
+  set restaurantId(value: string) {
+    this.set("restaurantId", Value.fromString(value));
   }
 
   get mintPrice(): BigInt {
@@ -208,6 +190,23 @@ export class Drop extends Entity {
   set isActive(value: boolean) {
     this.set("isActive", Value.fromBoolean(value));
   }
+
+  get restaurant(): string | null {
+    let value = this.get("restaurant");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set restaurant(value: string | null) {
+    if (!value) {
+      this.unset("restaurant");
+    } else {
+      this.set("restaurant", Value.fromString(<string>value));
+    }
+  }
 }
 
 export class Reservation extends Entity {
@@ -250,31 +249,22 @@ export class Reservation extends Entity {
     this.set("owner", Value.fromBytes(value));
   }
 
-  get tokenId(): BigInt {
-    let value = this.get("tokenId");
-    return value!.toBigInt();
-  }
-
-  set tokenId(value: BigInt) {
-    this.set("tokenId", Value.fromBigInt(value));
-  }
-
-  get dropId(): BigInt {
+  get dropId(): string {
     let value = this.get("dropId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set dropId(value: BigInt) {
-    this.set("dropId", Value.fromBigInt(value));
+  set dropId(value: string) {
+    this.set("dropId", Value.fromString(value));
   }
 
-  get restaurantId(): BigInt {
+  get restaurantId(): string {
     let value = this.get("restaurantId");
-    return value!.toBigInt();
+    return value!.toString();
   }
 
-  set restaurantId(value: BigInt) {
-    this.set("restaurantId", Value.fromBigInt(value));
+  set restaurantId(value: string) {
+    this.set("restaurantId", Value.fromString(value));
   }
 
   get reservationTimestamp(): BigInt {
@@ -284,5 +274,39 @@ export class Reservation extends Entity {
 
   set reservationTimestamp(value: BigInt) {
     this.set("reservationTimestamp", Value.fromBigInt(value));
+  }
+
+  get restaurant(): string | null {
+    let value = this.get("restaurant");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set restaurant(value: string | null) {
+    if (!value) {
+      this.unset("restaurant");
+    } else {
+      this.set("restaurant", Value.fromString(<string>value));
+    }
+  }
+
+  get drop(): string | null {
+    let value = this.get("drop");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set drop(value: string | null) {
+    if (!value) {
+      this.unset("drop");
+    } else {
+      this.set("drop", Value.fromString(<string>value));
+    }
   }
 }

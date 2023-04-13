@@ -66,7 +66,9 @@ export default function RegisterRestaurant({ onDataChange }) {
             setRestaurantName("")
             setRestaurantBusinessAddress("")
             setButtonLoading(false)
-            onDataChange()
+            setTimeout(() => {
+                onDataChange()
+            }, 3000)
         } catch (error) {
             console.log(error)
         }

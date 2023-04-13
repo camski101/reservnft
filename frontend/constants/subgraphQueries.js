@@ -2,46 +2,42 @@ import { gql } from "@apollo/client"
 
 const GET_MY_RESTAURANTS = gql`
     query MyRestaurants($ownerAddress: Bytes!) {
-        restaurants(where: { owner: $ownerAddress }, orderBy: restaurantId, orderDirection: desc) {
+        restaurants(where: { owner: $ownerAddress }, orderBy: id, orderDirection: desc) {
+            id
             name
             businessAddress
             isActive
-            id
-            restaurantId
         }
     }
 `
 
 const GET_ACTIVE_RESTAURANTS = gql`
     query ActiveRestaurants {
-        restaurants(where: { isActive: true }, orderBy: restaurantId, orderDirection: desc) {
+        restaurants(where: { isActive: true }, orderBy: id, orderDirection: desc) {
+            id
             name
             businessAddress
             isActive
-            id
-            restaurantId
         }
     }
 `
 
 const GET_RESTAURANT_BY_ID = gql`
-    query GET_RESTAURANT_BY_ID($id: ID!) {
+    query GetRestaurantById($id: ID!) {
         restaurant(id: $id) {
             id
             name
             businessAddress
             isActive
             owner
-            restaurantId
         }
     }
 `
 
 const GET_DROPS_BY_RESTAURANT_ID = gql`
-    query GET_DROPS_BY_RESTAURANT_ID($restaurantId: ID!) {
-        drops(where: { restaurantId: $restaurantId }, orderBy: dropId, orderDirection: desc) {
+    query GetDropsByRestaurantId($restaurantId: ID!) {
+        drops(where: { restaurantId: $restaurantId }) {
             id
-            dropId
             mintPrice
             startDate
             endDate
@@ -49,14 +45,30 @@ const GET_DROPS_BY_RESTAURANT_ID = gql`
             dailyEndTime
             windowDuration
             reservationsPerWindow
+            restaurantId
         }
     }
 `
 
 const GET_RESERVATION_TIMESTAMP_BY_DROP_ID = gql`
-    query GetReservationTimestampCount($dropId: ID!) {
+    query GetReservationTimestampByDropId($dropId: ID!) {
         reservations(where: { dropId: $dropId }) {
             reservationTimestamp
+        }
+    }
+`
+
+const GET_RESERVATIONS_BY_ADDRESS = gql`
+    query GetReservationsByAddress($owner: Bytes!) {
+        reservations(where: { owner: $owner }) {
+            id
+            owner
+            dropId
+            reservationTimestamp
+            restaurant {
+                # Add a nested query for the restaurant field
+                name # Fetch the restaurant name
+            }
         }
     }
 `
@@ -67,4 +79,5 @@ export default {
     GET_RESTAURANT_BY_ID,
     GET_DROPS_BY_RESTAURANT_ID,
     GET_RESERVATION_TIMESTAMP_BY_DROP_ID,
+    GET_RESERVATIONS_BY_ADDRESS,
 }

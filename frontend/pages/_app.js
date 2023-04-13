@@ -2,12 +2,12 @@ import { MoralisProvider } from "react-moralis"
 import { NotificationProvider } from "web3uikit"
 import "../styles/globals.css"
 import Head from "next/head"
-import Header from "../components/Header"
+import Header from "@/components/Header"
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client"
 
 const client = new ApolloClient({
     cache: new InMemoryCache(),
-    uri: "https://api.studio.thegraph.com/query/44793/reservnft/0.0.19", // doesn't work in env for some reason
+    uri: "https://api.studio.thegraph.com/query/44793/reservnft/0.0.27", // doesn't work in env for some reason
 })
 
 function MyApp({ Component, pageProps }) {
