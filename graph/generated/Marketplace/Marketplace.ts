@@ -10,6 +10,46 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
+export class OwnershipTransferred extends ethereum.Event {
+  get params(): OwnershipTransferred__Params {
+    return new OwnershipTransferred__Params(this);
+  }
+}
+
+export class OwnershipTransferred__Params {
+  _event: OwnershipTransferred;
+
+  constructor(event: OwnershipTransferred) {
+    this._event = event;
+  }
+
+  get previousOwner(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get newOwner(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
+export class ReservNFTAddressSet extends ethereum.Event {
+  get params(): ReservNFTAddressSet__Params {
+    return new ReservNFTAddressSet__Params(this);
+  }
+}
+
+export class ReservNFTAddressSet__Params {
+  _event: ReservNFTAddressSet;
+
+  constructor(event: ReservNFTAddressSet) {
+    this._event = event;
+  }
+
+  get reservNFTAddress(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+}
+
 export class ReservationBought extends ethereum.Event {
   get params(): ReservationBought__Params {
     return new ReservationBought__Params(this);
@@ -103,29 +143,6 @@ export class Marketplace extends ethereum.SmartContract {
     return new Marketplace("Marketplace", address);
   }
 
-  RESERV_NFT_CONTRACT_ADDRESS(): Address {
-    let result = super.call(
-      "RESERV_NFT_CONTRACT_ADDRESS",
-      "RESERV_NFT_CONTRACT_ADDRESS():(address)",
-      []
-    );
-
-    return result[0].toAddress();
-  }
-
-  try_RESERV_NFT_CONTRACT_ADDRESS(): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "RESERV_NFT_CONTRACT_ADDRESS",
-      "RESERV_NFT_CONTRACT_ADDRESS():(address)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
   getProceeds(seller: Address): BigInt {
     let result = super.call("getProceeds", "getProceeds(address):(uint256)", [
       ethereum.Value.fromAddress(seller)
@@ -179,35 +196,20 @@ export class Marketplace extends ethereum.SmartContract {
       )
     );
   }
-}
 
-export class ConstructorCall extends ethereum.Call {
-  get inputs(): ConstructorCall__Inputs {
-    return new ConstructorCall__Inputs(this);
+  owner(): Address {
+    let result = super.call("owner", "owner():(address)", []);
+
+    return result[0].toAddress();
   }
 
-  get outputs(): ConstructorCall__Outputs {
-    return new ConstructorCall__Outputs(this);
-  }
-}
-
-export class ConstructorCall__Inputs {
-  _call: ConstructorCall;
-
-  constructor(call: ConstructorCall) {
-    this._call = call;
-  }
-
-  get _reservNFTContractAddress(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class ConstructorCall__Outputs {
-  _call: ConstructorCall;
-
-  constructor(call: ConstructorCall) {
-    this._call = call;
+  try_owner(): ethereum.CallResult<Address> {
+    let result = super.tryCall("owner", "owner():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 }
 
@@ -301,6 +303,92 @@ export class ListReservationCall__Outputs {
   _call: ListReservationCall;
 
   constructor(call: ListReservationCall) {
+    this._call = call;
+  }
+}
+
+export class RenounceOwnershipCall extends ethereum.Call {
+  get inputs(): RenounceOwnershipCall__Inputs {
+    return new RenounceOwnershipCall__Inputs(this);
+  }
+
+  get outputs(): RenounceOwnershipCall__Outputs {
+    return new RenounceOwnershipCall__Outputs(this);
+  }
+}
+
+export class RenounceOwnershipCall__Inputs {
+  _call: RenounceOwnershipCall;
+
+  constructor(call: RenounceOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class RenounceOwnershipCall__Outputs {
+  _call: RenounceOwnershipCall;
+
+  constructor(call: RenounceOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class SetReservNFTAddressCall extends ethereum.Call {
+  get inputs(): SetReservNFTAddressCall__Inputs {
+    return new SetReservNFTAddressCall__Inputs(this);
+  }
+
+  get outputs(): SetReservNFTAddressCall__Outputs {
+    return new SetReservNFTAddressCall__Outputs(this);
+  }
+}
+
+export class SetReservNFTAddressCall__Inputs {
+  _call: SetReservNFTAddressCall;
+
+  constructor(call: SetReservNFTAddressCall) {
+    this._call = call;
+  }
+
+  get _reservNFTAddress(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class SetReservNFTAddressCall__Outputs {
+  _call: SetReservNFTAddressCall;
+
+  constructor(call: SetReservNFTAddressCall) {
+    this._call = call;
+  }
+}
+
+export class TransferOwnershipCall extends ethereum.Call {
+  get inputs(): TransferOwnershipCall__Inputs {
+    return new TransferOwnershipCall__Inputs(this);
+  }
+
+  get outputs(): TransferOwnershipCall__Outputs {
+    return new TransferOwnershipCall__Outputs(this);
+  }
+}
+
+export class TransferOwnershipCall__Inputs {
+  _call: TransferOwnershipCall;
+
+  constructor(call: TransferOwnershipCall) {
+    this._call = call;
+  }
+
+  get newOwner(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class TransferOwnershipCall__Outputs {
+  _call: TransferOwnershipCall;
+
+  constructor(call: TransferOwnershipCall) {
     this._call = call;
   }
 }

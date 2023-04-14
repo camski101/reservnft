@@ -1,10 +1,10 @@
 {
-    "31337": {
-        "RestaurantManager": "0x5fbdb2315678afecb367f032d93f642f64180aa3"
-    },
-    "80001": {
-        "RestaurantManager": "0x03800426cFBD3541f34d83250993a2C04694a877",
-        "ReservNFT": "0x3F79Ec9a375E1583626Dae0B7bb6B2e0aB1b33d1",
-        "Marketplace": "0xC67234dDDca904D7e413FE683e325106ce357b96"
-    }
+  "31337": {
+    "RestaurantManager": "0x5fbdb2315678afecb367f032d93f642f64180aa3"
+  },
+  "80001": {
+    "RestaurantManager": "0x03800426cFBD3541f34d83250993a2C04694a877",
+    "ReservNFT": "0x3F79Ec9a375E1583626Dae0B7bb6B2e0aB1b33d1",
+    "Marketplace": "0xd3774FB3C3D49B258Dd1963396baE28de7598969"
+  }
 }

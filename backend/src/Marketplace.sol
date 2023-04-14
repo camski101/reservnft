@@ -3,6 +3,7 @@ pragma solidity ^0.8.18;
 
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 error Marketplace__PriceMustBeAboveZero();
 error Marketplace__NotApprovedForMarketplace();
@@ -12,15 +13,12 @@ error Marketplace__NotListed(uint256 tokenId);
 error Marketplace__PriceNotMet(uint256 tokenId, uint256 price);
 error Marketplace__NoProceeds();
 error Marketplace__TransferFailed();
+error Marketplace__ZeroAddress();
 
 /// @title Marketplace
 /// @notice A contract for buying and selling restaurant reservation NFTs
-contract Marketplace is ReentrancyGuard {
-    address public RESERV_NFT_CONTRACT_ADDRESS;
-
-    constructor(address _reservNFTContractAddress) {
-        RESERV_NFT_CONTRACT_ADDRESS = _reservNFTContractAddress;
-    }
+contract Marketplace is ReentrancyGuard, Ownable {
+    address private reservNFTAddress;
 
     /// @notice Reservation data structure
     struct Listing {
@@ -43,6 +41,8 @@ contract Marketplace is ReentrancyGuard {
 
     event ReservationCancelled(address indexed seller, uint256 indexed tokenId);
 
+    event ReservNFTAddressSet(address indexed reservNFTAddress);
+
     /// @notice Mapping from token ID to reservation listing data
     mapping(uint256 => Listing) private s_listings;
 
@@ -63,7 +63,7 @@ contract Marketplace is ReentrancyGuard {
     /// @param tokenId The ID of the NFT
     /// @param spender The address of the spender
     modifier isOwner(uint256 tokenId, address spender) {
-        IERC721 reserv = IERC721(RESERV_NFT_CONTRACT_ADDRESS);
+        IERC721 reserv = IERC721(reservNFTAddress);
 
         address owner = reserv.ownerOf(tokenId);
 
@@ -83,6 +83,18 @@ contract Marketplace is ReentrancyGuard {
         _;
     }
 
+    /// @notice Set the address of the ReservNFT contract
+    /// @param _reservNFTAddress Address of the ReservNFT contract
+    function setReservNFTAddress(address _reservNFTAddress) public onlyOwner {
+        if (_reservNFTAddress == address(0)) {
+            revert Marketplace__ZeroAddress();
+        }
+
+        reservNFTAddress = _reservNFTAddress;
+
+        emit ReservNFTAddressSet(reservNFTAddress);
+    }
+
     /// @notice List a reservation NFT for sale
     /// @param tokenId The ID of the NFT
     /// @param price The price of the NFT
@@ -94,7 +106,7 @@ contract Marketplace is ReentrancyGuard {
             revert Marketplace__PriceMustBeAboveZero();
         }
 
-        IERC721 reserv = IERC721(RESERV_NFT_CONTRACT_ADDRESS);
+        IERC721 reserv = IERC721(reservNFTAddress);
 
         if (reserv.getApproved(tokenId) != address(this)) {
             revert Marketplace__NotApprovedForMarketplace();
@@ -120,7 +132,7 @@ contract Marketplace is ReentrancyGuard {
             msg.value;
 
         delete s_listings[tokenId];
-        IERC721(RESERV_NFT_CONTRACT_ADDRESS).safeTransferFrom(
+        IERC721(reservNFTAddress).safeTransferFrom(
             listedReservation.seller,
             msg.sender,
             tokenId

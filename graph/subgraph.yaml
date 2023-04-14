@@ -53,7 +53,7 @@ dataSources:
     name: Marketplace
     network: mumbai
     source:
-      address: '0xC67234dDDca904D7e413FE683e325106ce357b96'
+      address: '0xd3774FB3C3D49B258Dd1963396baE28de7598969'
       abi: Marketplace
       startBlock: 34332274
     mapping:

@@ -10,9 +10,7 @@ contract DeployMarketplace is Script {
     function run() public {
         vm.startBroadcast();
 
-        address reservNftAddress = 0x3F79Ec9a375E1583626Dae0B7bb6B2e0aB1b33d1;
-
-        new Marketplace(reservNftAddress);
+        new Marketplace();
 
         vm.stopBroadcast();
     }

@@ -15,11 +15,12 @@ contract MarketplaceTest is Test {
         reservNFT = new ReservNFT();
         restaurantManager = new RestaurantManager();
 
+        marketplace = new Marketplace();
+
         // Set up the addresses after deploying both contracts
         restaurantManager.setReservNFTAddress(address(reservNFT));
         reservNFT.setRestaurantManagerAddress(address(restaurantManager));
-
-        marketplace = new Marketplace(address(reservNFT));
+        marketplace.setReservNFTAddress(address(reservNFT));
 
         // Register a restaurant
         restaurantManager.registerRestaurant(
