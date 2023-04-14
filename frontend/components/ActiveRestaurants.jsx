@@ -1,9 +1,8 @@
 import React, { useEffect } from "react"
 import { useMoralis } from "react-moralis"
 import { useQuery } from "@apollo/client"
-import { Table, Loading } from "web3uikit"
+import { Loading } from "web3uikit"
 import subgraphQueries from "@/constants/subgraphQueries"
-import Link from "next/link"
 import { RestaurantsTable } from "@/components/RestaurantsTable"
 
 const { GET_ACTIVE_RESTAURANTS } = subgraphQueries
