@@ -6,7 +6,7 @@ import subgraphQueries from "../constants/subgraphQueries"
 import { RestaurantManager, networkMapping } from "../constants"
 import { RestaurantsTable } from "@/components/RestaurantsTable"
 
-export default function MyRestaurants() {
+export default function MyRestaurants({ updateKey }) {
     const { isWeb3Enabled, chainId: chainIdHex, account } = useMoralis()
     const chainId = parseInt(chainIdHex)
     const rmAddress =
@@ -92,6 +92,10 @@ export default function MyRestaurants() {
             })
         }
     }, [shouldToggle, restaurantId, isActive])
+
+    useEffect(() => {
+        refetch()
+    }, [updateKey])
 
     if (loading) {
         return (

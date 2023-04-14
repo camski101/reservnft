@@ -7,7 +7,11 @@ import { ReservNFT, Marketplace, networkMapping } from "../constants"
 import moment from "moment-timezone"
 import ListModal from "../components/ListModal"
 
-export default function MyReservations() {
+export default function MyReservations({ updateKey }) {
+    useEffect(() => {
+        refetch()
+    }, [updateKey])
+
     const { isWeb3Enabled, chainId: chainIdHex, account } = useMoralis()
     const chainId = parseInt(chainIdHex)
     const { GET_RESERVATIONS_BY_ADDRESS } = subgraphQueries
@@ -24,6 +28,8 @@ export default function MyReservations() {
         setListModalVisible(false)
         setListModalReservation(null)
     }
+
+    // Queries
 
     const {
         loading,

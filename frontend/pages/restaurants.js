@@ -3,16 +3,13 @@ import { useMoralis } from "react-moralis"
 import React, { useState, Suspense, lazy } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { ChainCheck } from "@/components/ChainCheck"
+import { useUpdateData } from "../contexts/UpdateDataContext"
 
 const RegisterRestaurant = lazy(() => import("@/components/RegisterRestaurant"))
 const ActiveRestaurants = lazy(() => import("@/components/ActiveRestaurants"))
 
-export default function RestaurantsComponent() {
-    const [updateKey, setUpdateKey] = useState(uuidv4())
-
-    function handleDataChange() {
-        setUpdateKey(uuidv4())
-    }
+export default function Restaurants() {
+    const { updateKey, refreshData } = useUpdateData()
 
     return (
         <div className={`p-6 bg-white shadow-md rounded-lg ${styles.container}`}>
@@ -26,7 +23,7 @@ export default function RestaurantsComponent() {
                 <div className="w-1/3 h-full">
                     <Suspense fallback={<div>Loading...</div>}>
                         <RegisterRestaurant
-                            onDataChange={handleDataChange}
+                            onDataChange={refreshData}
                             className="p-8 bg-gray-100 rounded-lg shadow-lg h-full"
                         />
                     </Suspense>

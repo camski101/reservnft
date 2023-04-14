@@ -211,7 +211,7 @@ export const DropModal = ({
                         </div>
                         <div>
                             <label className="block text-gray-700 font-medium">
-                                Drop Start Date (UTC)
+                                Drop Start Date
                             </label>
                             <DatePicker
                                 className="mt-1 w-full"
@@ -229,7 +229,7 @@ export const DropModal = ({
                         </div>
                         <div>
                             <label className="block text-gray-700 font-medium">
-                                Drop End Date (UTC)
+                                Drop End Date
                             </label>
                             <DatePicker
                                 className="mt-1 w-full"
@@ -258,7 +258,7 @@ export const DropModal = ({
                         <div className="">
                             <div className="z-10">
                                 <label className="block text-gray-700 font-medium">
-                                    Daily Start Time (EST):
+                                    Daily Start Time :
                                 </label>
                                 <Dropdown
                                     className="mt-1 w-full"
@@ -270,7 +270,7 @@ export const DropModal = ({
                             </div>
                             <div className="z-10">
                                 <label className="block text-gray-700 font-medium">
-                                    Daily End Time (EST):
+                                    Daily End Time:
                                 </label>
                                 <Dropdown
                                     className="mt-1 w-full"
