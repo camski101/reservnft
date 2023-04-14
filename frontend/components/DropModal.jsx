@@ -115,11 +115,6 @@ export const DropModal = ({
             reservationsPerWindow,
         }
 
-        console.log(startDate)
-        console.log(endDate)
-        console.log(dailyStartTime)
-        console.log(dailyEndTime)
-
         await createDrop({
             onSuccess: (tx) => {
                 handleSuccess(tx)

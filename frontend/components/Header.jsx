@@ -16,6 +16,9 @@ export default function Header() {
                 <Link href="/restaurants" className="mr-4 p-6">
                     Restaurants
                 </Link>
+                <Link href="/marketplace" className="mr-4 p-6">
+                    Marketplace
+                </Link>
                 <ConnectButton moralisAuth={false} />
             </div>
         </nav>

@@ -1,18 +1,29 @@
-import React, { useEffect, useContext } from "react"
-import { useMoralis } from "react-moralis"
+import React, { useEffect, useContext, useState } from "react"
+import { useMoralis, useWeb3Contract } from "react-moralis"
 import { useQuery } from "@apollo/client"
-import { useNotification, Loading, Table } from "web3uikit"
+import { useNotification, Loading, Table, Button } from "web3uikit"
 import subgraphQueries from "../constants/subgraphQueries"
-import { networkMapping } from "../constants"
+import { ReservNFT, Marketplace, networkMapping } from "../constants"
 import moment from "moment-timezone"
+import ListModal from "../components/ListModal"
 
 export default function MyReservations() {
     const { isWeb3Enabled, chainId: chainIdHex, account } = useMoralis()
     const chainId = parseInt(chainIdHex)
-    const rmAddress =
-        chainId in networkMapping ? networkMapping[chainId]["RestaurantManager"] : null
-    const dispatch = useNotification()
     const { GET_RESERVATIONS_BY_ADDRESS } = subgraphQueries
+    const [listModalVisible, setListModalVisible] = useState(false)
+    const [listModalReservation, setListModalReservation] = useState(null)
+
+    const openListModel = (reservation) => {
+        console.log(reservation)
+        setListModalVisible(true)
+        setListModalReservation(reservation)
+    }
+
+    const closeListModel = () => {
+        setListModalVisible(false)
+        setListModalReservation(null)
+    }
 
     const {
         loading,
@@ -41,6 +52,8 @@ export default function MyReservations() {
     if (!myReservations?.reservations?.length) return null
     if (!account) return null
 
+    console.log(myReservations)
+
     const dataSource = myReservations.reservations.map((reservation) => [
         "", // Empty column (you can replace this with desired content)
 
@@ -49,7 +62,11 @@ export default function MyReservations() {
         moment
             .utc(parseInt(reservation.reservationTimestamp, 10) * 1000)
             .format("YYYY-MM-DD HH:mm:ss"), // Timestamp
-        "", // Empty column (you can replace this with desired content)
+        reservation.status == "owned" ? (
+            <Button theme="primary" text={"List"} onClick={() => openListModel(reservation)} />
+        ) : (
+            <Button theme="secondary" text={"Listed"} disabled={true} />
+        ),
     ])
 
     return (
@@ -71,6 +88,13 @@ export default function MyReservations() {
                 onPageNumberChanged={() => {}}
                 onRowClick={() => {}}
                 pageSize={5}
+            />
+            <ListModal
+                isVisible={listModalVisible}
+                setListModalVisible={setListModalVisible}
+                reservation={listModalReservation}
+                onClose={closeListModel}
+                refetch={refetch}
             />
         </div>
     )

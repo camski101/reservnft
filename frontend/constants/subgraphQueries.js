@@ -65,6 +65,7 @@ const GET_RESERVATIONS_BY_ADDRESS = gql`
             owner
             dropId
             reservationTimestamp
+            status
             restaurant {
                 # Add a nested query for the restaurant field
                 name # Fetch the restaurant name

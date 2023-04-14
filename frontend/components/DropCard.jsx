@@ -82,7 +82,8 @@ export const DropCard = ({ drop }) => {
                 tx
             )
             setButtonLoading(false)
-            setFormDisabled(false) // Re-enable the form fields
+            setMintModalVisible(false)
+            setFormDisabled(false)
         } catch (error) {
             console.log(error)
         }
@@ -91,7 +92,7 @@ export const DropCard = ({ drop }) => {
     const handleError = (error) => {
         handleNewNotification("error", error.message, "Transaction Notification")
         setButtonLoading(false)
-        setFormDisabled(false) // Re-enable the form fields
+        setFormDisabled(false)
     }
 
     const slots = generateReservationSlots(
