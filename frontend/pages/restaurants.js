@@ -1,7 +1,5 @@
 import styles from "@/styles/Home.module.css"
-import { useMoralis } from "react-moralis"
-import React, { useState, Suspense, lazy } from "react"
-import { v4 as uuidv4 } from "uuid"
+import React, { Suspense, lazy } from "react"
 import { ChainCheck } from "@/components/ChainCheck"
 import { useUpdateData } from "../contexts/UpdateDataContext"
 

@@ -14,8 +14,6 @@ export default function Restaurant() {
     const router = useRouter()
     const { restaurantId } = router.query
 
-    const [buttonLoading, setButtonLoading] = useState(false)
-
     const {
         loading: restaurantLoading,
         error: restaurantError,
@@ -38,12 +36,10 @@ export default function Restaurant() {
     const [modalVisible, setModalVisible] = useState(false)
     const openModal = () => {
         setModalVisible(true)
-        setButtonLoading(true)
     }
 
     const handleOnClose = () => {
         setModalVisible(false)
-        setButtonLoading(false)
     }
 
     const handleSubmit = (data) => {
@@ -120,17 +116,7 @@ export default function Restaurant() {
                                     <div className="w-full p-2">
                                         <Button
                                             theme="primary"
-                                            text={
-                                                buttonLoading ? (
-                                                    <Loading
-                                                        size={20}
-                                                        spinnerColor="#ffffff"
-                                                        spinnerType="wave"
-                                                    />
-                                                ) : (
-                                                    "Create a Drop"
-                                                )
-                                            }
+                                            text={"Create a Drop"}
                                             onClick={openModal}
                                         />
                                         <DropModal
@@ -138,7 +124,6 @@ export default function Restaurant() {
                                             onClose={handleOnClose}
                                             onSubmit={handleSubmit}
                                             restaurantId={parseInt(restaurant.id, 16)}
-                                            setButtonLoading={setButtonLoading}
                                             refetchDrops={refetch}
                                         />
                                     </div>

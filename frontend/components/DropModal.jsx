@@ -1,18 +1,11 @@
 import React, { useState, useCallback, useEffect } from "react"
-import { Modal, Input, DatePicker, Dropdown, useNotification, Form } from "web3uikit"
+import { Modal, Input, DatePicker, Dropdown, useNotification, Loading } from "web3uikit"
 import moment from "moment-timezone"
 import { useMoralis, useWeb3Contract } from "react-moralis"
 import { RestaurantManager, networkMapping } from "../constants"
 import { generateTimeOptions } from "@/utils/dateUtils"
 
-export const DropModal = ({
-    isVisible,
-    onClose,
-    onSubmit,
-    restaurantId,
-    setButtonLoading,
-    refetchDrops,
-}) => {
+export const DropModal = ({ isVisible, onClose, restaurantId, refetchDrops }) => {
     const reservationOptions = [
         { id: "900", label: "15 min" }, // 15 * 60
         { id: "1800", label: "30 min" }, // 30 * 60
@@ -28,6 +21,7 @@ export const DropModal = ({
     const [dailyEndTime, setDailyEndTime] = useState(null)
     const [windowDuration, setWindowDuration] = useState(parseInt(reservationOptions[0].id))
     const [reservationsPerWindow, setReservationsPerWindow] = useState("5")
+    const [buttonLoading, setButtonLoading] = useState(false)
 
     const { Moralis, chainId: chainIdHex } = useMoralis()
     const chainId = parseInt(chainIdHex)
@@ -87,8 +81,9 @@ export const DropModal = ({
                 setDailyEndTime(null)
                 setWindowDuration(parseInt(reservationOptions[0].id))
                 setReservationsPerWindow("")
-                setButtonLoading(false)
                 refetchDrops()
+                setButtonLoading(false)
+                onClose()
             } catch (error) {
                 console.log(error)
             }
@@ -98,34 +93,47 @@ export const DropModal = ({
 
     const handleError = useCallback(
         (error) => {
-            setButtonLoading(false)
             handleNewNotification("error", error.message, "Transaction Notification")
+            setButtonLoading(false)
         },
         [handleNewNotification]
     )
 
-    const handleSubmit = async (data) => {
-        data = {
-            mintPrice: mintPrice,
-            startDate: startDate,
-            endDate: endDate,
+    const handleSubmit = useCallback(
+        async (data) => {
+            data = {
+                mintPrice: mintPrice,
+                startDate: startDate,
+                endDate: endDate,
+                dailyStartTime,
+                dailyEndTime,
+                windowDuration,
+                reservationsPerWindow,
+            }
+            setButtonLoading(true)
+
+            await createDrop({
+                onSuccess: (tx) => {
+                    handleSuccess(tx)
+                },
+                onError: (error) => {
+                    handleError(error)
+                },
+            })
+        },
+        [
+            createDrop,
+            handleSuccess,
+            handleError,
+            mintPrice,
+            startDate,
+            endDate,
             dailyStartTime,
             dailyEndTime,
             windowDuration,
             reservationsPerWindow,
-        }
-
-        await createDrop({
-            onSuccess: (tx) => {
-                handleSuccess(tx)
-            },
-            onError: (error) => {
-                handleError(error)
-            },
-        })
-
-        onSubmit(data)
-    }
+        ]
+    )
 
     const [startTimeOptions, setStartTimeOptions] = useState([])
     const [endTimeOptions, setEndTimeOptions] = useState([])
@@ -184,7 +192,13 @@ export const DropModal = ({
             canOverflow={true}
             onCloseButtonPressed={onClose}
             onOk={handleSubmit}
-            okText="Create Drop"
+            okText={
+                buttonLoading ? (
+                    <Loading size={20} spinnerColor="#ffffff" spinnerType="wave" />
+                ) : (
+                    "Create Drop"
+                )
+            }
             onCancel={onClose}
             cancelText="Cancel"
             className="bg-white rounded-lg p-6"

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react"
+import React, { useState, useCallback } from "react"
 import { Modal, useNotification, Input, Loading } from "web3uikit"
 import { useMoralis, useWeb3Contract } from "react-moralis"
 import { ReservNFT, Marketplace, networkMapping } from "../constants"

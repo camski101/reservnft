@@ -1,4 +1,3 @@
-import { useMoralis } from "react-moralis"
 import { ChainCheck } from "@/components/ChainCheck"
 import styles from "../styles/Home.module.css"
 import MyRestaurants from "@/components/MyRestaurants"

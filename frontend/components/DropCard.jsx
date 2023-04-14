@@ -12,21 +12,22 @@ const { GET_RESERVATION_TIMESTAMP_BY_DROP_ID } = subgraphQueries
 export const DropCard = ({ drop }) => {
     const dispatch = useNotification()
 
+    // Vars
+
     const { Moralis, isWeb3Enabled, chainId: chainIdHex } = useMoralis()
     const chainId = parseInt(chainIdHex)
     const reservAddress = chainId in networkMapping ? networkMapping[chainId]["ReservNFT"] : null
 
+    // State
+
     const [buttonLoading, setButtonLoading] = useState(false)
     const [formDisabled, setFormDisabled] = useState(false)
-
     const [reservationTimestamp, setReservationTimestamp] = useState(0)
+    const [mintModalVisible, setMintModalVisible] = useState(false)
 
-    const {
-        runContractFunction: createReservNFT,
-        data: enterTxResponse,
-        isLoading,
-        isFetching,
-    } = useWeb3Contract({
+    // Contract calls
+
+    const { runContractFunction: createReservNFT, data: enterTxResponse } = useWeb3Contract({
         abi: ReservNFT,
         contractAddress: reservAddress,
         functionName: "createReservNFT",
@@ -36,6 +37,8 @@ export const DropCard = ({ drop }) => {
         },
         msgValue: drop.mintPrice,
     })
+
+    // Handlers
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -50,13 +53,6 @@ export const DropCard = ({ drop }) => {
                 console.log(error)
             },
         })
-    }
-
-    const [mintModalVisible, setMintModalVisible] = useState(false)
-
-    const openMintModal = () => {
-        refetchMintedReservations()
-        setMintModalVisible(true)
     }
 
     const handleMintOnClose = () => {
@@ -84,6 +80,7 @@ export const DropCard = ({ drop }) => {
             setButtonLoading(false)
             setMintModalVisible(false)
             setFormDisabled(false)
+            refetch()
         } catch (error) {
             console.log(error)
         }
@@ -93,6 +90,13 @@ export const DropCard = ({ drop }) => {
         handleNewNotification("error", error.message, "Transaction Notification")
         setButtonLoading(false)
         setFormDisabled(false)
+    }
+
+    // Modal stuff
+
+    const openMintModal = () => {
+        refetch()
+        setMintModalVisible(true)
     }
 
     const slots = generateReservationSlots(
@@ -108,7 +112,7 @@ export const DropCard = ({ drop }) => {
         loading: reservationLoading,
         error: reservationError,
         data: mintedReservationsData,
-        refetch: refetchMintedReservations,
+        refetch,
     } = useQuery(GET_RESERVATION_TIMESTAMP_BY_DROP_ID, {
         variables: {
             dropId: drop.id,
@@ -136,14 +140,6 @@ export const DropCard = ({ drop }) => {
         const count = bookedReservationsMap.get(timestamp) || 0
         bookedReservationsMap.set(timestamp, count + 1)
     })
-
-    // Convert the bookedReservationsMap into an array of objects
-    const bookedReservationsArray = Array.from(bookedReservationsMap).map(
-        ([timestamp, count]) => ({
-            timestamp,
-            count,
-        })
-    )
 
     return (
         <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 p-2">
@@ -184,7 +180,7 @@ export const DropCard = ({ drop }) => {
                         )}
                         windowDuration={drop.windowDuration}
                         onTimestampSelected={setReservationTimestamp}
-                        onInteraction={refetchMintedReservations}
+                        onInteraction={refetch}
                         formDisabled={formDisabled}
                     />
                 </Modal>
