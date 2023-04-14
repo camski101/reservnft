@@ -81,6 +81,7 @@ const GET_MARKETPLACE_RESERVATIONS = gql`
             price
             reservation {
                 reservationTimestamp
+                id
                 restaurant {
                     name
                 }

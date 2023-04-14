@@ -125,7 +125,7 @@ export default function MyRestaurants({ updateKey }) {
             <h1 className="pb-4 font-bold text-3xl">My Restaurants</h1>
             <RestaurantsTable
                 data={data}
-                columnsConfig="8fr 8fr 2fr 2fr 0fr"
+                columnsConfig=" 3fr 2fr 2fr 0fr"
                 header={[
                     <span>Name</span>,
                     <span>Address</span>,

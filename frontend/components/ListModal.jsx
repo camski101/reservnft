@@ -10,6 +10,7 @@ export default function ListModal({
     onClose,
     setListModalVisible,
     refetch,
+    onDataChange,
 }) {
     const dispatch = useNotification()
     const { isWeb3Enabled, chainId: chainIdHex, account, Moralis } = useMoralis()
@@ -143,6 +144,7 @@ export default function ListModal({
             setButtonLoading(false)
             refetch()
             setListModalVisible(false)
+            onDataChange()
         } catch (error) {
             handleError(error)
             setButtonLoading(false)

@@ -1,19 +1,17 @@
-import React, { useEffect, useContext, useState } from "react"
-import { useMoralis, useWeb3Contract } from "react-moralis"
+import React, { useEffect, useState } from "react"
+import { useMoralis } from "react-moralis"
 import { useQuery } from "@apollo/client"
-import { useNotification, Loading, Table, Button } from "web3uikit"
+import { Loading, Table, Button } from "web3uikit"
 import subgraphQueries from "../constants/subgraphQueries"
-import { ReservNFT, Marketplace, networkMapping } from "../constants"
 import moment from "moment-timezone"
 import ListModal from "../components/ListModal"
 
-export default function MyReservations({ updateKey }) {
+export default function MyReservations({ updateKey, onDataChange }) {
     useEffect(() => {
         refetch()
     }, [updateKey])
 
-    const { isWeb3Enabled, chainId: chainIdHex, account } = useMoralis()
-    const chainId = parseInt(chainIdHex)
+    const { isWeb3Enabled, account } = useMoralis()
     const { GET_RESERVATIONS_BY_ADDRESS } = subgraphQueries
     const [listModalVisible, setListModalVisible] = useState(false)
     const [listModalReservation, setListModalReservation] = useState(null)
@@ -58,11 +56,7 @@ export default function MyReservations({ updateKey }) {
     if (!myReservations?.reservations?.length) return null
     if (!account) return null
 
-    console.log(myReservations)
-
     const dataSource = myReservations.reservations.map((reservation) => [
-        "", // Empty column (you can replace this with desired content)
-
         parseInt(reservation.id, 16), // Token ID
         reservation.restaurant.name, // Restaurant Name
         moment
@@ -80,14 +74,13 @@ export default function MyReservations({ updateKey }) {
             <h1 className="pb-4 font-bold text-3xl">My Reservations</h1>
             {/* Render the Table component */}
             <Table
-                columnsConfig="80px 3fr 2fr 2fr 80px"
+                columnsConfig=" 3fr 2fr 2fr 0fr"
                 data={dataSource}
                 header={[
-                    "",
                     <span>Token ID</span>,
                     <span>Restaurant Name</span>,
                     <span>Timestamp</span>,
-                    "",
+                    <span>Actions</span>,
                 ]}
                 isColumnSortable={[false, true, false, false]}
                 maxPages={3}
@@ -101,6 +94,7 @@ export default function MyReservations({ updateKey }) {
                 reservation={listModalReservation}
                 onClose={closeListModel}
                 refetch={refetch}
+                onDataChange={onDataChange}
             />
         </div>
     )
