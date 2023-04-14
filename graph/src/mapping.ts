@@ -107,7 +107,7 @@ export function handleReservationListed(event: ReservationListedEvent): void {
   listing.seller = event.params.seller
   listing.buyer = Address.fromString("0x0000000000000000000000000000000000000000")
   listing.price = event.params.price
-
+  listing.reservation = reservation.id
   reservation.status = "listed";
 
   listing.save()

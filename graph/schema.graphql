@@ -17,7 +17,7 @@ type Drop @entity {
   windowDuration: BigInt!
   reservationsPerWindow: BigInt!
   isActive: Boolean!
-  restaurant: Restaurant
+  restaurant: Restaurant!
 }
 
 type Reservation @entity {
@@ -37,4 +37,5 @@ type Listing @entity {
   seller: Bytes!
   buyer: Bytes!
   price: BigInt!
+  reservation: Reservation!
 }

@@ -191,21 +191,13 @@ export class Drop extends Entity {
     this.set("isActive", Value.fromBoolean(value));
   }
 
-  get restaurant(): string | null {
+  get restaurant(): string {
     let value = this.get("restaurant");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
+    return value!.toString();
   }
 
-  set restaurant(value: string | null) {
-    if (!value) {
-      this.unset("restaurant");
-    } else {
-      this.set("restaurant", Value.fromString(<string>value));
-    }
+  set restaurant(value: string) {
+    this.set("restaurant", Value.fromString(value));
   }
 }
 
@@ -369,5 +361,14 @@ export class Listing extends Entity {
 
   set price(value: BigInt) {
     this.set("price", Value.fromBigInt(value));
+  }
+
+  get reservation(): string {
+    let value = this.get("reservation");
+    return value!.toString();
+  }
+
+  set reservation(value: string) {
+    this.set("reservation", Value.fromString(value));
   }
 }

@@ -67,8 +67,23 @@ const GET_RESERVATIONS_BY_ADDRESS = gql`
             reservationTimestamp
             status
             restaurant {
-                # Add a nested query for the restaurant field
-                name # Fetch the restaurant name
+                name
+            }
+        }
+    }
+`
+
+const GET_MARKETPLACE_RESERVATIONS = gql`
+    query GetMarketplaceReservations {
+        listings {
+            id
+            seller
+            price
+            reservation {
+                reservationTimestamp
+                restaurant {
+                    name
+                }
             }
         }
     }
@@ -81,4 +96,5 @@ export default {
     GET_DROPS_BY_RESTAURANT_ID,
     GET_RESERVATION_TIMESTAMP_BY_DROP_ID,
     GET_RESERVATIONS_BY_ADDRESS,
+    GET_MARKETPLACE_RESERVATIONS,
 }

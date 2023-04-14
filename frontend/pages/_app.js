@@ -8,7 +8,7 @@ import { UpdateDataProvider } from "../contexts/UpdateDataContext"
 
 const client = new ApolloClient({
     cache: new InMemoryCache(),
-    uri: "https://api.studio.thegraph.com/query/44793/reservnft/0.0.29", // doesn't work in env for some reason
+    uri: process.env.GRAPH_URI, // doesn't work in env for some reason
 })
 
 function MyApp({ Component, pageProps }) {
