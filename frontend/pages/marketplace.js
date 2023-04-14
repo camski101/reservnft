@@ -1,23 +1,57 @@
 import styles from "@/styles/Home.module.css"
-import { Table, Loading, Button } from "web3uikit"
-import { useMoralis } from "react-moralis"
-import React, { useEffect } from "react"
+import { Table, Loading, Button, useNotification } from "web3uikit"
+import { useMoralis, useWeb3Contract } from "react-moralis"
+import React, { useEffect, useState, useCallback } from "react"
 import { ChainCheck } from "@/components/ChainCheck"
 import { useUpdateData } from "../contexts/UpdateDataContext"
 import { useQuery } from "@apollo/client"
 import subgraphQueries from "../constants/subgraphQueries"
 import { truncate } from "truncate-ethereum-address"
 import moment from "moment-timezone"
+import { Marketplace, networkMapping } from "../constants"
 
 const { GET_MARKETPLACE_RESERVATIONS } = subgraphQueries
 
-export default function Marketplace() {
-    const { isWeb3Enabled, Moralis, account } = useMoralis()
+export default function ReservMarket() {
+    const dispatch = useNotification()
     const { updateKey, refreshData } = useUpdateData()
+    const { isWeb3Enabled, chainId: chainIdHex, account, Moralis } = useMoralis()
+    const chainId = parseInt(chainIdHex)
+    const marketAddress = chainId in networkMapping ? networkMapping[chainId]["Marketplace"] : null
 
     useEffect(() => {
         refetch()
     }, [updateKey])
+
+    // State
+
+    const [buttonLoading, setButtonLoading] = useState(false)
+    const [tokenId, setTokenId] = useState(null)
+    const [action, setAction] = useState(null)
+
+    // Contract functions
+
+    // Contracts
+
+    const { runContractFunction: buyReservation, data: buyTxResponse } = useWeb3Contract({
+        abi: Marketplace,
+        contractAddress: marketAddress,
+        functionName: "buyReservation",
+        params: {
+            tokenId: tokenId,
+        },
+    })
+
+    const { runContractFunction: cancelReservationListing, data: cancelTxResponse } =
+        useWeb3Contract({
+            abi: Marketplace,
+            contractAddress: marketAddress,
+            functionName: "cancelReservationListing",
+            params: {
+                tokenId: tokenId,
+            },
+        })
+
     // Queries
 
     const {
@@ -28,6 +62,103 @@ export default function Marketplace() {
     } = useQuery(GET_MARKETPLACE_RESERVATIONS, {
         skip: !isWeb3Enabled,
     })
+
+    // Handlers
+
+    const handleNewNotification = (type, message, title, tx) => {
+        dispatch({
+            type: type,
+            message: message,
+            title: title,
+            position: "topR",
+        })
+    }
+
+    const handleError = useCallback(
+        (error) => {
+            handleNewNotification("error", error.message, "Transaction Notification")
+            setButtonLoading(false)
+            setTokenId(null)
+
+            console.log(error)
+        },
+        [handleNewNotification]
+    )
+
+    const handleBuySuccess = useCallback(async (tx) => {
+        try {
+            await tx.wait(1)
+            handleNewNotification(
+                "success",
+                "Transaction Complete!",
+                "Transaction Notification",
+                tx
+            )
+            setButtonLoading(false)
+            refreshData()
+            setTokenId(null)
+        } catch (error) {
+            handleError(error)
+            setButtonLoading(false)
+            setTokenId(null)
+        }
+    })
+
+    const handleBuy = async (tokenId) => {
+        setButtonLoading(true)
+        setTokenId(tokenId)
+        setAction("buy")
+    }
+
+    const handleCancel = async (tokenId) => {
+        setButtonLoading(true)
+        setTokenId(tokenId)
+        setAction("cancel")
+    }
+
+    useEffect(() => {
+        if (tokenId !== null && action !== null) {
+            if (action === "buy") {
+                buyReservation({
+                    onSuccess: (tx) => {
+                        handleBuySuccess(tx)
+                    },
+                    onError: (error) => {
+                        handleError(error)
+                    },
+                })
+            } else if (action === "cancel") {
+                cancelReservationListing({
+                    onSuccess: (tx) => {
+                        handleCancelSuccess(tx)
+                    },
+                    onError: (error) => {
+                        handleError(error)
+                    },
+                })
+            }
+        }
+    }, [tokenId, action])
+
+    const handleCancelSuccess = useCallback(async (tx) => {
+        try {
+            await tx.wait(1)
+            handleNewNotification(
+                "success",
+                "Transaction Complete!",
+                "Transaction Notification",
+                tx
+            )
+            setButtonLoading(false)
+            refreshData()
+            setTokenId(null)
+        } catch (error) {
+            handleError(error)
+            setButtonLoading(false)
+            setTokenId(null)
+        }
+    })
+
     if (error) return <div>Error: {error.message}</div>
     if (!marketplaceReservations?.listings?.length) return null
 
@@ -62,9 +193,18 @@ export default function Marketplace() {
                         Moralis.Units.FromWei(listing.price),
                         truncate(listing.seller),
                         listing.seller == account ? (
-                            <Button theme="primary" text={"Update"} />
+                            <Button
+                                theme="colored"
+                                color="red"
+                                text={"Cancel"}
+                                onClick={() => handleCancel(parseInt(listing.reservation.id, 16))}
+                            />
                         ) : (
-                            <Button theme="primary" text={"Buy"} />
+                            <Button
+                                theme="primary"
+                                text={"Buy"}
+                                onClick={() => handleBuy(parseInt(listing.reservation.id, 16))}
+                            />
                         ),
                     ])}
                     header={[

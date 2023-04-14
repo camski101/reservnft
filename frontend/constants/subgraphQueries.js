@@ -75,7 +75,7 @@ const GET_RESERVATIONS_BY_ADDRESS = gql`
 
 const GET_MARKETPLACE_RESERVATIONS = gql`
     query GetMarketplaceReservations {
-        listings {
+        listings(where: { buyer: "0x0000000000000000000000000000000000000000" }) {
             id
             seller
             price
@@ -85,6 +85,7 @@ const GET_MARKETPLACE_RESERVATIONS = gql`
                 restaurant {
                     name
                 }
+                status
             }
         }
     }
