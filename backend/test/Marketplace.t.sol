@@ -263,4 +263,43 @@ contract MarketplaceTest is Test {
         vm.expectRevert(Marketplace__NoProceeds.selector);
         marketplace.withdrawProceeds();
     }
+
+    function test_listCancelAndRelistReservation() public {
+        uint256 dropId = 0;
+        uint256 reservationTimestamp = 1673384400; // January 10, 2023 21:00:00 UTC
+        uint256 tokenId = _createReservNFT(
+            dropId,
+            reservationTimestamp,
+            0.01 ether
+        );
+
+        // Approve the marketplace to handle the NFT
+        reservNFT.approve(address(marketplace), tokenId);
+
+        uint256 price = 0.1 ether;
+        marketplace.listReservation(tokenId, price);
+
+        // Test if the listing was successful
+        Marketplace.Listing memory listing = marketplace.getReservationListing(
+            tokenId
+        );
+        assertEq(listing.seller, address(this));
+        assertEq(listing.price, price);
+
+        // Test canceling the reservation listing
+        marketplace.cancelReservationListing(tokenId);
+
+        // Test if the listing was removed
+        listing = marketplace.getReservationListing(tokenId);
+        assertEq(listing.price, 0);
+
+        // Test relisting the reservation
+        uint256 newPrice = 0.15 ether;
+        marketplace.listReservation(tokenId, newPrice);
+
+        // Test if the relisting was successful
+        listing = marketplace.getReservationListing(tokenId);
+        assertEq(listing.seller, address(this));
+        assertEq(listing.price, newPrice);
+    }
 }

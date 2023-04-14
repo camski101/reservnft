@@ -141,6 +141,7 @@ contract Marketplace is ReentrancyGuard {
     ) external isListed(tokenId) isOwner(tokenId, msg.sender) {
         Listing memory listedReservation = s_listings[tokenId];
         delete listedReservation;
+        s_listings[tokenId] = listedReservation;
         emit ReservationCancelled(msg.sender, tokenId);
     }
 
