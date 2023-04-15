@@ -13,8 +13,13 @@ export default function MyReservations({ updateKey, onDataChange }) {
 
     const { isWeb3Enabled, account } = useMoralis()
     const { GET_RESERVATIONS_BY_ADDRESS } = subgraphQueries
+
+    // State
+
     const [listModalVisible, setListModalVisible] = useState(false)
     const [listModalReservation, setListModalReservation] = useState(null)
+
+    // Modal stuff
 
     const openListModel = (reservation) => {
         console.log(reservation)
@@ -68,6 +73,8 @@ export default function MyReservations({ updateKey, onDataChange }) {
             <Button theme="secondary" text={"Listed"} disabled={true} />
         ),
     ])
+
+    // Render
 
     return (
         <div className="p-5 border-1">

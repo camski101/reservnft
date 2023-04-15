@@ -13,6 +13,9 @@ export const DropModal = ({ isVisible, onClose, restaurantId, refetchDrops }) =>
         { id: "7200", label: "2 hr" }, // 120 * 60
         { id: "14400", label: "4 hr" }, // 240 * 60
     ]
+
+    // State
+
     const [mintPrice, setMintPrice] = useState(0)
     const [uiMintPrice, setUIMintPrice] = useState(0)
     const [startDate, setStartDate] = useState(moment.utc(new Date()).unix())
@@ -22,6 +25,8 @@ export const DropModal = ({ isVisible, onClose, restaurantId, refetchDrops }) =>
     const [windowDuration, setWindowDuration] = useState(parseInt(reservationOptions[0].id))
     const [reservationsPerWindow, setReservationsPerWindow] = useState("5")
     const [buttonLoading, setButtonLoading] = useState(false)
+    const [startTimeOptions, setStartTimeOptions] = useState([])
+    const [endTimeOptions, setEndTimeOptions] = useState([])
 
     const { Moralis, chainId: chainIdHex } = useMoralis()
     const chainId = parseInt(chainIdHex)
@@ -32,6 +37,8 @@ export const DropModal = ({ isVisible, onClose, restaurantId, refetchDrops }) =>
     useEffect(() => {
         handleWindowDurationChange(reservationOptions[0])
     }, [])
+
+    // Contract functions
 
     const {
         runContractFunction: createDrop,
@@ -53,6 +60,8 @@ export const DropModal = ({ isVisible, onClose, restaurantId, refetchDrops }) =>
             reservationsPerWindow: reservationsPerWindow,
         },
     })
+
+    // Handlers
 
     const handleNewNotification = (type, message, title, tx) => {
         dispatch({
@@ -135,9 +144,6 @@ export const DropModal = ({ isVisible, onClose, restaurantId, refetchDrops }) =>
         ]
     )
 
-    const [startTimeOptions, setStartTimeOptions] = useState([])
-    const [endTimeOptions, setEndTimeOptions] = useState([])
-
     const handleTimeChange = (selectedOption, isStartTime) => {
         const selectedTimeInSeconds = parseInt(selectedOption.id)
         if (isStartTime) {
@@ -185,6 +191,8 @@ export const DropModal = ({ isVisible, onClose, restaurantId, refetchDrops }) =>
             setUIMintPrice(mintPrice)
         }
     }
+
+    // Render
 
     return (
         <Modal

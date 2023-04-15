@@ -146,6 +146,8 @@ export const CustomDateTimeSelector = ({
         return slotMoment.minute() !== 0
     })
 
+    // Render
+
     return (
         <div className="space-y-2">
             <select

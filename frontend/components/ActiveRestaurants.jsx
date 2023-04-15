@@ -9,6 +9,9 @@ const { GET_ACTIVE_RESTAURANTS } = subgraphQueries
 
 export default function ActiveRestaurants({ updateKey }) {
     const { Moralis, chainId, isWeb3Enabled, account } = useMoralis()
+
+    // Queries
+
     const {
         loading,
         error,
@@ -43,6 +46,8 @@ export default function ActiveRestaurants({ updateKey }) {
             ...restaurant,
         }
     })
+
+    // Render
 
     return (
         <div className="p-5">

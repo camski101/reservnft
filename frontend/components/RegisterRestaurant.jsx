@@ -4,23 +4,19 @@ import { useState } from "react"
 import { useNotification, Button, Loading } from "web3uikit"
 
 export default function RegisterRestaurant({ onDataChange }) {
-    const { Moralis, isWeb3Enabled, chainId: chainIdHex } = useMoralis()
+    const { chainId: chainIdHex } = useMoralis()
     const chainId = parseInt(chainIdHex)
     const rmAddress =
         chainId in networkMapping ? networkMapping[chainId]["RestaurantManager"] : null
     const dispatch = useNotification()
 
-    // State for form input values
+    // State
+
     const [restaurantName, setRestaurantName] = useState("")
     const [restaurantBusinessAddress, setRestaurantBusinessAddress] = useState("")
     const [buttonLoading, setButtonLoading] = useState(false)
 
-    const {
-        runContractFunction: registerRestaurant,
-        data: enterTxResponse,
-        isLoading,
-        isFetching,
-    } = useWeb3Contract({
+    const { runContractFunction: registerRestaurant, data: registerTxResponse } = useWeb3Contract({
         abi: RestaurantManager,
         contractAddress: rmAddress,
         functionName: "registerRestaurant",
@@ -30,7 +26,8 @@ export default function RegisterRestaurant({ onDataChange }) {
         },
     })
 
-    // Function to handle form submission
+    // Handlers
+
     const handleSubmit = async (e) => {
         setButtonLoading(true)
         e.preventDefault()
@@ -59,7 +56,7 @@ export default function RegisterRestaurant({ onDataChange }) {
             await tx.wait(1)
             handleNewNotification(
                 "success",
-                "Transaction Complete!",
+                "Restaurant Registered!",
                 "Transaction Notification",
                 tx
             )
@@ -77,6 +74,8 @@ export default function RegisterRestaurant({ onDataChange }) {
         handleNewNotification("error", error.message, "Transaction Notification")
         setButtonLoading(false)
     }
+
+    // Render
 
     if (!rmAddress) {
         return

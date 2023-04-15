@@ -25,6 +25,19 @@ export const DropCard = ({ drop }) => {
     const [reservationTimestamp, setReservationTimestamp] = useState(0)
     const [mintModalVisible, setMintModalVisible] = useState(false)
 
+    // Queries
+
+    const {
+        loading: reservationLoading,
+        error: reservationError,
+        data: mintedReservationsData,
+        refetch,
+    } = useQuery(GET_RESERVATION_TIMESTAMP_BY_DROP_ID, {
+        variables: {
+            dropId: drop.id,
+        },
+    })
+
     // Contract calls
 
     const { runContractFunction: createReservNFT, data: enterTxResponse } = useWeb3Contract({
@@ -55,6 +68,8 @@ export const DropCard = ({ drop }) => {
         })
     }
 
+    // Handlers
+
     const handleMintOnClose = () => {
         setMintModalVisible(false)
     }
@@ -71,12 +86,7 @@ export const DropCard = ({ drop }) => {
     const handleSuccess = async (tx) => {
         try {
             await tx.wait(1)
-            handleNewNotification(
-                "success",
-                "Transaction Complete!",
-                "Transaction Notification",
-                tx
-            )
+            handleNewNotification("success", "Mint Complete!", "Transaction Notification", tx)
             setButtonLoading(false)
             setMintModalVisible(false)
             setFormDisabled(false)
@@ -108,17 +118,6 @@ export const DropCard = ({ drop }) => {
         drop.reservationsPerWindow
     )
 
-    const {
-        loading: reservationLoading,
-        error: reservationError,
-        data: mintedReservationsData,
-        refetch,
-    } = useQuery(GET_RESERVATION_TIMESTAMP_BY_DROP_ID, {
-        variables: {
-            dropId: drop.id,
-        },
-    })
-
     if (reservationLoading) {
         return <div>Loading reservations...</div>
     }
@@ -140,6 +139,8 @@ export const DropCard = ({ drop }) => {
         const count = bookedReservationsMap.get(timestamp) || 0
         bookedReservationsMap.set(timestamp, count + 1)
     })
+
+    // Render
 
     return (
         <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 p-2">

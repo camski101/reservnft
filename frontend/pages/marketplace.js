@@ -27,6 +27,7 @@ export default function ReservMarket() {
 
     const [buttonLoading, setButtonLoading] = useState(false)
     const [tokenId, setTokenId] = useState(null)
+    const [listPrice, setListPrice] = useState(null)
     const [action, setAction] = useState(null)
 
     // Contract functions
@@ -40,6 +41,7 @@ export default function ReservMarket() {
         params: {
             tokenId: tokenId,
         },
+        msgValue: listPrice,
     })
 
     const { runContractFunction: cancelReservationListing, data: cancelTxResponse } =
@@ -88,14 +90,10 @@ export default function ReservMarket() {
     const handleBuySuccess = useCallback(async (tx) => {
         try {
             await tx.wait(1)
-            handleNewNotification(
-                "success",
-                "Transaction Complete!",
-                "Transaction Notification",
-                tx
-            )
+            handleNewNotification("success", "Buy Complete!", "Transaction Notification", tx)
             setButtonLoading(false)
             refreshData()
+            refetch()
             setTokenId(null)
         } catch (error) {
             handleError(error)
@@ -104,9 +102,10 @@ export default function ReservMarket() {
         }
     })
 
-    const handleBuy = async (tokenId) => {
+    const handleBuy = async (tokenId, listPrice) => {
         setButtonLoading(true)
         setTokenId(tokenId)
+        setListPrice(listPrice)
         setAction("buy")
     }
 
@@ -143,14 +142,10 @@ export default function ReservMarket() {
     const handleCancelSuccess = useCallback(async (tx) => {
         try {
             await tx.wait(1)
-            handleNewNotification(
-                "success",
-                "Transaction Complete!",
-                "Transaction Notification",
-                tx
-            )
+            handleNewNotification("success", "Listing Cancelled!", "Transaction Notification", tx)
             setButtonLoading(false)
             refreshData()
+            refetch()
             setTokenId(null)
         } catch (error) {
             handleError(error)
@@ -160,7 +155,16 @@ export default function ReservMarket() {
     })
 
     if (error) return <div>Error: {error.message}</div>
-    if (!marketplaceReservations?.listings?.length) return null
+    if (!marketplaceReservations?.listings?.length)
+        return (
+            <div className={`p-6 bg-white shadow-md rounded-lg ${styles.container}`}>
+                <ChainCheck />
+                <div className="p-5 border-1">
+                    <h1 className="pb-4 font-bold text-3xl">Reservation Marketplace</h1>
+                    <p className="text-center">No reservations listed</p>
+                </div>
+            </div>
+        )
 
     if (loading) {
         return (
@@ -196,14 +200,36 @@ export default function ReservMarket() {
                             <Button
                                 theme="colored"
                                 color="red"
-                                text={"Cancel"}
+                                text={
+                                    buttonLoading ? (
+                                        <Loading
+                                            size={20}
+                                            spinnerColor="#FF0000"
+                                            spinnerType="wave"
+                                        />
+                                    ) : (
+                                        "Cancel"
+                                    )
+                                }
                                 onClick={() => handleCancel(parseInt(listing.reservation.id, 16))}
                             />
                         ) : (
                             <Button
                                 theme="primary"
-                                text={"Buy"}
-                                onClick={() => handleBuy(parseInt(listing.reservation.id, 16))}
+                                text={
+                                    buttonLoading ? (
+                                        <Loading
+                                            size={20}
+                                            spinnerColor="#ffffff"
+                                            spinnerType="wave"
+                                        />
+                                    ) : (
+                                        "Buy"
+                                    )
+                                }
+                                onClick={() =>
+                                    handleBuy(parseInt(listing.reservation.id, 16), listing.price)
+                                }
                             />
                         ),
                     ])}

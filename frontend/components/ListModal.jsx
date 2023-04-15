@@ -33,7 +33,7 @@ export default function ListModal({
     const [listPrice, setListPrice] = useState(0)
     const [uiListPrice, setUIListPrice] = useState(0)
 
-    // Contracts
+    // Contract functions
 
     const {
         runContractFunction: approve,
@@ -77,19 +77,6 @@ export default function ListModal({
         }
     }
 
-    const listSubmit = async () => {
-        setButtonLoading(true)
-
-        approve({
-            onSuccess: (tx) => {
-                handleApprovalSuccess(tx)
-            },
-            onError: (error) => {
-                handleError(error)
-            },
-        })
-    }
-
     const handleNewNotification = (type, message, title, tx) => {
         dispatch({
             type: type,
@@ -110,12 +97,7 @@ export default function ListModal({
     const handleApprovalSuccess = useCallback(async (tx) => {
         try {
             await tx.wait(1)
-            handleNewNotification(
-                "success",
-                "Transaction Complete!",
-                "Transaction Notification",
-                tx
-            )
+            handleNewNotification("success", "Approved to List!", "Transaction Notification", tx)
 
             listReservation({
                 onSuccess: (tx) => {
@@ -134,12 +116,7 @@ export default function ListModal({
     const handleListSuccess = useCallback(async (tx) => {
         try {
             await tx.wait(1)
-            handleNewNotification(
-                "success",
-                "Transaction Complete!",
-                "Transaction Notification",
-                tx
-            )
+            handleNewNotification("success", "Listing Created!", "Transaction Notification", tx)
 
             setButtonLoading(false)
             refetch()
@@ -150,6 +127,21 @@ export default function ListModal({
             setButtonLoading(false)
         }
     })
+
+    const listSubmit = async () => {
+        setButtonLoading(true)
+
+        approve({
+            onSuccess: (tx) => {
+                handleApprovalSuccess(tx)
+            },
+            onError: (error) => {
+                handleError(error)
+            },
+        })
+    }
+
+    // Render
 
     return (
         <Modal

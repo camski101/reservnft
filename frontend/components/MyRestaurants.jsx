@@ -14,12 +14,15 @@ export default function MyRestaurants({ updateKey }) {
     const dispatch = useNotification()
     const { GET_MY_RESTAURANTS } = subgraphQueries
 
+    // State
+
     const [restaurantId, setRestaurantId] = useState(null)
     const [isActive, setIsActive] = useState(null)
     const [shouldToggle, setShouldToggle] = useState(false)
-
     const [buttonLoading, setButtonLoading] = useState({})
     const [buttonId, setButtonId] = useState(null)
+
+    // Contract functions
 
     const { runContractFunction: setRestaurantIsActive } = useWeb3Contract({
         abi: RestaurantManager,
@@ -27,6 +30,9 @@ export default function MyRestaurants({ updateKey }) {
         functionName: "setRestaurantIsActive",
         params: { restaurantId: restaurantId, isActive: isActive },
     })
+
+    // Queries
+
     const {
         loading,
         error,
@@ -36,6 +42,8 @@ export default function MyRestaurants({ updateKey }) {
         variables: { ownerAddress: account ? account : null },
         skip: !isWeb3Enabled || !account,
     })
+
+    // Handlers
 
     const handleNewNotification = (type, message, title, tx) => {
         dispatch({
@@ -52,7 +60,7 @@ export default function MyRestaurants({ updateKey }) {
                 await tx.wait(1)
                 handleNewNotification(
                     "success",
-                    "Transaction Complete!",
+                    "Restaurant Active Status Changed!",
                     "Transaction Notification",
                     tx
                 )
@@ -119,6 +127,8 @@ export default function MyRestaurants({ updateKey }) {
             ...restaurant,
         }
     })
+
+    // Render
 
     return (
         <div className="p-5 border-1">

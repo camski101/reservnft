@@ -15,6 +15,8 @@ export const ChainCheck = ({ children }) => {
         )
     }
 
+    // Render
+
     if (supportedChains.includes(parseInt(chainId).toString())) {
         return (
             <div className="flex flex-row items-center justify-center bg-green-200 text-green-800 p-2 rounded-lg shadow-sm">
