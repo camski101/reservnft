@@ -5,26 +5,21 @@ Frontend
 - [x] Metamask boilerplate
 - [x] Add a restaurant
 - [x] Remove restaurant
-- [ ] Create Reserv Slots
-- [ ] Buy Reserv NFTs
-- [ ] Sell Reserv NFTs
+- [x] Create Reserv Slots
+- [x] Buy Reserv NFTs
+- [x] Sell Reserv NFTs
 
 Backend
 - [x] Restaurant Contract
-- [ ] Reserv NFT Contract
-- [ ] Marketplace Interactions
+- [x] Reserv NFT Contract
+- [x] Marketplace Interactions
 
 Graph
 - [x] Boilerplate
-- [ ] Event Tables and custom queries
-- [ ] Displays in UI
+- [x] Event Tables and custom queries
+- [x] Displays in UI
 
 CICD
 
 - [x] Frontend deploy
-- [ ] Backend deploy 
-
-# Getting Started
-
-Local nextjs run stuff
-Local node stuff here
+- [x] Backend deploy
